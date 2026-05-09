@@ -1,0 +1,22 @@
+name = "llm-wiki-tg-webhook"
+main = "src/worker.js"
+compatibility_date = "2025-01-01"
+
+# Free tier is fine for this — payload is tiny, traffic is low.
+# Each request: 1 fetch to Telegram (ack) + 1 fetch to GitHub (dispatch).
+
+# Secrets are set via:
+#   wrangler secret put WEBHOOK_SECRET
+#   wrangler secret put ALLOWED_CHAT_ID
+#   wrangler secret put GITHUB_DISPATCH_TOKEN
+#   wrangler secret put GITHUB_REPO
+#   wrangler secret put TELEGRAM_BOT_TOKEN
+#
+# Don't put them in [vars] — that's plaintext.
+
+# Optional plain (non-secret) vars can go here, e.g. log level:
+# [vars]
+# LOG_LEVEL = "info"
+
+[observability]
+enabled = true

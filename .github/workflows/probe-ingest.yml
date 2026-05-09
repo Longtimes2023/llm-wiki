@@ -1,0 +1,97 @@
+name: Probe ingest on Actions runner
+
+# Manual probe for Phase 1 of cloud migration plan.
+# Run this BEFORE trusting ingest-url.yml. Validates that 7_wiki_writer.py
+# + llm-wiki-skill can ingest a URL on a stock GitHub Actions runner.
+#
+# Usage:
+#   gh workflow run probe-ingest.yml -f url='https://example.com/article'
+# or via GitHub web UI (Actions tab → Run workflow).
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'URL to test ingest with'
+        required: true
+        default: 'https://karpathy.bearblog.dev/llm-os/'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
+      ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
+      MODEL: ${{ secrets.MODEL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Install Python deps
+        run: uv sync --frozen
+
+      - name: Install Node 22 (for Quartz tooling that the skill may invoke)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Print env (sanity)
+        run: |
+          echo "PWD=$PWD"
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          uv run python --version
+          test -f .claude/skills/llm-wiki-skill/SKILL.md && echo "skill found" || echo "skill MISSING"
+          test -d ai-wiki && echo "ai-wiki found" || echo "ai-wiki MISSING"
+          if [ -z "${ANTHROPIC_AUTH_TOKEN:-}" ]; then echo "::error::ANTHROPIC_AUTH_TOKEN secret missing"; exit 1; fi
+
+      - name: Run ingest probe
+        id: ingest
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          bash scripts/ci_ingest.sh "${{ inputs.url }}" 2>&1 | tee probe-output.log
+
+      - name: Show source dir delta
+        if: always()
+        run: |
+          echo "=== ai-wiki/wiki/sources/ ==="
+          ls -la ai-wiki/wiki/sources/ || true
+          echo
+          echo "=== ai-wiki/raw/articles/ (last 5) ==="
+          ls -t ai-wiki/raw/articles/ 2>/dev/null | head -5 || true
+          echo
+          echo "=== git status ==="
+          git status --short
+
+      - name: Upload probe artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe-output
+          path: |
+            probe-output.log
+            scripts/ci_ingest.log
+            ai-wiki/wiki/sources/
+            ai-wiki/raw/articles/
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Fail job if ingest failed
+        if: steps.ingest.outcome != 'success'
+        run: |
+          echo "::error::ingest probe failed — inspect probe-output artifact"
+          exit 1

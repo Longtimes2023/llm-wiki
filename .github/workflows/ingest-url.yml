@@ -1,0 +1,143 @@
+name: Ingest URL
+
+# Triggered by Cloudflare Worker (cloudflare-worker/) via repository_dispatch.
+# Worker payload: { url, chat_id, msg_id }
+# Pipeline: fetch URL → llm-wiki-skill ingest → commit ai-wiki/ → push main →
+#           Cloudflare Pages auto-builds Quartz from the pushed commit.
+
+on:
+  repository_dispatch:
+    types: [ingest-url]
+  # Allow manual re-run for debugging.
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'URL to ingest'
+        required: true
+      chat_id:
+        description: 'Telegram chat_id to reply to (optional)'
+        required: false
+        default: ''
+      msg_id:
+        description: 'Telegram message_id to reply to (optional)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ingest
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
+      ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
+      MODEL: ${{ secrets.MODEL }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      INGEST_URL: ${{ github.event.client_payload.url || inputs.url }}
+      CHAT_ID: ${{ github.event.client_payload.chat_id || inputs.chat_id }}
+      MSG_ID: ${{ github.event.client_payload.msg_id || inputs.msg_id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Validate input
+        run: |
+          if [ -z "$INGEST_URL" ]; then
+            echo "::error::no URL provided (client_payload.url empty)"
+            exit 1
+          fi
+          echo "ingesting: $INGEST_URL"
+          echo "reply-to: chat=$CHAT_ID msg=$MSG_ID"
+
+      - name: Setup Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Install Python deps
+        run: uv sync --frozen
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run ingest
+        id: ingest
+        run: bash scripts/ci_ingest.sh "$INGEST_URL"
+
+      - name: Sync ai-wiki -> quartz/content
+        run: |
+          rsync -a --delete \
+            --exclude='.obsidian/' \
+            --exclude='.git/' \
+            --exclude='*.tmp' \
+            ai-wiki/ quartz/content/
+
+      - name: Commit + push
+        id: commit
+        run: |
+          git config user.name 'llm-wiki-bot'
+          git config user.email 'llm-wiki-bot@users.noreply.github.com'
+          git add ai-wiki/ quartz/content/
+          if git diff --cached --quiet; then
+            echo "no changes to commit"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          short_url="${INGEST_URL:0:80}"
+          git commit -m "ingest: ${short_url}
+
+          Source URL: ${INGEST_URL}
+          Workflow: ${GITHUB_RUN_URL}"
+          git push origin HEAD:main
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Compute reply URL
+        id: replyurl
+        run: |
+          stem="${{ steps.ingest.outputs.new_source_stem }}"
+          base="${{ secrets.QUARTZ_PUBLIC_BASE_URL }}"
+          if [ -z "$base" ]; then base="https://${{ secrets.CLOUDFLARE_PAGES_PROJECT }}.pages.dev"; fi
+          if [ -n "$stem" ]; then
+            url="$base/wiki/sources/$stem"
+          else
+            url="$base/"
+          fi
+          echo "reply_url=$url" >> "$GITHUB_OUTPUT"
+          echo "site_url=$base" >> "$GITHUB_OUTPUT"
+          echo "computed reply URL: $url"
+
+      - name: Notify Telegram (success)
+        if: success() && env.CHAT_ID != ''
+        run: |
+          uv run python scripts/notify_telegram.py \
+            --status ok \
+            --chat-id "$CHAT_ID" \
+            --reply-to "$MSG_ID" \
+            --url "${{ steps.replyurl.outputs.reply_url }}" \
+            --site "${{ steps.replyurl.outputs.site_url }}"
+
+      - name: Notify Telegram (failure)
+        if: failure() && env.CHAT_ID != ''
+        run: |
+          uv run python scripts/notify_telegram.py \
+            --status fail \
+            --chat-id "$CHAT_ID" \
+            --reply-to "$MSG_ID" \
+            --reason "ingest workflow failed (see workflow run)"

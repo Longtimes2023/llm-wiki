@@ -354,3 +354,81 @@ llm-wiki-skill-main/
 - [Claude Agent SDK 教程](https://github.com/kenneth-liao/claude-agent-sdk-intro)
 - [Quartz v4 文档](https://quartz.jzhao.xyz/)
 - [Karpathy llm-wiki](https://github.com/karpathy/llm-wiki)
+
+## 📱 Telegram bot 懒人 ingest
+
+`telegram_bot.py` cho phép paste link vào Telegram chat → bot tự động đẩy vào pipeline `raw-watcher.sh` → reply lại link Quartz wiki khi xử lý xong. Không đụng pipeline có sẵn.
+
+### Setup (5 phút)
+
+1. **Tạo bot qua [@BotFather](https://t.me/BotFather)** → copy token dạng `1234567890:AAAA...`.
+2. **Chat với bot mới tạo** 1 lần (gửi bất kỳ tin nhắn nào).
+3. **Lấy chat_id của bạn**:
+   ```bash
+   uv run python telegram_bot.py --getchatid
+   ```
+   Bot sẽ in `chat_id=...` rồi exit.
+4. **Điền `.env`** (xem `.env.example` for template):
+   ```
+   TELEGRAM_BOT_TOKEN=<from BotFather>
+   TELEGRAM_ALLOWED_CHAT_ID=<from step 3>
+   QUARTZ_PUBLIC_BASE_URL=https://your-site.pages.dev
+   ```
+5. **Enable systemd user service** (auto-start cùng WSL):
+   ```bash
+   systemctl --user daemon-reload
+   systemctl --user enable --now llm-wiki-telegram-bot
+   systemctl --user status llm-wiki-telegram-bot
+   ```
+
+### Sử dụng
+
+Mở Telegram chat với bot → paste URL bài viết → đợi 1-3 phút → bot reply link wiki.
+
+```
+You: https://www.woshipm.com/pd/6384384.html
+Bot: 🔄 Đã nhận URL — đang đẩy vào pipeline...
+Bot: ✅ Đã ingest + deploy xong!
+     Wiki source: https://your-site.pages.dev/sources/2026-05-07-...
+```
+
+Logs: `scripts/telegram_bot.log` (bot) + `scripts/watcher.log` (pipeline).
+
+Stop/restart:
+```bash
+systemctl --user stop llm-wiki-telegram-bot
+systemctl --user restart llm-wiki-telegram-bot
+```
+
+## ☁️ Cloud mode — chạy không cần máy local
+
+Local mode ở trên cần WSL2 mở 24/7. Nếu muốn tắt máy mà bot vẫn xử lý link, dùng cloud mode:
+
+```
+Telegram → Cloudflare Worker (webhook, always-on, free)
+        → repository_dispatch → GitHub Actions
+        → workflow chạy 7_wiki_writer.py + commit ai-wiki/ → push main
+        → Cloudflare Pages auto-build từ commit → site live
+        → workflow gửi Telegram reply với URL khi xong
+```
+
+### Setup
+
+1. **GitHub Actions secrets** — repo Settings → Secrets and variables → Actions:
+   - `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_BASE_URL`, `MODEL`
+   - `TELEGRAM_BOT_TOKEN` (cùng token với local mode)
+   - `QUARTZ_PUBLIC_BASE_URL`, `CLOUDFLARE_PAGES_PROJECT`
+
+2. **Probe trước khi tin** (Phase 1 của plan):
+   ```bash
+   gh workflow run probe-ingest.yml -f url='https://karpathy.bearblog.dev/llm-os/'
+   ```
+   Tab Actions → xem run mới, download artifact `probe-output` để check log. Nếu skill ingest chạy được → tiếp tục.
+
+3. **Deploy Cloudflare Worker** — xem [`cloudflare-worker/README.md`](cloudflare-worker/README.md) cho các bước chi tiết (`wrangler login`, set secrets, `wrangler deploy`, `setWebhook`).
+
+4. **Bật Cloudflare Pages auto-build từ Git** — Pages dashboard → project → Settings → Builds & deployments → Connect to Git → repo `liangdabiao/llm-wiki`, branch `main`. Build command: `cd quartz && rm -rf public .quartz-cache && npx quartz build`. Output: `quartz/public`.
+
+5. **Test e2e**: tắt WSL hoàn toàn, gửi 1 URL Telegram → ack < 5s → 2-6 phút sau nhận URL wiki final → click load thành công.
+
+Local mode và cloud mode KHÔNG xung đột. Có thể chạy cả hai (local nhanh hơn khi máy mở; cloud là fallback). Để tránh ingest 2 lần cùng URL: **không chạy đồng thời** `telegram_bot.py` local và webhook cloud trên cùng 1 bot token.
