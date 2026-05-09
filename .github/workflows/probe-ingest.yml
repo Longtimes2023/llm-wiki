@@ -42,7 +42,7 @@ jobs:
           enable-cache: true
 
       - name: Install Python deps
-        run: uv sync --frozen
+        run: uv sync
 
       - name: Install Node 22 (for Quartz tooling that the skill may invoke)
         uses: actions/setup-node@v4
