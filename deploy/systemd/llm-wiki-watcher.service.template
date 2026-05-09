@@ -1,0 +1,15 @@
+[Unit]
+Description=LLM Wiki raw/ folder watcher (auto-ingest pipeline)
+After=default.target
+
+[Service]
+Type=simple
+Environment=PATH=__NODE_PATH__:__HOME__/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=__PROJECT_DIR__/scripts/raw-watcher.sh
+Restart=on-failure
+RestartSec=5
+StandardOutput=append:__PROJECT_DIR__/scripts/watcher.log
+StandardError=append:__PROJECT_DIR__/scripts/watcher.log
+
+[Install]
+WantedBy=default.target

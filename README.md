@@ -402,7 +402,15 @@ systemctl --user restart llm-wiki-telegram-bot
 
 ## ☁️ Cloud mode — chạy không cần máy local
 
-Local mode ở trên cần WSL2 mở 24/7. Nếu muốn tắt máy mà bot vẫn xử lý link, dùng cloud mode:
+Local mode ở trên cần WSL2 mở 24/7. Nếu muốn tắt máy mà bot vẫn xử lý link, có 2 hướng:
+
+### Hướng 1: VPS (recommend, đơn giản nhất)
+
+Port y nguyên local stack lên 1 VPS Ubuntu nhỏ (~$5/tháng). Code không đổi, chỉ đổi host. Setup ~10 phút.
+
+→ Xem [`deploy/README.md`](deploy/README.md)
+
+### Hướng 2: GitHub Actions + Cloudflare Worker (free, phức tạp hơn)
 
 ```
 Telegram → Cloudflare Worker (webhook, always-on, free)

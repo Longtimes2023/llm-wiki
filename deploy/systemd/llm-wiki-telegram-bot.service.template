@@ -1,0 +1,15 @@
+[Unit]
+Description=LLM Wiki Telegram bot (URL ingest)
+After=default.target
+
+[Service]
+Type=simple
+ExecStart=__PROJECT_DIR__/.venv/bin/python __PROJECT_DIR__/telegram_bot.py
+WorkingDirectory=__PROJECT_DIR__
+Restart=on-failure
+RestartSec=5
+StandardOutput=append:__PROJECT_DIR__/scripts/telegram_bot.log
+StandardError=append:__PROJECT_DIR__/scripts/telegram_bot.log
+
+[Install]
+WantedBy=default.target
