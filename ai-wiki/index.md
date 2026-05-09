@@ -1,14 +1,14 @@
 # 知识库索引
 
-> 最后更新：2026-04-29
+> 最后更新：2026-05-09
 
 ---
 
 ## 概览
 
 - 主题：AI 学习笔记
-- 素材总数：23
-- Wiki 页面总数：36
+- 素材总数：24
+- Wiki 页面总数：39
 
 ---
 
@@ -41,6 +41,8 @@
 - [[GTM]] - Go-To-Market市场进入策略，AI时代从线性后置变为闭环内生的公司DNA
 - [[PM Skills Marketplace]] - 面向产品经理的AI技能市场，8插件65技能36工作流
 - [[Product Manager Skills]] - Dean Peters 的开源PM方法论库，46技能6工作流
+- [[Codex]] - OpenAI 推出的任务执行型 AI 工具，支持 Skill 安装和批量图片生成
+- [[GPT Image 2]] - OpenAI 图像生成模型，擅长视觉风格迁移和带文本图片生成
 
 ---
 
@@ -70,11 +72,12 @@
 - [[2026-04-29-deepseek-novel-collaboration]] - DeepSeek Agent 协写长篇小说真实案例
 - [[2026-04-29-deepseek-content-creation]] - 内容创作全指南：从初稿到 SEO 优化
 
-### 创意设计类（3 篇）
+### 创意设计类（4 篇）
 
 - [[2026-04-29-deepseek-5-killer-combinations]] - 5 大王炸工具组合：PPT、视频、图片、会议、3D
 - [[2026-04-29-deepseek-photoshop-script]] - 一句话生成 PS 脚本，三秒日式小清新修图
 - [[2026-04-29-deepseek-ai-video-tutorial]] - AI 视频制作全流程保姆级教程
+- [[2026-05-09-codex-visual-style-ppt]] - Codex + Image 2 视觉风格迁移 PPT 全流程
 
 ### 办公自动化类（3 篇）
 
