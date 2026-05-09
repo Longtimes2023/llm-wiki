@@ -83,9 +83,11 @@ ingest_one_file() {
 
   cat "$OUTPUT_TMP" >> "$LOG_FILE"
 
-  # Persist [METRICS] line emitted by 7_wiki_writer.py to ingest_metrics.jsonl for A/B aggregation
+  # Persist [METRICS] line emitted by 7_wiki_writer.py to ingest_metrics.jsonl for A/B aggregation.
+  # Use grep -oE to handle case where SDK error output doesn't end with \n and [METRICS] gets
+  # glued mid-line. Pattern matches `[METRICS] {flat json object}`.
   local METRICS_LINE
-  METRICS_LINE=$(grep -m1 '^\[METRICS\] ' "$OUTPUT_TMP" 2>/dev/null | sed 's/^\[METRICS\] //')
+  METRICS_LINE=$(grep -m1 -oE '\[METRICS\] \{[^}]*\}' "$OUTPUT_TMP" 2>/dev/null | sed 's/^\[METRICS\] //')
   if [ -n "$METRICS_LINE" ]; then
     echo "$METRICS_LINE" >> "$PROJECT_DIR/scripts/ingest_metrics.jsonl"
     log "metrics: $METRICS_LINE"

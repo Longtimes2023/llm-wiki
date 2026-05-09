@@ -166,7 +166,9 @@ async def generate_wiki_article(
             "cost_usd": cost,
         }
         # Last line — must be standalone, no trailing prints after.
-        print(f"[METRICS] {json.dumps(metrics, ensure_ascii=False)}")
+        # Leading "\n" ensures METRICS is at start of a line even if previous output
+        # didn't end with a newline (e.g. SDK error JSON without trailing \n).
+        print(f"\n[METRICS] {json.dumps(metrics, ensure_ascii=False)}")
         return "".join(full_response)
 
 
