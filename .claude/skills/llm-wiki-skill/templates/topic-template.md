@@ -2,8 +2,7 @@
 tags: [主题]
 created: {{DATE}}
 updated: {{DATE}}
-sources: 
-  - {{FIRST_SOURCE}}
+sources: [{{FIRST_SOURCE}}]
 ---
 
 # {{TOPIC_NAME}}

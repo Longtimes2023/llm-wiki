@@ -3,8 +3,7 @@ type: entity
 name: LangChain4j
 category: 开发框架
 tags: [Java, AI框架, Agent, 智能体]
-sources: 
-  - 2026-04-29-yupi-ai-guide-programming-tech
+sources: [2026-04-29-yupi-ai-guide-programming-tech]
 created: 2026-04-29
 updated: 2026-04-29
 ---

@@ -4,8 +4,6 @@ name: MCP 模型上下文协议
 category: 核心技术
 tags: [MCP, Model Context Protocol, 工具调用, 标准化协议]
 sources: [2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-programming-tech]
-  - 2026-04-29-yupi-ai-guide-core-concepts.md
-  - 2026-04-29-yupi-ai-guide-programming-tech.md
 created: 2026-04-29
 updated: 2026-04-29
 ---

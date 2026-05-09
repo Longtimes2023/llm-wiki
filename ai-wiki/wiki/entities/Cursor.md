@@ -4,8 +4,6 @@ name: Cursor
 category: 开发工具
 tags: [IDE, AI编程, Agent, 代码生成]
 sources: [2026-04-29-yupi-ai-guide-tools, 2026-04-29-yupi-ai-guide-programming-tips]
-  - 2026-04-29-yupi-ai-guide-tools.md
-  - 2026-04-29-yupi-ai-guide-programming-tips.md
 created: 2026-04-29
 updated: 2026-04-29
 ---

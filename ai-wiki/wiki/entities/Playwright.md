@@ -4,7 +4,6 @@ name: Playwright
 category: 开发工具
 tags: [浏览器自动化, 测试, 爬虫, E2E测试]
 sources: [2026-04-29-yupi-ai-guide-programming-tech]
-  - 2026-04-29-yupi-ai-guide-programming-tech.md
 created: 2026-04-29
 updated: 2026-04-29
 ---

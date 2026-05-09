@@ -4,8 +4,6 @@ name: Ollama
 category: 开发工具
 tags: [本地部署, 开源模型, 私有化, 数据安全]
 sources: [2026-04-29-yupi-ai-guide-programming-tech, 2026-04-29-deepseek-python-local-setup]
-  - 2026-04-29-yupi-ai-guide-programming-tech.md
-  - 2026-04-29-deepseek-python-local-setup.md
 created: 2026-04-29
 updated: 2026-04-29
 ---

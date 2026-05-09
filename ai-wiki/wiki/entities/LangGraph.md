@@ -4,7 +4,6 @@ name: LangGraph
 category: 开发框架
 tags: [工作流, Agent, 图结构, 可视化编排]
 sources: [2026-04-29-yupi-ai-guide-programming-tech]
-  - 2026-04-29-yupi-ai-guide-programming-tech.md
 created: 2026-04-29
 updated: 2026-04-29
 ---

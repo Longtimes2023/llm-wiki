@@ -3,9 +3,7 @@ type: entity
 name: Mermaid 作图
 category: 设计工具
 tags: [图表, 文档, Markdown, 可视化]
-sources: 
-  - 2026-04-29-yupi-ai-guide-tools
-  - 2026-04-29-ai-architecture-diagram-tutorial
+sources: [2026-04-29-yupi-ai-guide-tools, 2026-04-29-ai-architecture-diagram-tutorial]
 created: 2026-04-29
 updated: 2026-04-29
 ---

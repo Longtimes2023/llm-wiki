@@ -3,8 +3,7 @@ type: entity
 name: Spring AI
 category: 开发框架
 tags: [Java, Spring, AI框架, 大模型集成]
-sources: 
-  - 2026-04-29-yupi-ai-guide-programming-tech
+sources: [2026-04-29-yupi-ai-guide-programming-tech]
 created: 2026-04-29
 updated: 2026-04-29
 ---

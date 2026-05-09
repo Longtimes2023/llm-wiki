@@ -4,7 +4,6 @@ name: Dify
 category: 开发工具
 tags: [低代码, Agent, RAG, 工作流, 可视化编排]
 sources: [2026-04-29-yupi-ai-guide-programming-tech]
-  - 2026-04-29-yupi-ai-guide-programming-tech.md
 created: 2026-04-29
 updated: 2026-04-29
 ---

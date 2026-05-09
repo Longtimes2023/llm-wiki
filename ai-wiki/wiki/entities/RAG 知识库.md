@@ -4,8 +4,6 @@ name: RAG 知识库
 category: 核心技术
 tags: [RAG, 检索增强生成, 向量数据库, Embedding]
 sources: [2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-programming-tech]
-  - 2026-04-29-yupi-ai-guide-core-concepts.md
-  - 2026-04-29-yupi-ai-guide-programming-tech.md
 created: 2026-04-29
 updated: 2026-04-29
 ---

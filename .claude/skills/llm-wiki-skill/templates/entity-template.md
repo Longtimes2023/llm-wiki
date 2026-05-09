@@ -2,8 +2,7 @@
 tags: [实体]
 created: {{DATE}}
 updated: {{DATE}}
-sources: 
-  - {{FIRST_SOURCE}}
+sources: [{{FIRST_SOURCE}}]
 ---
 
 <!-- ⚠️ 重要：本模板中的所有占位符必须用实际内容替换，禁止留空！ -->
