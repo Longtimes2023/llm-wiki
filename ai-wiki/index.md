@@ -7,8 +7,8 @@
 ## 概览
 
 - 主题：AI 学习笔记
-- 素材总数：21
-- Wiki 页面总数：31
+- 素材总数：23
+- Wiki 页面总数：36
 
 ---
 
@@ -38,6 +38,9 @@
 - [[豆包]] - 字节跳动推出的人工智能助手
 - [[语雀 AI]] - 蚂蚁集团语雀文档的 AI 能力，内嵌 DeepSeek
 - [[独立开发者]] - 独自开发产品的开发者群体，追求财务自由
+- [[GTM]] - Go-To-Market市场进入策略，AI时代从线性后置变为闭环内生的公司DNA
+- [[PM Skills Marketplace]] - 面向产品经理的AI技能市场，8插件65技能36工作流
+- [[Product Manager Skills]] - Dean Peters 的开源PM方法论库，46技能6工作流
 
 ---
 
@@ -49,6 +52,7 @@
 - [[AI创意设计]] - 以 DeepSeek 为核心的多工具创意设计工作流
 - [[AI办公自动化]] - VBA + API 深度集成 Office 套件的办公自动化方法论
 - [[AI编程开发]] - 从 IDE 集成到 AI 应用开发的完整知识体系
+- [[AI产品经理工作流]] - AI 在PM五大场景的应用体系，核心原则"AI做80%事务人做20%判断"
 - [[鱼皮 AI 指南]] - 程序员鱼皮两年半积累的 AI 知识体系
 
 ---
@@ -77,6 +81,11 @@
 - [[2026-04-29-deepseek-excel-integration]] - DeepSeek Excel VBA 集成，效率提升 10 倍
 - [[2026-04-29-deepseek-word-integration]] - DeepSeek Word 集成：VBA 脚本一键接入
 - [[2026-04-29-deepseek-10-work-tips]] - DeepSeek 高效工作十法：从提问小白到驾驭 AI
+
+### 产品经理类（2 篇）
+
+- [[2026-05-09-pm-ai-playbook]] - 产品经理的AI实战手册：5个技能让效率翻倍
+- [[2026-05-09-product-to-startup-blues]] - 产品到创业：两次失败一次重生换来的能力闭环与GTM认知
 
 ### 编程开发类（10 篇）
 

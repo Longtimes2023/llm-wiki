@@ -23,3 +23,13 @@ desktop.ini
 # Temp files
 _debug*.py
 *.tmp
+
+# Quartz build artifacts (453MB node_modules, 8MB public, 1MB cache — never commit)
+quartz/node_modules/
+quartz/public/
+quartz/quartz/.quartz-cache/
+
+# Runtime logs / state from telegram bot + raw-watcher
+scripts/*.log
+scripts/*.state
+scripts/*.failed
