@@ -61,9 +61,14 @@ log "Quartz build OK ($build_files files emitted)"
 
 # Stage 4: deploy to Cloudflare Pages
 log "deploying to Cloudflare Pages project=$CLOUDFLARE_PAGES_PROJECT"
+# Use explicit ASCII commit message — Cloudflare API rejects some unicode (e.g. → arrow,
+# long multi-paragraph bodies) with "Invalid commit message, must be valid UTF-8 string"
+# even when the git log message is technically valid UTF-8. Git short hash gives traceability.
+DEPLOY_MSG="auto-deploy from raw-watcher ($(git -C "$PROJECT_DIR" rev-parse --short HEAD 2>/dev/null || echo unknown))"
 if ! npx wrangler pages deploy public \
     --project-name="$CLOUDFLARE_PAGES_PROJECT" \
     --commit-dirty=true \
+    --commit-message="$DEPLOY_MSG" \
     --branch=main \
     > /tmp/cf-deploy.log 2>&1; then
   log "Cloudflare deploy FAILED — see /tmp/cf-deploy.log"

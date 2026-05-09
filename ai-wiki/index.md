@@ -7,8 +7,8 @@
 ## 概览
 
 - 主题：AI 学习笔记
-- 素材总数：24
-- Wiki 页面总数：39
+- 素材总数：25
+- Wiki 页面总数：42
 
 ---
 
@@ -42,6 +42,7 @@
 - [[PM Skills Marketplace]] - 面向产品经理的AI技能市场，8插件65技能36工作流
 - [[Product Manager Skills]] - Dean Peters 的开源PM方法论库，46技能6工作流
 - [[Codex]] - OpenAI 推出的任务执行型 AI 工具，支持 Skill 安装和批量图片生成
+- [[GEO]] - AI 时代替代 SEO 的流量获取新范式，优化品牌在 AI 推荐体系中的认知与可见度
 - [[GPT Image 2]] - OpenAI 图像生成模型，擅长视觉风格迁移和带文本图片生成
 
 ---
@@ -55,6 +56,7 @@
 - [[AI办公自动化]] - VBA + API 深度集成 Office 套件的办公自动化方法论
 - [[AI编程开发]] - 从 IDE 集成到 AI 应用开发的完整知识体系
 - [[AI产品经理工作流]] - AI 在PM五大场景的应用体系，核心原则"AI做80%事务人做20%判断"
+- [[AI营销趋势]] - AI 对营销底层逻辑的冲击：GEO 替代 SEO、人机博弈、品牌共识回归
 - [[鱼皮 AI 指南]] - 程序员鱼皮两年半积累的 AI 知识体系
 
 ---
@@ -84,6 +86,10 @@
 - [[2026-04-29-deepseek-excel-integration]] - DeepSeek Excel VBA 集成，效率提升 10 倍
 - [[2026-04-29-deepseek-word-integration]] - DeepSeek Word 集成：VBA 脚本一键接入
 - [[2026-04-29-deepseek-10-work-tips]] - DeepSeek 高效工作十法：从提问小白到驾驭 AI
+
+### 营销趋势类（1 篇）
+
+- [[2026-05-09-10-marketing-trends-2026]] - 2026 年 10 大营销趋势：GEO 替代 SEO、AI 人感博弈、K型消费
 
 ### 产品经理类（2 篇）
 
