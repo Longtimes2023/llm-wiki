@@ -49,6 +49,9 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Install Claude Code CLI (claude_agent_sdk subprocess dep)
+        run: npm install -g @anthropic-ai/claude-code
+
       - name: Print env (sanity)
         run: |
           echo "PWD=$PWD"

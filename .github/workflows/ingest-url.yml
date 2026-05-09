@@ -77,6 +77,9 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Install Claude Code CLI (claude_agent_sdk subprocess dep)
+        run: npm install -g @anthropic-ai/claude-code
+
       - name: Run ingest
         id: ingest
         run: bash scripts/ci_ingest.sh "$INGEST_URL"
