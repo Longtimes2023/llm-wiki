@@ -60,6 +60,8 @@ LOG_POLL_INTERVAL_SECONDS = 1.0
 SOURCES_POLL_INTERVAL_SECONDS = 15
 
 URL_RE = re.compile(r"https?://[^\s<>\"']+", re.IGNORECASE)
+RE_SOURCE_URL = re.compile(r"^source_url:\s*(\S+)\s*$", re.MULTILINE)
+RE_SOURCE_PATH = re.compile(r"^source_path:\s*raw/articles/(\S+\.md)\s*$", re.MULTILINE)
 
 # Markers emitted by raw-watcher.sh + sync-and-rebuild.sh
 RE_DETECTED = re.compile(r"detected new file:\s*(\S+\.md)")
@@ -137,6 +139,41 @@ def extract_url(text: str) -> Optional[str]:
         return None
     m = URL_RE.search(text)
     return m.group(0) if m else None
+
+
+def _norm_url(url: str) -> str:
+    return url.rstrip("/").lower()
+
+
+def find_existing_raw_for_url(url: str) -> Optional[Path]:
+    """Scan ai-wiki/raw/articles/ for a raw file with matching source_url frontmatter."""
+    if not RAW_ARTICLES_DIR.exists():
+        return None
+    target = _norm_url(url)
+    for raw in RAW_ARTICLES_DIR.glob("*.md"):
+        try:
+            head = raw.read_text(encoding="utf-8", errors="ignore")[:500]
+        except OSError:
+            continue
+        m = RE_SOURCE_URL.search(head)
+        if m and _norm_url(m.group(1)) == target:
+            return raw
+    return None
+
+
+def find_source_page_for_raw(raw_filename: str) -> Optional[str]:
+    """Find wiki/sources/*.md whose frontmatter source_path: points to this raw."""
+    if not SOURCES_DIR.exists():
+        return None
+    for src in SOURCES_DIR.glob("*.md"):
+        try:
+            head = src.read_text(encoding="utf-8", errors="ignore")[:1500]
+        except OSError:
+            continue
+        m = RE_SOURCE_PATH.search(head)
+        if m and m.group(1) == raw_filename:
+            return src.name
+    return None
 
 
 def write_raw_file(url: str, chat_id: int, msg_id: int) -> Path:
@@ -266,6 +303,22 @@ async def on_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     url = extract_url(msg.text)
     if not url:
         await msg.reply_text("❌ Không tìm thấy URL hợp lệ. Gửi 1 link http(s) nhé.")
+        return
+
+    existing = find_existing_raw_for_url(url)
+    if existing:
+        src_name = find_source_page_for_raw(existing.name)
+        src_url = (
+            quartz_url_for_source(src_name) if src_name
+            else f"{QUARTZ_PUBLIC_BASE_URL}/"
+        )
+        log.info("dedup: url already ingested via raw=%s, source=%s", existing.name, src_name)
+        await msg.reply_text(
+            f"♻️ URL này đã ingest trước đó.\n"
+            f"Wiki: {src_url}\n"
+            f"<i>Raw: {existing.name}</i>",
+            parse_mode="HTML",
+        )
         return
 
     raw_path = write_raw_file(url, chat_id, msg.message_id)

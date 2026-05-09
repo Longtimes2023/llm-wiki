@@ -33,6 +33,24 @@ ingest_one_file() {
   local OUTPUT_TMP
   OUTPUT_TMP=$(mktemp)
 
+  # Dedup precheck: same source_url as already-processed raw → skip without invoking agent.
+  # Returns code 2 (distinct from 0=success-with-rebuild and 1=real-failure).
+  local NEW_URL OLD_URL OLD_FILE
+  NEW_URL=$(awk '/^source_url:/{print $2; exit}' "$FILE" 2>/dev/null)
+  if [ -n "$NEW_URL" ] && [ -s "$STATE_FILE" ]; then
+    while IFS= read -r OLD_FILE; do
+      [ -z "$OLD_FILE" ] && continue
+      [ "$OLD_FILE" = "$FILE" ] && continue
+      [ -f "$OLD_FILE" ] || continue
+      OLD_URL=$(awk '/^source_url:/{print $2; exit}' "$OLD_FILE" 2>/dev/null)
+      if [ "$OLD_URL" = "$NEW_URL" ]; then
+        log "DEDUP_SKIP: same URL as $OLD_FILE — skipping ingest, no rebuild needed"
+        rm -f "$OUTPUT_TMP"
+        return 2
+      fi
+    done < "$STATE_FILE"
+  fi
+
   local COUNT_BEFORE
   COUNT_BEFORE=$(find "$SOURCES_DIR" -maxdepth 1 -name "*.md" 2>/dev/null | wc -l)
   log "ingest start | sources count before: $COUNT_BEFORE"
@@ -86,7 +104,12 @@ process_file() {
   for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
     log "attempt $attempt/$MAX_ATTEMPTS"
 
-    if ingest_one_file "$FILE"; then
+    set +e
+    ingest_one_file "$FILE"
+    local rc=$?
+    set -e
+
+    if [ "$rc" -eq 0 ]; then
       echo "$FILE" >> "$STATE_FILE"
       log "marked as processed in state"
 
@@ -97,9 +120,13 @@ process_file() {
         log "post-ingest sync FAILED (Quartz site may be stale)"
       fi
       return 0
+    elif [ "$rc" -eq 2 ]; then
+      echo "$FILE" >> "$STATE_FILE"
+      log "marked as processed (dedup skip) — no rebuild"
+      return 0
     fi
 
-    # Failure: backoff before next attempt (skip on last attempt)
+    # rc=1: real failure → backoff before next attempt (skip on last attempt)
     if [ "$attempt" -lt "$MAX_ATTEMPTS" ]; then
       local backoff=$(( attempt * 30 ))
       log "retrying in ${backoff}s..."
