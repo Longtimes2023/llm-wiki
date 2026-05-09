@@ -17,6 +17,8 @@ API 端点:
 import asyncio
 import json
 import os
+import sys
+from pathlib import Path
 from typing import Optional, AsyncGenerator
 from contextlib import asynccontextmanager
 
@@ -27,12 +29,17 @@ from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 
 from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions
+from claude_agent_sdk.types import ResultMessage
 
 # 强制从 .env 文件加载，覆盖系统环境变量
 load_dotenv(override=True)
 
-# 默认模型
-DEFAULT_MODEL = os.getenv("MODEL", "deepseek-chat")
+# Allow `from providers.loader import resolve` regardless of cwd
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from providers.loader import resolve as resolve_provider
+
+# 默认模型 (fallback shown in /health; actual resolution per-request)
+DEFAULT_MODEL = os.getenv("MODEL", "claude-sonnet-4-20250514")
 
 # 获取 wiki 目录路径
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -44,7 +51,8 @@ WIKI_DIR = os.path.join(SCRIPT_DIR, "ai-wiki")
 class WikiGenerateRequest(BaseModel):
     """Wiki 文章生成请求模型"""
     request: str = Field(..., description="用户请求描述，例如：'帮我写一篇关于乐高建筑技巧的文章'")
-    model: Optional[str] = Field(default=None, description="使用的模型，默认使用环境变量 MODEL 或 deepseek-chat")
+    model: Optional[str] = Field(default=None, description="使用的模型；如指定会覆盖 provider 的 MODEL")
+    provider: Optional[str] = Field(default=None, description="Provider profile name (providers/<name>.env). 默认: sticky / .env fallback")
     permission_mode: str = Field(default="acceptEdits", description="权限模式: acceptEdits/askUser/bypassPermissions")
     stream: bool = Field(default=True, description="是否使用流式响应 (SSE)")
 
@@ -110,11 +118,12 @@ app.add_middleware(
 async def generate_wiki_article_stream(
     user_request: str,
     model: Optional[str] = None,
+    provider_name: Optional[str] = None,
     permission_mode: str = "acceptEdits"
 ) -> AsyncGenerator[str, None]:
     """
     流式生成 wiki 文章
-    
+
     生成 SSE 格式的数据流，每个数据块包含:
     - type: 消息类型 (text/tool_use/tool_result/done/error)
     - data: 具体数据内容
@@ -123,11 +132,17 @@ async def generate_wiki_article_stream(
         yield f"data: {json.dumps({'type': 'error', 'data': f'wiki 目录不存在: {WIKI_DIR}'}, ensure_ascii=False)}\n\n"
         return
 
-    use_model = model or DEFAULT_MODEL
-    
+    try:
+        provider = resolve_provider(provider_name)
+    except (FileNotFoundError, RuntimeError) as e:
+        yield f"data: {json.dumps({'type': 'error', 'data': f'Provider config error: {e}'}, ensure_ascii=False)}\n\n"
+        return
+
+    use_model = model or provider["model"]
+
     # 发送开始事件
-    yield f"data: {json.dumps({'type': 'start', 'data': {'model': use_model, 'request': user_request}}, ensure_ascii=False)}\n\n"
-    
+    yield f"data: {json.dumps({'type': 'start', 'data': {'model': use_model, 'provider': provider['name'], 'request': user_request}}, ensure_ascii=False)}\n\n"
+
     options = ClaudeAgentOptions(
         model=use_model,
         permission_mode=permission_mode,
@@ -135,8 +150,8 @@ async def generate_wiki_article_stream(
         allowed_tools=["Skill", "Read", "Write", "Glob", "Grep", "Bash", "Edit"],
         cwd=WIKI_DIR,
         env={
-            "ANTHROPIC_AUTH_TOKEN": os.getenv("ANTHROPIC_AUTH_TOKEN"),
-            "ANTHROPIC_BASE_URL": os.getenv("ANTHROPIC_BASE_URL", "https://api.anthropic.com"),
+            "ANTHROPIC_AUTH_TOKEN": provider["auth_token"],
+            "ANTHROPIC_BASE_URL": provider["base_url"],
         }
     )
     
@@ -174,11 +189,12 @@ async def generate_wiki_article_stream(
 async def generate_wiki_article_sync(
     user_request: str,
     model: Optional[str] = None,
+    provider_name: Optional[str] = None,
     permission_mode: str = "acceptEdits"
 ) -> dict:
     """
     同步生成 wiki 文章
-    
+
     返回完整的生成结果，适用于不需要实时流式展示的场景
     """
     if not os.path.exists(WIKI_DIR):
@@ -187,10 +203,15 @@ async def generate_wiki_article_sync(
             detail=f"wiki 目录不存在: {WIKI_DIR}"
         )
 
-    use_model = model or DEFAULT_MODEL
+    try:
+        provider = resolve_provider(provider_name)
+    except (FileNotFoundError, RuntimeError) as e:
+        raise HTTPException(status_code=400, detail=f"Provider config error: {e}")
+
+    use_model = model or provider["model"]
     full_response = []
     tool_calls = []
-    
+
     options = ClaudeAgentOptions(
         model=use_model,
         permission_mode=permission_mode,
@@ -198,40 +219,49 @@ async def generate_wiki_article_sync(
         allowed_tools=["Skill", "Read", "Write", "Glob", "Grep", "Bash", "Edit"],
         cwd=WIKI_DIR,
         env={
-            "ANTHROPIC_AUTH_TOKEN": os.getenv("ANTHROPIC_AUTH_TOKEN"),
-            "ANTHROPIC_BASE_URL": os.getenv("ANTHROPIC_BASE_URL", "https://api.anthropic.com"),
+            "ANTHROPIC_AUTH_TOKEN": provider["auth_token"],
+            "ANTHROPIC_BASE_URL": provider["base_url"],
         }
     )
     
     try:
         async with ClaudeSDKClient(options=options) as client:
             await client.query(user_request)
-            
+
+            usage = None
+            cost = None
             async for message in client.receive_response():
+                if isinstance(message, ResultMessage):
+                    usage = message.usage
+                    cost = message.total_cost_usd
+                    continue
                 if hasattr(message, 'content'):
                     for block in message.content:
                         if hasattr(block, 'text'):
                             full_response.append(block.text)
-                        
+
                         elif hasattr(block, 'tool_use'):
                             tool_calls.append({
                                 'type': 'tool_use',
                                 'name': block.tool_use.name,
                                 'input': getattr(block.tool_use, 'input', {})
                             })
-                        
+
                         elif hasattr(block, 'tool_result'):
                             tool_calls.append({
                                 'type': 'tool_result',
                                 'result': str(getattr(block, 'tool_result', {}))
                             })
-        
+
         return {
             "success": True,
             "content": "".join(full_response),
             "model": use_model,
+            "provider": provider["name"],
             "request": user_request,
-            "tool_calls": tool_calls
+            "tool_calls": tool_calls,
+            "usage": usage,
+            "cost_usd": cost,
         }
         
     except Exception as e:
@@ -302,6 +332,7 @@ async def generate_wiki(request: WikiGenerateRequest):
             generate_wiki_article_stream(
                 user_request=request.request,
                 model=request.model,
+                provider_name=request.provider,
                 permission_mode=request.permission_mode
             ),
             media_type="text/event-stream",
@@ -316,6 +347,7 @@ async def generate_wiki(request: WikiGenerateRequest):
         result = await generate_wiki_article_sync(
             user_request=request.request,
             model=request.model,
+            provider_name=request.provider,
             permission_mode=request.permission_mode
         )
         return JSONResponse(content=result)
@@ -340,6 +372,7 @@ async def generate_wiki_sync(request: WikiGenerateRequest):
     result = await generate_wiki_article_sync(
         user_request=request.request,
         model=request.model,
+        provider_name=request.provider,
         permission_mode=request.permission_mode
     )
     return WikiGenerateResponse(**result)

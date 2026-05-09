@@ -33,11 +33,17 @@ ingest_one_file() {
   local OUTPUT_TMP
   OUTPUT_TMP=$(mktemp)
 
+  # Read optional provider override from raw frontmatter (set by telegram_bot when
+  # user sends `URL @<provider>`). Bypasses dedup precheck — intentional re-test.
+  local PROVIDER
+  PROVIDER=$(awk '/^provider:/{print $2; exit}' "$FILE" 2>/dev/null)
+
   # Dedup precheck: same source_url as already-processed raw → skip without invoking agent.
+  # Skipped when PROVIDER override present (A/B re-test).
   # Returns code 2 (distinct from 0=success-with-rebuild and 1=real-failure).
   local NEW_URL OLD_URL OLD_FILE
   NEW_URL=$(awk '/^source_url:/{print $2; exit}' "$FILE" 2>/dev/null)
-  if [ -n "$NEW_URL" ] && [ -s "$STATE_FILE" ]; then
+  if [ -z "$PROVIDER" ] && [ -n "$NEW_URL" ] && [ -s "$STATE_FILE" ]; then
     while IFS= read -r OLD_FILE; do
       [ -z "$OLD_FILE" ] && continue
       [ "$OLD_FILE" = "$FILE" ] && continue
@@ -53,17 +59,37 @@ ingest_one_file() {
 
   local COUNT_BEFORE
   COUNT_BEFORE=$(find "$SOURCES_DIR" -maxdepth 1 -name "*.md" 2>/dev/null | wc -l)
-  log "ingest start | sources count before: $COUNT_BEFORE"
+  if [ -n "$PROVIDER" ]; then
+    log "ingest start | provider=$PROVIDER (override) | sources count before: $COUNT_BEFORE"
+  else
+    log "ingest start | sources count before: $COUNT_BEFORE"
+  fi
 
   cd "$PROJECT_DIR"
   set +e
-  "$PROJECT_DIR/.venv/bin/python" -B 7_wiki_writer.py \
-    -r "请消化这个新素材文件，文件路径是: $FILE。请运行 llm-wiki-skill 的 ingest 工作流。" \
+  # Build provider flag + A/B suffix instruction (only when override present)
+  local PROVIDER_FLAG=""
+  local AB_HINT=""
+  if [ -n "$PROVIDER" ]; then
+    PROVIDER_FLAG="--provider $PROVIDER"
+    AB_HINT="注意：素材摘要页文件名末尾追加 -$PROVIDER 后缀（用于 A/B 测试，避免覆盖之前用其他模型生成的版本）。"
+  fi
+  "$PROJECT_DIR/.venv/bin/python" -B 7_wiki_writer.py $PROVIDER_FLAG \
+    --raw-file "$FILE" \
+    -r "请消化这个新素材文件，文件路径是: $FILE。请运行 llm-wiki-skill 的 ingest 工作流。${AB_HINT}" \
     > "$OUTPUT_TMP" 2>&1
   local EXIT_CODE=$?
   set -e
 
   cat "$OUTPUT_TMP" >> "$LOG_FILE"
+
+  # Persist [METRICS] line emitted by 7_wiki_writer.py to ingest_metrics.jsonl for A/B aggregation
+  local METRICS_LINE
+  METRICS_LINE=$(grep -m1 '^\[METRICS\] ' "$OUTPUT_TMP" 2>/dev/null | sed 's/^\[METRICS\] //')
+  if [ -n "$METRICS_LINE" ]; then
+    echo "$METRICS_LINE" >> "$PROJECT_DIR/scripts/ingest_metrics.jsonl"
+    log "metrics: $METRICS_LINE"
+  fi
 
   # Failure check 1: explicit error patterns in output
   if grep -qE "API Error|status code [4-5][0-9][0-9]|connection error|ETIMEDOUT|ECONNRESET" "$OUTPUT_TMP"; then

@@ -33,12 +33,18 @@ from telegram import Update
 from telegram.ext import (
     Application,
     ApplicationBuilder,
+    CommandHandler,
     ContextTypes,
     MessageHandler,
     filters,
 )
 
 load_dotenv(override=True)
+
+# Allow `from providers.loader import ...` regardless of cwd
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))
+from providers.loader import list_providers, get_active, set_active
 
 # ---------- Config ----------
 PROJECT_DIR = Path(__file__).resolve().parent
@@ -47,6 +53,7 @@ RAW_ARTICLES_DIR = WIKI_DIR / "raw" / "articles"
 SOURCES_DIR = WIKI_DIR / "wiki" / "sources"
 WATCHER_LOG = PROJECT_DIR / "scripts" / "watcher.log"
 STATE_FILE = PROJECT_DIR / "scripts" / "telegram_bot.state"
+METRICS_FILE = PROJECT_DIR / "scripts" / "ingest_metrics.jsonl"
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
 TELEGRAM_ALLOWED_CHAT_ID = os.getenv("TELEGRAM_ALLOWED_CHAT_ID", "").strip()
@@ -62,6 +69,7 @@ SOURCES_POLL_INTERVAL_SECONDS = 15
 URL_RE = re.compile(r"https?://[^\s<>\"']+", re.IGNORECASE)
 RE_SOURCE_URL = re.compile(r"^source_url:\s*(\S+)\s*$", re.MULTILINE)
 RE_SOURCE_PATH = re.compile(r"^source_path:\s*raw/articles/(\S+\.md)\s*$", re.MULTILINE)
+RE_PROVIDER_TOKEN = re.compile(r"@([a-z0-9_-]+)\b", re.IGNORECASE)
 
 # Markers emitted by raw-watcher.sh + sync-and-rebuild.sh
 RE_DETECTED = re.compile(r"detected new file:\s*(\S+\.md)")
@@ -141,6 +149,21 @@ def extract_url(text: str) -> Optional[str]:
     return m.group(0) if m else None
 
 
+def extract_url_and_provider(text: str) -> tuple[Optional[str], Optional[str]]:
+    """Returns (url, provider_override). Provider is the @<name> token if present.
+
+    Examples:
+      "https://example.com"            -> ("https://example.com", None)
+      "https://example.com @deepseek"  -> ("https://example.com", "deepseek")
+      "@anthropic https://example.com" -> ("https://example.com", "anthropic")
+    """
+    if not text:
+        return None, None
+    url = extract_url(text)
+    pm = RE_PROVIDER_TOKEN.search(text)
+    return url, (pm.group(1).lower() if pm else None)
+
+
 def _norm_url(url: str) -> str:
     return url.rstrip("/").lower()
 
@@ -176,11 +199,57 @@ def find_source_page_for_raw(raw_filename: str) -> Optional[str]:
     return None
 
 
-def write_raw_file(url: str, chat_id: int, msg_id: int) -> Path:
+def find_metrics_for_raw(raw_filename: str) -> Optional[dict]:
+    """Read the latest metrics line for this raw_file from ingest_metrics.jsonl."""
+    if not METRICS_FILE.exists():
+        return None
+    try:
+        last = None
+        with METRICS_FILE.open(encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    obj = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if obj.get("raw_file") == raw_filename:
+                    last = obj
+        return last
+    except OSError:
+        return None
+
+
+def format_metrics_line(metrics: dict) -> str:
+    """One-liner for Telegram deploy reply: '⏱ 14.5min · 🔢 12,345/6,789 · 💰 $0.052 (model)'."""
+    dur_s = metrics.get("duration_s") or 0
+    mins = dur_s / 60
+    in_tok = metrics.get("input_tokens") or 0
+    out_tok = metrics.get("output_tokens") or 0
+    cache = metrics.get("cache_read_tokens") or 0
+    cost = metrics.get("cost_usd")
+    model = metrics.get("model") or metrics.get("provider") or "?"
+    parts = [f"⏱ {mins:.1f}min", f"🔢 {in_tok:,} in / {out_tok:,} out"]
+    if cache:
+        parts[-1] += f" ({cache:,} cached)"
+    if cost is not None:
+        parts.append(f"💰 ${cost:.4f}")
+    parts.append(f"<code>{model}</code>")
+    return " · ".join(parts)
+
+
+def write_raw_file(
+    url: str,
+    chat_id: int,
+    msg_id: int,
+    provider: Optional[str] = None,
+) -> Path:
     RAW_ARTICLES_DIR.mkdir(parents=True, exist_ok=True)
     ts = datetime.now().strftime("%Y-%m-%d-%H%M%S")
     short = hashlib.sha1(f"{url}:{msg_id}:{time.time()}".encode()).hexdigest()[:6]
     path = RAW_ARTICLES_DIR / f"{ts}-tg-{short}.md"
+    provider_line = f"provider: {provider}\n" if provider else ""
     body = (
         f"---\n"
         f"source_url: {url}\n"
@@ -188,6 +257,7 @@ def write_raw_file(url: str, chat_id: int, msg_id: int) -> Path:
         f"captured_via: telegram_bot\n"
         f"telegram_chat_id: {chat_id}\n"
         f"telegram_msg_id: {msg_id}\n"
+        f"{provider_line}"
         f"---\n\n"
         f"# Source URL\n\n"
         f"{url}\n\n"
@@ -300,39 +370,55 @@ async def on_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         log.warning("ignoring message from non-allowlisted chat_id=%s", chat_id)
         return
 
-    url = extract_url(msg.text)
+    url, provider_override = extract_url_and_provider(msg.text)
     if not url:
         await msg.reply_text("❌ Không tìm thấy URL hợp lệ. Gửi 1 link http(s) nhé.")
         return
 
-    existing = find_existing_raw_for_url(url)
-    if existing:
-        src_name = find_source_page_for_raw(existing.name)
-        src_url = (
-            quartz_url_for_source(src_name) if src_name
-            else f"{QUARTZ_PUBLIC_BASE_URL}/"
-        )
-        log.info("dedup: url already ingested via raw=%s, source=%s", existing.name, src_name)
-        await msg.reply_text(
-            f"♻️ URL này đã ingest trước đó.\n"
-            f"Wiki: {src_url}\n"
-            f"<i>Raw: {existing.name}</i>",
-            parse_mode="HTML",
-        )
-        return
+    # Validate provider override (if any) against profiles BEFORE writing raw
+    if provider_override:
+        if provider_override not in list_providers():
+            available = ", ".join(list_providers()) or "(no profiles)"
+            await msg.reply_text(
+                f"❌ Provider <b>{provider_override}</b> không có. Available: {available}",
+                parse_mode="HTML",
+            )
+            return
 
-    raw_path = write_raw_file(url, chat_id, msg.message_id)
-    log.info("wrote raw file %s for url=%s", raw_path, url)
+    # Pre-flight dedup — skip when @provider override is present (intentional re-test)
+    if not provider_override:
+        existing = find_existing_raw_for_url(url)
+        if existing:
+            src_name = find_source_page_for_raw(existing.name)
+            src_url = (
+                quartz_url_for_source(src_name) if src_name
+                else f"{QUARTZ_PUBLIC_BASE_URL}/"
+            )
+            log.info("dedup: url already ingested via raw=%s, source=%s", existing.name, src_name)
+            await msg.reply_text(
+                f"♻️ URL này đã ingest trước đó.\n"
+                f"Wiki: {src_url}\n"
+                f"<i>Raw: {existing.name}</i>\n\n"
+                f"Để A/B test với provider khác, gửi: <code>{url} @&lt;provider&gt;</code>",
+                parse_mode="HTML",
+            )
+            return
+
+    raw_path = write_raw_file(url, chat_id, msg.message_id, provider=provider_override)
+    log.info(
+        "wrote raw file %s for url=%s provider=%s",
+        raw_path, url, provider_override or "(default)",
+    )
 
     sources_before = snapshot_sources()
     log.info("snapshot sources before ingest: %d files", len(sources_before))
 
-    ack = await msg.reply_text(
-        f"🔄 Đã nhận URL — đang đẩy vào pipeline:\n{url}\n\n"
-        f"File: <code>{raw_path.name}</code>\n"
-        f"Sẽ reply link wiki khi pipeline xong (thường 1–5 phút).",
-        parse_mode="HTML",
-    )
+    ack_lines = [f"🔄 Đã nhận URL — đang đẩy vào pipeline:", url]
+    if provider_override:
+        ack_lines.append(f"\n<b>Provider override:</b> {provider_override} (one-off, dedup bypass)")
+    ack_lines.append(f"\nFile: <code>{raw_path.name}</code>")
+    ack_lines.append("Sẽ reply link wiki khi pipeline xong (thường 1–5 phút).")
+    ack = await msg.reply_text("\n".join(ack_lines), parse_mode="HTML")
 
     tracker: PendingTracker = context.application.bot_data["tracker"]
     await tracker.add(
@@ -346,6 +432,46 @@ async def on_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
             sources_snapshot=sources_before,
         )
     )
+
+
+async def on_provider_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """`/provider` shows active + list. `/provider <name>` switches sticky default."""
+    msg = update.effective_message
+    if not msg:
+        return
+    chat_id = msg.chat_id
+    if not _is_allowed(chat_id):
+        log.warning("ignoring /provider from non-allowlisted chat_id=%s", chat_id)
+        return
+
+    args = context.args or []
+    available = list_providers()
+    if not args:
+        active = get_active() or "(none — using .env default)"
+        avail_str = ", ".join(available) if available else "(no profiles in providers/)"
+        await msg.reply_text(
+            f"<b>Active provider:</b> {active}\n"
+            f"<b>Available:</b> {avail_str}\n\n"
+            f"Switch: <code>/provider &lt;name&gt;</code>\n"
+            f"Per-URL override: send <code>URL @&lt;name&gt;</code> (one-off, bypasses dedup)",
+            parse_mode="HTML",
+        )
+        return
+
+    name = args[0].strip().lower()
+    try:
+        prev = get_active()
+        set_active(name)
+        log.info("provider switched: %s -> %s by chat=%s", prev, name, chat_id)
+        await msg.reply_text(
+            f"✅ Active provider: <b>{name}</b>\n"
+            f"<i>(was: {prev or 'default'})</i>\n\n"
+            f"Ingest đang chạy KHÔNG bị ảnh hưởng — vẫn dùng provider cũ tới khi xong.\n"
+            f"URL tiếp theo sẽ dùng <b>{name}</b>.",
+            parse_mode="HTML",
+        )
+    except ValueError as e:
+        await msg.reply_text(f"❌ {e}")
 
 
 # ---------- Bridge: log events → telegram replies ----------
@@ -410,12 +536,15 @@ async def make_emitter(application: Application):
                     f"\nSource: <code>{p.new_source_file}</code>"
                     if p.new_source_file else ""
                 )
+                # Append per-ingest metrics if available (time, tokens, cost)
+                metrics = find_metrics_for_raw(filename)
+                metrics_label = f"\n{format_metrics_line(metrics)}" if metrics else ""
                 await bot.send_message(
                     chat_id=p.chat_id,
                     reply_to_message_id=p.msg_id,
                     text=(
                         f"✅ Đã ingest + deploy xong!\n"
-                        f"Wiki: {url}{src_label}\n"
+                        f"Wiki: {url}{src_label}{metrics_label}\n"
                         f"(Site: {QUARTZ_PUBLIC_BASE_URL}/)"
                     ),
                     parse_mode="HTML",
@@ -516,6 +645,7 @@ def build_app() -> Application:
         .post_shutdown(_post_shutdown)
         .build()
     )
+    app.add_handler(CommandHandler("provider", on_provider_cmd))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, on_message))
     return app
 

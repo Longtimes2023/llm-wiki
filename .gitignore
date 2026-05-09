@@ -33,3 +33,9 @@ quartz/quartz/.quartz-cache/
 scripts/*.log
 scripts/*.state
 scripts/*.failed
+scripts/ingest_metrics.jsonl
+
+# Provider profiles — real creds gitignored, only .env.example tracked
+providers/*.env
+providers/.active
+!providers/*.env.example
