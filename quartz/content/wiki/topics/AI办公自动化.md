@@ -7,6 +7,7 @@ sources:
   - 2026-04-29-deepseek-word-integration
   - 2026-04-29-deepseek-10-work-tips
   - 2026-05-18-woshipm-ai-agent-productivity
+---
 
 > 以 DeepSeek 为核心，通过 VBA + API 模式深度集成 Office 套件的办公自动化方法论，并延伸至基于 Agent 的跨工具全流程自动化——包含使用技巧和落地实践
 
