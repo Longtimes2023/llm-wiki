@@ -2,10 +2,18 @@
 type: entity
 name: Dify
 category: 开发工具
-tags: [低代码, Agent, RAG, 工作流, 可视化编排]
-sources: [2026-04-29-yupi-ai-guide-programming-tech]
+tags:
+  - 低代码
+  - Agent
+  - RAG
+  - 工作流
+  - 可视化编排
 created: 2026-04-29
-updated: 2026-04-29
+updated: 2026-05-18
+sources:
+  - 2026-04-29-yupi-ai-guide-programming-tech
+  - 2026-05-17-pm-ai-knowledge-base-design-practice
+  - 2026-05-18-woshipm-ai-knowledge-management-design-practice
 ---
 
 # Dify
@@ -50,6 +58,16 @@ Dify 是一款低代码 AI 应用开发平台，提供可视化的方式构建 A
 - 搭建复杂工作流
 - 不会写代码也能搞复杂 AI 应用
 - 低代码平台的代表产品
+
+来自 [[2026-05-17-pm-ai-knowledge-base-design-practice]]：
+- Dify 在这篇实践中被用作本地 RAG 原型的一部分，证明了低代码工作流平台很适合快速验证“文档问答是否有价值”
+- 但作者最终没有把 Dify 作为组织级知识库的最终底座，而是更看重可服务器部署、API 集成和多用户扩展能力，说明低代码平台在原型期和产品化阶段的权重并不相同
+- 这也补充了一个判断标准：当需求从“个人可用”转向“团队可运营”，平台 API 完整度与集成自由度会超过可视化编排本身的重要性
+
+来自 [[2026-05-18-woshipm-ai-knowledge-management-design-practice]]：
+- Dify 在这篇文章里继续被验证为“低成本原型加速器”：它足够快地把文档问答能力拼起来，让团队先确认需求是否成立
+- 但一旦产品目标转向网页登录、团队协作、权限管理和自有客户端集成，Dify 的角色更像概念验证层，而不是最终产品底座
+- 这说明评估 Dify 不能只看它会不会编排工作流，还要看它在目标场景下的 API 完整度、部署形态和对自有业务系统的嵌入自由度
 
 ## 实用信息
 
