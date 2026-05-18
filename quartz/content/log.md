@@ -4,6 +4,21 @@
 
 ---
 
+## 2026-05-18 ingest | 生产力提升20倍的秘密：用AI Agent把一周工作压缩进一天（overview 修复）
+
+- **操作**：检查并修复 overview.md 中的缺失记录
+- **修复**：overview.md 最近更新列表补回"品牌节日营销设计"条目
+
+- **操作**：识别 `raw/articles/2026-05-18-221737-tg-61e744.md` 为 URL stub，自动提取 `source_url`（https://www.woshipm.com/ai/6362871.html）并抓取正文后完成消化
+- **新增页面**：
+  - 素材摘要 1 篇（2026-05-18-woshipm-ai-agent-productivity）
+- **更新页面**：
+  - AI Agent 智能体 实体页（补充 Observe-Think-Act 循环、Agent harnesses 跨平台通用性、四大组件、上下文工程范式转变、文件夹结构）
+  - MCP 模型上下文协议 实体页（补充通用翻译器比喻、跨工具全流程演示、一键连接方式、起步建议）
+  - 提示词工程 实体页（补充上下文工程范式转移、agents.md 构建、memory.md 自动化）
+  - AI办公自动化 主题页（新增第5条核心观点、素材汇总表条目、"Agent 级跨工具工作流自动化"子方向）
+  - index.md、overview.md
+
 ## 2026-05-18 ingest | 2026年给内容创作者的20个从业建议（重抓）
 
 - **操作**：消化本地素材 `raw/articles/2026-05-18-woshipm-share.md`（同一文章的第二次抓取，内容与 `2026-05-17-content-creator-20-tips` 完全一致）

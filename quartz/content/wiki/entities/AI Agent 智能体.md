@@ -13,7 +13,7 @@ sources:
   - 2026-04-29-yupi-ai-guide-core-concepts
   - 2026-04-29-yupi-ai-guide-programming-tech
   - 2026-05-17-ai-short-drama-workflow
-  - 2026-05-18-ai-agent-productivity-20x
+  - 2026-05-18-woshipm-ai-agent-productivity
 created: 2026-04-29
 updated: 2026-05-18
 ---
@@ -88,7 +88,7 @@ AI Agent（智能体）是 AI 技术的高级形态。与传统的大模型对�
 - 文中提到上传剧本后约 1 分钟内完成世界观理解、角色卡生成、故事蓝图建立，说明 Agent 的价值不只在回答问题，而在把完整行业流程编译为可重复执行的系统
 - 该案例也说明 Agent 的真实壁垒是流程设计与下游模型耦合，而不是单纯多轮对话
 
-来自 [[2026-05-18-ai-agent-productivity-20x]]：
+来自 [[2026-05-18-woshipm-ai-agent-productivity]]：
 - Agent 的底层运作逻辑是"观察-思考-行动"（Observe-Think-Act）三步循环，Agent 会持续执行此循环直到任务完成。给 Agent 任务"为某人搭建作品集网站"，它会：检查工作空间 → 研究人物背景 → 制定计划 → 编写代码 → 启动网站 → 截图验证。这种自主性是传统自动化工具完全不具备的
 - 这个循环是跨平台通用的。Claude Code、Codex、Antigravity、Cowork、Manus、OpenClaw 都是不同的"Agent harnesses"（Agent 容器/框架），类比不同品牌的汽车——学会开车就能开任何车
 - Agent 从"问答模式"升级为"目标-结果模式"：传统聊天像打乒乓球你来我往但最终还是你在做事，Agent 则完全相反——给一个目标，它会自己规划、执行、交付

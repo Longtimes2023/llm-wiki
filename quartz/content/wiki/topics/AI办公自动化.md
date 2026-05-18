@@ -6,10 +6,7 @@ sources:
   - 2026-04-29-deepseek-excel-integration
   - 2026-04-29-deepseek-word-integration
   - 2026-04-29-deepseek-10-work-tips
-  - 2026-05-18-ai-agent-week-into-day
----
-
-# AI 办公自动化
+  - 2026-05-18-woshipm-ai-agent-productivity
 
 > 以 DeepSeek 为核心，通过 VBA + API 模式深度集成 Office 套件的办公自动化方法论，并延伸至基于 Agent 的跨工具全流程自动化——包含使用技巧和落地实践
 
@@ -23,7 +20,7 @@ sources:
 
 4. **使用技巧的杠杆效应显著**：同样的 AI，掌握正确使用方法的用户效率是普通用户的数倍。提问质量、互动方式、能力利用三个维度的方法构成完整方法论
 
-5. **Agent 级自动化将取代单点集成，成为办公自动化的下一个进化阶段**：基于 Agent 的 Observe-Think-Act 循环，结合 agents.md（上下文工程）、memory.md（记忆）、MCP（工具连接）和 skills（SOP 标准化），办公自动化将从"在 Excel 里嵌一个 AI 按钮"进化为"Agent 跨工具管理整个工作流"——邮件处理、日历管理、文档协同全部由 Agent 自主完成，人类只做关键决策。| 来源：[[2026-05-18-ai-agent-week-into-day]]
+5. **Agent 级自动化将取代单点集成，成为办公自动化的下一个进化阶段**：基于 Agent 的 Observe-Think-Act 循环，结合 agents.md（上下文工程）、memory.md（记忆）、MCP（工具连接）和 skills（SOP 标准化），办公自动化将从"在 Excel 里嵌一个 AI 按钮"进化为"Agent 跨工具管理整个工作流"——邮件处理、日历管理、文档协同全部由 Agent 自主完成，人类只做关键决策。| 来源：[[2026-05-18-woshipm-ai-agent-productivity]]
 
 ## 素材汇总
 

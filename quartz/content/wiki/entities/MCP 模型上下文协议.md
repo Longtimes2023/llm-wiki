@@ -10,7 +10,7 @@ tags:
 sources:
   - 2026-04-29-yupi-ai-guide-core-concepts
   - 2026-04-29-yupi-ai-guide-programming-tech
-  - 2026-05-18-ai-agent-week-into-day
+  - 2026-05-18-woshipm-ai-agent-productivity
 created: 2026-04-29
 updated: 2026-05-18
 ---
