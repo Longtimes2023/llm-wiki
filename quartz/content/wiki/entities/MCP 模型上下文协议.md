@@ -2,10 +2,17 @@
 type: entity
 name: MCP 模型上下文协议
 category: 核心技术
-tags: [MCP, Model Context Protocol, 工具调用, 标准化协议]
-sources: [2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-programming-tech]
+tags:
+  - MCP
+  - Model Context Protocol
+  - 工具调用
+  - 标准化协议
+sources:
+  - 2026-04-29-yupi-ai-guide-core-concepts
+  - 2026-04-29-yupi-ai-guide-programming-tech
+  - 2026-05-18-ai-agent-week-into-day
 created: 2026-04-29
-updated: 2026-04-29
+updated: 2026-05-18
 ---
 
 # MCP 模型上下文协议
@@ -62,6 +69,12 @@ MCP（Model Context Protocol）是模型上下文协议，为 AI 与外部工具
 - 提供给 AI 的标准化服务
 - 让 AI 调用外部工具和数据，增强功能
 - Spring AI 框架原生支持 MCP
+
+来自 [[2026-05-18-woshipm-ai-agent-productivity]]：
+- MCP 被比喻为"通用翻译器"：Agent 说英语，工具说各自语言，MCP 坐在中间进行双向翻译。这个协议大大降低了 Agent 系统的构建门槛
+- 实际演示效果：一个提示词让 Agent 完成"总结收件箱 → 提取会议笔记 → 创建 Stripe 付款链接 → Notion 设置项目 → 起草跟进邮件"的跨工具全流程，无需切换任何标签页
+- Cowork、Codex、Manus 和 Perplexity 都有"连接器"或"技能"菜单，可浏览应用并登录一键完成连接
+- 建议从 3-5 个最核心的工具开始连接，不要一次性全部接入
 
 ## 快速开发工具
 

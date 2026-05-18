@@ -2,10 +2,19 @@
 type: entity
 name: RAG 知识库
 category: 核心技术
-tags: [RAG, 检索增强生成, 向量数据库, Embedding]
-sources: [2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-programming-tech]
+tags:
+  - RAG
+  - 检索增强生成
+  - 向量数据库
+  - Embedding
+sources:
+  - 2026-04-29-yupi-ai-guide-core-concepts
+  - 2026-04-29-yupi-ai-guide-programming-tech
+  - 2026-05-17-ai-pm-interview-claude-workflow
+  - 2026-05-17-pm-ai-knowledge-base-design-practice
+  - 2026-05-18-woshipm-ai-knowledge-management-design-practice
 created: 2026-04-29
-updated: 2026-04-29
+updated: 2026-05-18
 ---
 
 # RAG 知识库
@@ -59,6 +68,24 @@ RAG（检索增强生成）是一种结合检索和生成的 AI 技术架构。�
 - 构建企业自己的问答系统或客服
 - 基于企业真实数据作答，更准确贴合实际
 - 是 AI 编程开发的四大核心业务领域之一
+
+来自 [[2026-05-17-ai-pm-interview-claude-workflow]]：
+- 个人也应该给自己建RAG知识库，而不只是帮公司做。简历是第一份语料、项目复盘文档是第二份、面试转录是第三份、笔记是第四份
+- 当这些语料持续喂给Claude，它从通用助手变成个人面试教练——知道你做过什么项目、踩过什么坑、答崩过哪道题
+- "为什么选RAG不选微调"是AI PM面试中被问频率最高的题之一（38场面试中被问5次以上），说明RAG vs 微调的选型判断是行业共识级考点
+- 搭建个人AI教练的成本是0元，核心是持续积累结构化语料
+
+来自 [[2026-05-17-pm-ai-knowledge-base-design-practice]]：
+- 本地RAG已经足以验证“文档可对话”的核心价值，但一旦要满足手机访问和多人协作，就必须从单机实验升级为云端产品
+- 知识库产品的关键不只是“检索到段落”，而是把语义理解能力接入文件管理、权限、上传下载和多端访问等完整产品流程
+- 作者用Ollama + Dify + 本地模型做了原型验证，最终选择带REST API和Docker部署能力的Yuxi，体现了RAG从技术方案走向产品化落地的路径
+- 在20位知识工作者的非正式调研中，87%经常找不到已存文档内容、63%会因为找不到而重复整理资料，这说明RAG知识库首先解决的是知识可达性与复用率问题
+
+来自 [[2026-05-18-woshipm-ai-knowledge-management-design-practice]]：
+- 这篇素材进一步把RAG知识库的价值从“回答问题”推进到“重建知识可达性”：用户真正痛的不是没存资料，而是资料命名缺乏语义、导致无法按意图找回
+- 作者先用Ollama + Dify + 本地模型验证了RAG对文档问答的可行性，但很快暴露出单机方案无法支撑手机访问、多人共享和免安装使用，说明RAG产品的真正门槛在交付形态而不只是检索效果
+- 从产品化视角看，RAG系统必须接入文件上传下载、用户认证、权限治理、移动端体验和API能力，才能从“桌面盆栽”变成组织级知识基础设施
+- Yuxi之所以胜出，不是因为概念上更先进，而是因为REST API、流式输出、Docker部署和知识图谱/向量检索结合，更适合把RAG能力嵌入完整业务流程
 
 ## 学习重点（面试高频考点）
 

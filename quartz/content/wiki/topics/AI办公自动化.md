@@ -1,13 +1,17 @@
 ---
 tags: [办公自动化, DeepSeek, Excel, Word, VBA, 效率提升]
 created: 2026-04-29
-updated: 2026-04-29
-sources: [2026-04-29-deepseek-excel-integration, 2026-04-29-deepseek-word-integration, 2026-04-29-deepseek-10-work-tips]
+updated: 2026-05-18
+sources:
+  - 2026-04-29-deepseek-excel-integration
+  - 2026-04-29-deepseek-word-integration
+  - 2026-04-29-deepseek-10-work-tips
+  - 2026-05-18-ai-agent-week-into-day
 ---
 
 # AI 办公自动化
 
-> 以 DeepSeek 为核心，通过 VBA + API 模式深度集成 Office 套件的办公自动化方法论，包含使用技巧和落地实践
+> 以 DeepSeek 为核心，通过 VBA + API 模式深度集成 Office 套件的办公自动化方法论，并延伸至基于 Agent 的跨工具全流程自动化——包含使用技巧和落地实践
 
 ## 核心观点
 
@@ -19,6 +23,8 @@ sources: [2026-04-29-deepseek-excel-integration, 2026-04-29-deepseek-word-integr
 
 4. **使用技巧的杠杆效应显著**：同样的 AI，掌握正确使用方法的用户效率是普通用户的数倍。提问质量、互动方式、能力利用三个维度的方法构成完整方法论
 
+5. **Agent 级自动化将取代单点集成，成为办公自动化的下一个进化阶段**：基于 Agent 的 Observe-Think-Act 循环，结合 agents.md（上下文工程）、memory.md（记忆）、MCP（工具连接）和 skills（SOP 标准化），办公自动化将从"在 Excel 里嵌一个 AI 按钮"进化为"Agent 跨工具管理整个工作流"——邮件处理、日历管理、文档协同全部由 Agent 自主完成，人类只做关键决策。| 来源：[[2026-05-18-ai-agent-week-into-day]]
+
 ## 素材汇总
 
 | 素材标题 | 核心贡献 | 关键技术 |
@@ -26,6 +32,7 @@ sources: [2026-04-29-deepseek-excel-integration, 2026-04-29-deepseek-word-integr
 | DeepSeek Excel 集成教程 | 三步实现 Excel AI 化 | VBA + API + 按钮宏 |
 | DeepSeek Word 集成教程 | 双模型支持的智能续写 | VBA + 双模型切换 + 选中交互 |
 | DeepSeek 高效工作十法 | 三维度完整使用方法论 | 提问技巧 + 互动策略 + 能力利用 |
+| AI Agent 工作流系统（Remy Gaskill） | Agent 级自动化方法：Observe-Think-Act 循环、上下文工程、MCP 跨工具连接、技能复利 | agents.md + memory.md + MCP + skills |
 
 ## 知识体系
 
@@ -78,7 +85,16 @@ sources: [2026-04-29-deepseek-excel-integration, 2026-04-29-deepseek-word-integr
 | 利用多模态能力 | 不限于文本，调用代码/图表能力 | 编程、数据分析、跨领域任务 |
 | 利用实时搜索能力 | 需要最新信息时主动调用 | 新闻、热点、市场数据 |
 
-### 典型落地应用场景
+### 子方向 5：Agent 级跨工具工作流自动化（新兴）
+
+基于 Agent 的 Observe-Think-Act 循环，办公自动化正在从"单点工具集成"进化为"Agent 跨工具全流程协调"。核心架构：
+
+- **agents.md（大脑）**：系统提示词，包含完整角色、业务背景、偏好、工具列表
+- **memory.md（记忆）**：持久化偏好学习，Agent 随时间越来越了解用户
+- **MCP 协议（手脚）**：标准化工具连接协议，让 Agent 访问 Gmail、Calendar、Notion、Slack 等
+- **skills（专业经验）**：将成功的操作流程打包为 skill 文件，支持复利式积累和技能级联调用
+
+典型场景：晨间简报技能每天 9 点自动运行→检查日历→收件箱总结→Notion 项目更新→交付每日行动计划。这一方向标志着办公自动化从"提升单点效率"到"全面取代事务性工作"的质变。
 
 #### 数据分析师场景
 1. 在 Excel A1 描述数据问题
@@ -108,8 +124,14 @@ Excel 和 Word 两篇素材共同揭示了一个重要趋势——AI 正在写�
 **关于集成成本的共识**：
 两篇集成教程都证明 VBA + API 模式的可行性极高，普通用户就能完成。这意味着办公自动化不需要等待大厂更新，用户自己就能动手实现。
 
+**关于 VBA + API 的可行性共识**：
+两篇集成教程都证明 VBA + API 模式的可行性极高，普通用户就能完成。这意味着办公自动化不需要等待大厂更新，用户自己就能动手实现。
+
 **关于方法 vs 工具的思考**：
 "十法"这篇素材提醒我们，即使有了强大的工具，使用方法的差异也会导致效率的巨大差异。工具和方法论同等重要，缺一不可。
+
+**关于 Agent 级自动化的升级**：
+2026 年 3 月的 AI Agent 工作流素材展示了办公自动化的下一阶段：从"在 Excel 里嵌一个 AI 按钮"进化为"Agent 跨工具管理整个工作流"。Observe-Think-Act 循环让 Agent 像人类员工一样分解复杂任务、自主决策，MCP 协议让 Agent 能访问所有工具。（来源：[[2026-05-18-woshipm-ai-agent-productivity]]）
 
 ### 趋势与判断
 
