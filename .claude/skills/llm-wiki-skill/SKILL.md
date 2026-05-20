@@ -268,9 +268,23 @@ bash ${SKILL_DIR}/scripts/adapter-state.sh classify-run <source_id> <exit_code> 
 
 - 对自动提取结果，统一运行 `bash ${SKILL_DIR}/scripts/adapter-state.sh classify-run <source_id> <exit_code> <output_path>`
 - 从 `classify-run` 返回的 8 列结果里读取 `state`、`detail`、`recovery_action`、`fallback_hint`
-- 如果返回 `runtime_failed` → 按 `detail`、`recovery_action`、`fallback_hint` 告诉用户“这次自动提取失败，可以先重试一次；如果还不行，就改走手动入口”
-- 如果返回 `empty_result` → 按 `detail`、`recovery_action`、`fallback_hint` 告诉用户“自动提取没有拿到有效正文，请手动补全文本后继续”
+- 如果返回 `runtime_failed` → 按 `detail`、`recovery_action`、`fallback_hint` 告诉用户"这次自动提取失败，可以先重试一次；如果还不行，就改走手动入口"
+- 如果返回 `empty_result` → 按 `detail`、`recovery_action`、`fallback_hint` 告诉用户"自动提取没有拿到有效正文，请手动补全文本后继续"
 - 其他状态也使用同一份返回结果，不再手写第二套回退文案
+
+**素材抓取彻底失败时**：当所有自动抓取（WebFetch、baoyu-url-to-markdown、youtube-transcript、其他注册的 adapter）和手动回退都无法获取有效素材文本，需要放弃 ingest 时，**必须在退出前 print 一行结构化标记**到 stdout：
+
+```
+[FETCH_FAIL] {"source_id":"<id>","url":"<url>","status":"403|paywall|empty|timeout|runtime_failed","reason":"<一句话原因>"}
+```
+
+字段说明：
+- `source_id`：来源类型（`webfetch_article`、`baoyu_article`、`xiaohongshu` 等），来自 source-registry
+- `url`：原始 URL（如有）
+- `status`：原因分类，从 `403`/`paywall`/`empty`/`timeout`/`runtime_failed` 里选最贴近的
+- `reason`：人类可读的一句话原因（不超过 120 字符）
+
+这行标记会被 `raw-watcher.sh` 抓出来写到 `scripts/ingest_failures.jsonl`，然后 Telegram bot 会把 `reason` push 回用户，不再只是 "Pipeline thất bại"。如果忘记 emit 这一行，bot 只能回 generic message，operator 也只能去 grep watcher.log，所以**素材抓取失败必须发**。
 
 ### 内容分级处理
 

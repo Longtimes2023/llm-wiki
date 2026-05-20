@@ -2,10 +2,10 @@
 type: entity
 name: MCP 模型上下文协议
 category: 核心技术
-tags: [MCP, Model Context Protocol, 工具调用, 标准化协议]
-sources: [2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-programming-tech]
+tags: [MCP, Model Context Protocol, 工具调用, 标准化协议, Canva]
+sources: [2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-programming-tech, 2026-05-10-codex-canva-operations-assets, 2026-05-13-ai-agent-productivity-20x]
 created: 2026-04-29
-updated: 2026-04-29
+updated: 2026-05-13
 ---
 
 # MCP 模型上下文协议
@@ -63,6 +63,18 @@ MCP（Model Context Protocol）是模型上下文协议，为 AI 与外部工具
 - 让 AI 调用外部工具和数据，增强功能
 - Spring AI 框架原生支持 MCP
 
+来自 [[2026-05-10-codex-canva-operations-assets]]：
+- Canva 提供远程 MCP server，是 MCP 在设计工具领域的重要落地案例
+- 通过 Canva MCP，AI 助手可调用设计生成、设计编辑、素材/品牌管理、设计库检索、导出、评论协作等能力
+- 在运营素材自动化流水线中，[[Codex]] 通过 MCP 调用 [[Canva]] 实现从选题到设计的全链路自动化（读取选题→生成素材brief→调用品牌模板→批量改图→导出→审核流程）
+- 这使 Codex 从"写代码/生成图片"的角色扩展为"工作流编排引擎"
+
+来自 [[2026-05-13-ai-agent-productivity-20x]]：
+- MCP 的核心价值被概括为把多工具协作的集成成本标准化：Agent 继续使用统一的语言，Gmail、Notion、Slack、Stripe、Google Calendar 等工具保留各自接口，MCP 负责双向翻译
+- 在实际工作流里，MCP 不是单点工具调用，而是把总结收件箱、提取会议纪要、创建付款链接、在 Notion 建项目、起草跟进邮件等动作串成一个连续任务
+- 文章强调 MCP 让用户不必手动切换多个标签页，本质上降低的是跨 SaaS 编排的摩擦，而不是单个 API 接入的门槛
+- 当 MCP 与 Agent、Skill、上下文文件组合后，AI 的角色会从"会调用一个工具"升级为"能在多个业务系统之间跑完整流程"
+
 ## 快速开发工具
 
 ### MCPify
@@ -97,4 +109,5 @@ MCP（Model Context Protocol）是模型上下文协议，为 AI 与外部工具
 - [[AI Agent 智能体]]
 - [[ReAct]]
 - [[Spring AI]]
+- [[Canva]]
 - [[AI编程开发]]

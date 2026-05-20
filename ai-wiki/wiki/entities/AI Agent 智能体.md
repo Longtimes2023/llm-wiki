@@ -3,9 +3,9 @@ type: entity
 name: AI Agent 智能体
 category: 核心技术
 tags: [Agent, 智能体, ReAct, 工具调用, 自主行动]
-sources: [2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-programming-tech]
+sources: [2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-programming-tech, 2026-05-11-skill-sop-for-ai, 2026-05-13-ai-agent-productivity-20x]
 created: 2026-04-29
-updated: 2026-04-29
+updated: 2026-05-13
 ---
 
 # AI Agent 智能体
@@ -70,6 +70,18 @@ AI Agent（智能体）是 AI 技术的高级形态。与传统的大模型对�
 - 打造能够依据推理自主采取行动的 AI 系统
 - 开发涉及知识：任务规划、工具调用、交互 I/O、异常处理
 
+来自 [[2026-05-11-skill-sop-for-ai]]：
+- Agent 在编排视角象限图中占据右上角——AI 自己决定目标和步骤，全权决定，判断空间最大
+- Skill 和 Agent 的关键区别：Skill 是"人定约束，AI 在约束内灵活执行"（中间位置），Agent 是"AI 全权决定"（完全自主）
+- 从演进线看，Agent 是 Skill 的下一步——Prompt→知识库→Skill→Agent，每步传递的东西都在变深
+- Agent 对应"给你一个员工"的分享形态，未来可能进一步演进为带 Principle（决策框架）的角色
+
+来自 [[2026-05-13-ai-agent-productivity-20x]]：
+- Agent 的关键跃迁不是"回答更聪明"，而是从问答模式切换到目标-结果模式：用户给出目标和完成标准后，Agent 会自主规划步骤、调用工具并交付结果
+- 文章用作品集网站案例把 Agent 的运行机制拆成 observe→think→act 循环：先检查工作空间，再研究背景、制定计划、写代码、启动和截图验证，未达标则继续下一轮
+- 这种循环说明 Agent 的价值不只在内容生成，而在多步骤任务闭环执行；但前提是人要给出清晰完成标准，否则 Agent 可能无限循环或偏航
+- Claude Code、Codex、Manus 等被视为不同的 agent harnesses，长期可迁移的资产不只是框架本身，而是伴随 Agent 使用沉淀下来的上下文、记忆和技能文件
+
 ### 开发流程示例：视频网站开发
 1. 深入理解任务内容
 2. 推理梳理执行步骤
@@ -127,3 +139,4 @@ AI Agent（智能体）是 AI 技术的高级形态。与传统的大模型对�
 - [[Dify]]
 - [[Cursor]]
 - [[AI编程开发]]
+- [[Skill]]

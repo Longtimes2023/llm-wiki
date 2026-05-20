@@ -1,0 +1,17 @@
+{
+  "stage": "skeleton_check",
+  "owner": "state_store",
+  "status": "fallback_local_digest",
+  "generated_at": "2026-05-20T03:44:55Z",
+  "source_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/skeleton-receipt.json",
+  "items": [
+    "Task focus: compare local project with GitHub https://github.com/Longtimes2023/llm-wiki identify differences especially UI parts from scripts to quartz copy determine proper sync git push strategy",
+    "Git branch: ",
+    "All required governed runtime prerequisite paths are present."
+  ],
+  "budget": {
+    "top_k": 3,
+    "max_tokens": 96,
+    "max_chars_per_item": 220
+  }
+}

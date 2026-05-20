@@ -1,0 +1,48 @@
+{
+  "run_id": "20260520T040315Z-3aabeae6",
+  "root_run_id": "20260520T040315Z-3aabeae6",
+  "stages": [
+    {
+      "stage_name": "skeleton_check",
+      "run_id": "20260520T040315Z-3aabeae6",
+      "root_run_id": "20260520T040315Z-3aabeae6",
+      "previous_stage_name": null,
+      "previous_stage_receipt_path": null,
+      "current_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T040315Z-3aabeae6/skeleton-receipt.json",
+      "transition_validated": true,
+      "validated_at": "2026-05-20T04:03:31Z"
+    },
+    {
+      "stage_name": "deep_interview",
+      "run_id": "20260520T040315Z-3aabeae6",
+      "root_run_id": "20260520T040315Z-3aabeae6",
+      "previous_stage_name": "skeleton_check",
+      "previous_stage_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T040315Z-3aabeae6/skeleton-receipt.json",
+      "current_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T040315Z-3aabeae6/intent-contract.json",
+      "transition_validated": true,
+      "validated_at": "2026-05-20T04:03:48Z"
+    },
+    {
+      "stage_name": "requirement_doc",
+      "run_id": "20260520T040315Z-3aabeae6",
+      "root_run_id": "20260520T040315Z-3aabeae6",
+      "previous_stage_name": "deep_interview",
+      "previous_stage_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T040315Z-3aabeae6/intent-contract.json",
+      "current_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T040315Z-3aabeae6/requirement-doc-receipt.json",
+      "transition_validated": true,
+      "validated_at": "2026-05-20T04:03:49Z"
+    },
+    {
+      "stage_name": "xl_plan",
+      "run_id": "20260520T040315Z-3aabeae6",
+      "root_run_id": "20260520T040315Z-3aabeae6",
+      "previous_stage_name": "requirement_doc",
+      "previous_stage_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T040315Z-3aabeae6/requirement-doc-receipt.json",
+      "current_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T040315Z-3aabeae6/execution-plan-receipt.json",
+      "transition_validated": true,
+      "validated_at": "2026-05-20T04:03:50Z"
+    }
+  ],
+  "last_stage_name": "xl_plan",
+  "updated_at": "2026-05-20T04:03:50Z"
+}

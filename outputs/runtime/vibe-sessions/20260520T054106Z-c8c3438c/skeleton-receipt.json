@@ -1,0 +1,63 @@
+{
+  "stage": "skeleton_check",
+  "run_id": "20260520T054106Z-c8c3438c",
+  "mode": "interactive_governed",
+  "task": "compare local project with GitHub https://github.com/Longtimes2023/llm-wiki iden... Deliverable: Governed implementation artifacts, verification evidence, and cleanup receipts. Constraints: Do not bypass the fixed six-stage governed runtime.; Do not widen scope silently beyond the frozen requirement document.. Update: execute merge: git merge origin/main, resolve conflicts per frozen strategy, git push origin main",
+  "generated_at": "2026-05-20T05:41:12Z",
+  "repo_root": "/home/steven/.claude/skills/vibe",
+  "git_branch": null,
+  "git_status": [],
+  "required_paths": [
+    {
+      "path": "SKILL.md",
+      "exists": true
+    },
+    {
+      "path": "protocols/runtime.md",
+      "exists": true
+    },
+    {
+      "path": "protocols/think.md",
+      "exists": true
+    },
+    {
+      "path": "protocols/do.md",
+      "exists": true
+    },
+    {
+      "path": "protocols/team.md",
+      "exists": true
+    },
+    {
+      "path": "protocols/retro.md",
+      "exists": true
+    },
+    {
+      "path": "config/runtime-contract.json",
+      "exists": true
+    },
+    {
+      "path": "config/runtime-modes.json",
+      "exists": true
+    },
+    {
+      "path": "config/requirement-doc-policy.json",
+      "exists": true
+    },
+    {
+      "path": "config/plan-execution-policy.json",
+      "exists": true
+    },
+    {
+      "path": "config/phase-cleanup-policy.json",
+      "exists": true
+    }
+  ],
+  "existing_requirement_docs": [
+    "2026-05-09-cloud-pipeline-migration.md",
+    "2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md"
+  ],
+  "existing_plan_docs": [
+    "2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023-execution-plan.md"
+  ]
+}

@@ -1,0 +1,855 @@
+=== VCO Installed Runtime Freshness Gate ===
+Repo root    : /home/steven/.claude/skills/vibe
+Target root  : /home/steven/.claude
+Installed root: /home/steven/.claude/skills/vibe
+[PASS] [runtime] installed vibe root exists
+[PASS] [file:SKILL.md] canonical exists
+[PASS] [file:SKILL.md] installed exists
+[PASS] [file:SKILL.md] parity
+[PASS] [file:check.ps1] canonical exists
+[PASS] [file:check.ps1] installed exists
+[PASS] [file:check.ps1] parity
+[PASS] [file:check.sh] canonical exists
+[PASS] [file:check.sh] installed exists
+[PASS] [file:check.sh] parity
+[PASS] [file:install.ps1] canonical exists
+[PASS] [file:install.ps1] installed exists
+[PASS] [file:install.ps1] parity
+[PASS] [file:install.sh] canonical exists
+[PASS] [file:install.sh] installed exists
+[PASS] [file:install.sh] parity
+[PASS] [file:core/skill-contracts/v1/vibe.json] canonical exists
+[PASS] [file:core/skill-contracts/v1/vibe.json] installed exists
+[PASS] [file:core/skill-contracts/v1/vibe.json] parity
+[PASS] [file:config/runtime-core-packaging.json] canonical exists
+[PASS] [file:config/runtime-core-packaging.json] installed exists
+[PASS] [file:config/runtime-core-packaging.json] parity
+[PASS] [file:config/runtime-core-packaging.minimal.json] canonical exists
+[PASS] [file:config/runtime-core-packaging.minimal.json] installed exists
+[PASS] [file:config/runtime-core-packaging.minimal.json] parity
+[PASS] [file:config/runtime-core-packaging.full.json] canonical exists
+[PASS] [file:config/runtime-core-packaging.full.json] installed exists
+[PASS] [file:config/runtime-core-packaging.full.json] parity
+[PASS] [file:config/runtime-script-manifest.json] canonical exists
+[PASS] [file:config/runtime-script-manifest.json] installed exists
+[PASS] [file:config/runtime-script-manifest.json] parity
+[PASS] [file:config/runtime-config-manifest.json] canonical exists
+[PASS] [file:config/runtime-config-manifest.json] installed exists
+[PASS] [file:config/runtime-config-manifest.json] parity
+[PASS] [file:scripts/bootstrap/one-shot-setup.ps1] canonical exists
+[PASS] [file:scripts/bootstrap/one-shot-setup.ps1] installed exists
+[PASS] [file:scripts/bootstrap/one-shot-setup.ps1] parity
+[PASS] [file:scripts/bootstrap/one-shot-setup.sh] canonical exists
+[PASS] [file:scripts/bootstrap/one-shot-setup.sh] installed exists
+[PASS] [file:scripts/bootstrap/one-shot-setup.sh] parity
+[PASS] [file:scripts/bootstrap/sync-local-compat.ps1] canonical exists
+[PASS] [file:scripts/bootstrap/sync-local-compat.ps1] installed exists
+[PASS] [file:scripts/bootstrap/sync-local-compat.ps1] parity
+[PASS] [file:scripts/router/invoke-pack-route.py] canonical exists
+[PASS] [file:scripts/router/invoke-pack-route.py] installed exists
+[PASS] [file:scripts/router/invoke-pack-route.py] parity
+[PASS] [file:scripts/router/resolve-pack-route.ps1] canonical exists
+[PASS] [file:scripts/router/resolve-pack-route.ps1] installed exists
+[PASS] [file:scripts/router/resolve-pack-route.ps1] parity
+[PASS] [file:scripts/router/modules/00-core-utils.ps1] canonical exists
+[PASS] [file:scripts/router/modules/00-core-utils.ps1] installed exists
+[PASS] [file:scripts/router/modules/00-core-utils.ps1] parity
+[PASS] [file:scripts/router/modules/01-openai-responses.ps1] canonical exists
+[PASS] [file:scripts/router/modules/01-openai-responses.ps1] installed exists
+[PASS] [file:scripts/router/modules/01-openai-responses.ps1] parity
+[PASS] [file:scripts/router/modules/10-observability.ps1] canonical exists
+[PASS] [file:scripts/router/modules/10-observability.ps1] installed exists
+[PASS] [file:scripts/router/modules/10-observability.ps1] parity
+[PASS] [file:scripts/router/modules/11-route-probe.ps1] canonical exists
+[PASS] [file:scripts/router/modules/11-route-probe.ps1] installed exists
+[PASS] [file:scripts/router/modules/11-route-probe.ps1] parity
+[PASS] [file:scripts/router/modules/12-heartbeat.ps1] canonical exists
+[PASS] [file:scripts/router/modules/12-heartbeat.ps1] installed exists
+[PASS] [file:scripts/router/modules/12-heartbeat.ps1] parity
+[PASS] [file:scripts/router/modules/19-custom-admission.ps1] canonical exists
+[PASS] [file:scripts/router/modules/19-custom-admission.ps1] installed exists
+[PASS] [file:scripts/router/modules/19-custom-admission.ps1] parity
+[PASS] [file:scripts/router/modules/20-routing-rules.ps1] canonical exists
+[PASS] [file:scripts/router/modules/20-routing-rules.ps1] installed exists
+[PASS] [file:scripts/router/modules/20-routing-rules.ps1] parity
+[PASS] [file:scripts/router/modules/21-capability-interview.ps1] canonical exists
+[PASS] [file:scripts/router/modules/21-capability-interview.ps1] installed exists
+[PASS] [file:scripts/router/modules/21-capability-interview.ps1] parity
+[PASS] [file:scripts/router/modules/22-intent-contract.ps1] canonical exists
+[PASS] [file:scripts/router/modules/22-intent-contract.ps1] installed exists
+[PASS] [file:scripts/router/modules/22-intent-contract.ps1] parity
+[PASS] [file:scripts/router/modules/30-openspec.ps1] canonical exists
+[PASS] [file:scripts/router/modules/30-openspec.ps1] installed exists
+[PASS] [file:scripts/router/modules/30-openspec.ps1] parity
+[PASS] [file:scripts/router/modules/31-gsd-overlay.ps1] canonical exists
+[PASS] [file:scripts/router/modules/31-gsd-overlay.ps1] installed exists
+[PASS] [file:scripts/router/modules/31-gsd-overlay.ps1] parity
+[PASS] [file:scripts/router/modules/32-prompt-overlay.ps1] canonical exists
+[PASS] [file:scripts/router/modules/32-prompt-overlay.ps1] installed exists
+[PASS] [file:scripts/router/modules/32-prompt-overlay.ps1] parity
+[PASS] [file:scripts/router/modules/33-memory-governance.ps1] canonical exists
+[PASS] [file:scripts/router/modules/33-memory-governance.ps1] installed exists
+[PASS] [file:scripts/router/modules/33-memory-governance.ps1] parity
+[PASS] [file:scripts/router/modules/34-data-scale-overlay.ps1] canonical exists
+[PASS] [file:scripts/router/modules/34-data-scale-overlay.ps1] installed exists
+[PASS] [file:scripts/router/modules/34-data-scale-overlay.ps1] parity
+[PASS] [file:scripts/router/modules/35-quality-debt-overlay.ps1] canonical exists
+[PASS] [file:scripts/router/modules/35-quality-debt-overlay.ps1] installed exists
+[PASS] [file:scripts/router/modules/35-quality-debt-overlay.ps1] parity
+[PASS] [file:scripts/router/modules/36-framework-interop-overlay.ps1] canonical exists
+[PASS] [file:scripts/router/modules/36-framework-interop-overlay.ps1] installed exists
+[PASS] [file:scripts/router/modules/36-framework-interop-overlay.ps1] parity
+[PASS] [file:scripts/router/modules/37-ml-lifecycle-overlay.ps1] canonical exists
+[PASS] [file:scripts/router/modules/37-ml-lifecycle-overlay.ps1] installed exists
+[PASS] [file:scripts/router/modules/37-ml-lifecycle-overlay.ps1] parity
+[PASS] [file:scripts/router/modules/38-python-clean-code-overlay.ps1] canonical exists
+[PASS] [file:scripts/router/modules/38-python-clean-code-overlay.ps1] installed exists
+[PASS] [file:scripts/router/modules/38-python-clean-code-overlay.ps1] parity
+[PASS] [file:scripts/router/modules/39-system-design-overlay.ps1] canonical exists
+[PASS] [file:scripts/router/modules/39-system-design-overlay.ps1] installed exists
+[PASS] [file:scripts/router/modules/39-system-design-overlay.ps1] parity
+[PASS] [file:scripts/router/modules/40-cuda-kernel-overlay.ps1] canonical exists
+[PASS] [file:scripts/router/modules/40-cuda-kernel-overlay.ps1] installed exists
+[PASS] [file:scripts/router/modules/40-cuda-kernel-overlay.ps1] parity
+[PASS] [file:scripts/router/modules/41-candidate-selection.ps1] canonical exists
+[PASS] [file:scripts/router/modules/41-candidate-selection.ps1] installed exists
+[PASS] [file:scripts/router/modules/41-candidate-selection.ps1] parity
+[PASS] [file:scripts/router/modules/42-ai-rerank-overlay.ps1] canonical exists
+[PASS] [file:scripts/router/modules/42-ai-rerank-overlay.ps1] installed exists
+[PASS] [file:scripts/router/modules/42-ai-rerank-overlay.ps1] parity
+[PASS] [file:scripts/router/modules/43-retrieval-overlay.ps1] canonical exists
+[PASS] [file:scripts/router/modules/43-retrieval-overlay.ps1] installed exists
+[PASS] [file:scripts/router/modules/43-retrieval-overlay.ps1] parity
+[PASS] [file:scripts/router/modules/44-dialectic-team-gate.ps1] canonical exists
+[PASS] [file:scripts/router/modules/44-dialectic-team-gate.ps1] installed exists
+[PASS] [file:scripts/router/modules/44-dialectic-team-gate.ps1] parity
+[PASS] [file:scripts/router/modules/44-exploration-overlay.ps1] canonical exists
+[PASS] [file:scripts/router/modules/44-exploration-overlay.ps1] installed exists
+[PASS] [file:scripts/router/modules/44-exploration-overlay.ps1] parity
+[PASS] [file:scripts/router/modules/45-daily-dialectic-guard.ps1] canonical exists
+[PASS] [file:scripts/router/modules/45-daily-dialectic-guard.ps1] installed exists
+[PASS] [file:scripts/router/modules/45-daily-dialectic-guard.ps1] parity
+[PASS] [file:scripts/router/modules/46-confirm-ui.ps1] canonical exists
+[PASS] [file:scripts/router/modules/46-confirm-ui.ps1] installed exists
+[PASS] [file:scripts/router/modules/46-confirm-ui.ps1] parity
+[PASS] [file:scripts/router/modules/47-closure-overlay.ps1] canonical exists
+[PASS] [file:scripts/router/modules/47-closure-overlay.ps1] installed exists
+[PASS] [file:scripts/router/modules/47-closure-overlay.ps1] parity
+[PASS] [file:scripts/router/modules/48-llm-acceleration-overlay.ps1] canonical exists
+[PASS] [file:scripts/router/modules/48-llm-acceleration-overlay.ps1] installed exists
+[PASS] [file:scripts/router/modules/48-llm-acceleration-overlay.ps1] parity
+[PASS] [file:scripts/router/modules/49-prompt-asset-boost.ps1] canonical exists
+[PASS] [file:scripts/router/modules/49-prompt-asset-boost.ps1] installed exists
+[PASS] [file:scripts/router/modules/49-prompt-asset-boost.ps1] parity
+[PASS] [file:scripts/router/runtime_neutral/router_contract.py] canonical exists
+[PASS] [file:scripts/router/runtime_neutral/router_contract.py] installed exists
+[PASS] [file:scripts/router/runtime_neutral/router_contract.py] parity
+[PASS] [file:scripts/router/runtime_neutral/custom_admission.py] canonical exists
+[PASS] [file:scripts/router/runtime_neutral/custom_admission.py] installed exists
+[PASS] [file:scripts/router/runtime_neutral/custom_admission.py] parity
+[PASS] [file:scripts/verify/runtime_neutral/_bootstrap.py] canonical exists
+[PASS] [file:scripts/verify/runtime_neutral/_bootstrap.py] installed exists
+[PASS] [file:scripts/verify/runtime_neutral/_bootstrap.py] parity
+[PASS] [file:scripts/verify/runtime_neutral/bootstrap_doctor.py] canonical exists
+[PASS] [file:scripts/verify/runtime_neutral/bootstrap_doctor.py] installed exists
+[PASS] [file:scripts/verify/runtime_neutral/bootstrap_doctor.py] parity
+[PASS] [file:scripts/verify/runtime_neutral/coherence_gate.py] canonical exists
+[PASS] [file:scripts/verify/runtime_neutral/coherence_gate.py] installed exists
+[PASS] [file:scripts/verify/runtime_neutral/coherence_gate.py] parity
+[PASS] [file:scripts/verify/runtime_neutral/freshness_gate.py] canonical exists
+[PASS] [file:scripts/verify/runtime_neutral/freshness_gate.py] installed exists
+[PASS] [file:scripts/verify/runtime_neutral/freshness_gate.py] parity
+[PASS] [file:scripts/verify/runtime_neutral/opencode_preview_smoke.py] canonical exists
+[PASS] [file:scripts/verify/runtime_neutral/opencode_preview_smoke.py] installed exists
+[PASS] [file:scripts/verify/runtime_neutral/opencode_preview_smoke.py] parity
+[PASS] [file:scripts/verify/runtime_neutral/release_notes_quality.py] canonical exists
+[PASS] [file:scripts/verify/runtime_neutral/release_notes_quality.py] installed exists
+[PASS] [file:scripts/verify/runtime_neutral/release_notes_quality.py] parity
+[PASS] [file:scripts/verify/runtime_neutral/release_truth_gate.py] canonical exists
+[PASS] [file:scripts/verify/runtime_neutral/release_truth_gate.py] installed exists
+[PASS] [file:scripts/verify/runtime_neutral/release_truth_gate.py] parity
+[PASS] [file:scripts/verify/runtime_neutral/router_ai_connectivity_probe.py] canonical exists
+[PASS] [file:scripts/verify/runtime_neutral/router_ai_connectivity_probe.py] installed exists
+[PASS] [file:scripts/verify/runtime_neutral/router_ai_connectivity_probe.py] parity
+[PASS] [file:scripts/verify/runtime_neutral/router_bridge_gate.py] canonical exists
+[PASS] [file:scripts/verify/runtime_neutral/router_bridge_gate.py] installed exists
+[PASS] [file:scripts/verify/runtime_neutral/router_bridge_gate.py] parity
+[PASS] [file:scripts/verify/runtime_neutral/runtime_delivery_acceptance.py] canonical exists
+[PASS] [file:scripts/verify/runtime_neutral/runtime_delivery_acceptance.py] installed exists
+[PASS] [file:scripts/verify/runtime_neutral/runtime_delivery_acceptance.py] parity
+[PASS] [file:scripts/verify/runtime_neutral/workflow_acceptance_runner.py] canonical exists
+[PASS] [file:scripts/verify/runtime_neutral/workflow_acceptance_runner.py] installed exists
+[PASS] [file:scripts/verify/runtime_neutral/workflow_acceptance_runner.py] parity
+[PASS] [file:scripts/common/python_helpers.sh] canonical exists
+[PASS] [file:scripts/common/python_helpers.sh] installed exists
+[PASS] [file:scripts/common/python_helpers.sh] parity
+[PASS] [file:scripts/common/vibe-governance-helpers.ps1] canonical exists
+[PASS] [file:scripts/common/vibe-governance-helpers.ps1] installed exists
+[PASS] [file:scripts/common/vibe-governance-helpers.ps1] parity
+[PASS] [file:scripts/common/adapter_registry_query.py] canonical exists
+[PASS] [file:scripts/common/adapter_registry_query.py] installed exists
+[PASS] [file:scripts/common/adapter_registry_query.py] parity
+[PASS] [file:scripts/common/AntiProxyGoalDrift.ps1] canonical exists
+[PASS] [file:scripts/common/AntiProxyGoalDrift.ps1] installed exists
+[PASS] [file:scripts/common/AntiProxyGoalDrift.ps1] parity
+[PASS] [file:scripts/runtime/Freeze-RuntimeInputPacket.ps1] canonical exists
+[PASS] [file:scripts/runtime/Freeze-RuntimeInputPacket.ps1] installed exists
+[PASS] [file:scripts/runtime/Freeze-RuntimeInputPacket.ps1] parity
+[PASS] [file:scripts/runtime/Invoke-AntiProxyGoalDriftCompaction.ps1] canonical exists
+[PASS] [file:scripts/runtime/Invoke-AntiProxyGoalDriftCompaction.ps1] installed exists
+[PASS] [file:scripts/runtime/Invoke-AntiProxyGoalDriftCompaction.ps1] parity
+[PASS] [file:scripts/runtime/Invoke-DeepInterview.ps1] canonical exists
+[PASS] [file:scripts/runtime/Invoke-DeepInterview.ps1] installed exists
+[PASS] [file:scripts/runtime/Invoke-DeepInterview.ps1] parity
+[PASS] [file:scripts/runtime/Invoke-DelegatedLaneUnit.ps1] canonical exists
+[PASS] [file:scripts/runtime/Invoke-DelegatedLaneUnit.ps1] installed exists
+[PASS] [file:scripts/runtime/Invoke-DelegatedLaneUnit.ps1] parity
+[PASS] [file:scripts/runtime/Invoke-PhaseCleanup.ps1] canonical exists
+[PASS] [file:scripts/runtime/Invoke-PhaseCleanup.ps1] installed exists
+[PASS] [file:scripts/runtime/Invoke-PhaseCleanup.ps1] parity
+[PASS] [file:scripts/runtime/Invoke-PlanExecute.ps1] canonical exists
+[PASS] [file:scripts/runtime/Invoke-PlanExecute.ps1] installed exists
+[PASS] [file:scripts/runtime/Invoke-PlanExecute.ps1] parity
+[PASS] [file:scripts/runtime/Invoke-SkeletonCheck.ps1] canonical exists
+[PASS] [file:scripts/runtime/Invoke-SkeletonCheck.ps1] installed exists
+[PASS] [file:scripts/runtime/Invoke-SkeletonCheck.ps1] parity
+[PASS] [file:scripts/runtime/Invoke-VibeCanonicalEntry.ps1] canonical exists
+[PASS] [file:scripts/runtime/Invoke-VibeCanonicalEntry.ps1] installed exists
+[PASS] [file:scripts/runtime/Invoke-VibeCanonicalEntry.ps1] parity
+[PASS] [file:scripts/runtime/VibeConsultation.Common.ps1] canonical exists
+[PASS] [file:scripts/runtime/VibeConsultation.Common.ps1] installed exists
+[PASS] [file:scripts/runtime/VibeConsultation.Common.ps1] parity
+[PASS] [file:scripts/runtime/VibeExecution.Common.ps1] canonical exists
+[PASS] [file:scripts/runtime/VibeExecution.Common.ps1] installed exists
+[PASS] [file:scripts/runtime/VibeExecution.Common.ps1] parity
+[PASS] [file:scripts/runtime/VibeMemoryActivation.Common.ps1] canonical exists
+[PASS] [file:scripts/runtime/VibeMemoryActivation.Common.ps1] installed exists
+[PASS] [file:scripts/runtime/VibeMemoryActivation.Common.ps1] parity
+[PASS] [file:scripts/runtime/VibeMemoryBackends.Common.ps1] canonical exists
+[PASS] [file:scripts/runtime/VibeMemoryBackends.Common.ps1] installed exists
+[PASS] [file:scripts/runtime/VibeMemoryBackends.Common.ps1] parity
+[PASS] [file:scripts/runtime/VibeRuntime.Common.ps1] canonical exists
+[PASS] [file:scripts/runtime/VibeRuntime.Common.ps1] installed exists
+[PASS] [file:scripts/runtime/VibeRuntime.Common.ps1] parity
+[PASS] [file:scripts/runtime/legacy/VibeRetiredConsultation.Common.ps1] canonical exists
+[PASS] [file:scripts/runtime/legacy/VibeRetiredConsultation.Common.ps1] installed exists
+[PASS] [file:scripts/runtime/legacy/VibeRetiredConsultation.Common.ps1] parity
+[PASS] [file:scripts/runtime/VibeSkillRouting.Common.ps1] canonical exists
+[PASS] [file:scripts/runtime/VibeSkillRouting.Common.ps1] installed exists
+[PASS] [file:scripts/runtime/VibeSkillRouting.Common.ps1] parity
+[PASS] [file:scripts/runtime/VibeSkillUsage.Common.ps1] canonical exists
+[PASS] [file:scripts/runtime/VibeSkillUsage.Common.ps1] installed exists
+[PASS] [file:scripts/runtime/VibeSkillUsage.Common.ps1] parity
+[PASS] [file:scripts/runtime/VibeWorkspaceMemory.Common.ps1] canonical exists
+[PASS] [file:scripts/runtime/VibeWorkspaceMemory.Common.ps1] installed exists
+[PASS] [file:scripts/runtime/VibeWorkspaceMemory.Common.ps1] parity
+[PASS] [file:scripts/runtime/Write-RequirementDoc.ps1] canonical exists
+[PASS] [file:scripts/runtime/Write-RequirementDoc.ps1] installed exists
+[PASS] [file:scripts/runtime/Write-RequirementDoc.ps1] parity
+[PASS] [file:scripts/runtime/Write-XlPlan.ps1] canonical exists
+[PASS] [file:scripts/runtime/Write-XlPlan.ps1] installed exists
+[PASS] [file:scripts/runtime/Write-XlPlan.ps1] parity
+[PASS] [file:scripts/runtime/invoke-vibe-runtime.ps1] canonical exists
+[PASS] [file:scripts/runtime/invoke-vibe-runtime.ps1] installed exists
+[PASS] [file:scripts/runtime/invoke-vibe-runtime.ps1] parity
+[PASS] [file:scripts/runtime/memory_backend_driver.py] canonical exists
+[PASS] [file:scripts/runtime/memory_backend_driver.py] installed exists
+[PASS] [file:scripts/runtime/memory_backend_driver.py] parity
+[PASS] [file:scripts/runtime/workspace_memory_driver.py] canonical exists
+[PASS] [file:scripts/runtime/workspace_memory_driver.py] installed exists
+[PASS] [file:scripts/runtime/workspace_memory_driver.py] parity
+[PASS] [file:scripts/runtime/native_specialist_runner.py] canonical exists
+[PASS] [file:scripts/runtime/native_specialist_runner.py] installed exists
+[PASS] [file:scripts/runtime/native_specialist_runner.py] parity
+[PASS] [file:scripts/install/Install-VgoAdapter.ps1] canonical exists
+[PASS] [file:scripts/install/Install-VgoAdapter.ps1] installed exists
+[PASS] [file:scripts/install/Install-VgoAdapter.ps1] parity
+[PASS] [file:scripts/uninstall/Uninstall-VgoAdapter.ps1] canonical exists
+[PASS] [file:scripts/uninstall/Uninstall-VgoAdapter.ps1] installed exists
+[PASS] [file:scripts/uninstall/Uninstall-VgoAdapter.ps1] parity
+[PASS] [file:scripts/verify/vibe-bom-frontmatter-gate.ps1] canonical exists
+[PASS] [file:scripts/verify/vibe-bom-frontmatter-gate.ps1] installed exists
+[PASS] [file:scripts/verify/vibe-bom-frontmatter-gate.ps1] parity
+[PASS] [file:scripts/verify/vibe-bootstrap-doctor-gate.ps1] canonical exists
+[PASS] [file:scripts/verify/vibe-bootstrap-doctor-gate.ps1] installed exists
+[PASS] [file:scripts/verify/vibe-bootstrap-doctor-gate.ps1] parity
+[PASS] [file:scripts/verify/vibe-canonical-entry-truth-gate.ps1] canonical exists
+[PASS] [file:scripts/verify/vibe-canonical-entry-truth-gate.ps1] installed exists
+[PASS] [file:scripts/verify/vibe-canonical-entry-truth-gate.ps1] parity
+[PASS] [file:scripts/verify/vibe-governed-runtime-contract-gate.ps1] canonical exists
+[PASS] [file:scripts/verify/vibe-governed-runtime-contract-gate.ps1] installed exists
+[PASS] [file:scripts/verify/vibe-governed-runtime-contract-gate.ps1] parity
+[PASS] [file:scripts/verify/vibe-installed-runtime-freshness-gate.ps1] canonical exists
+[PASS] [file:scripts/verify/vibe-installed-runtime-freshness-gate.ps1] installed exists
+[PASS] [file:scripts/verify/vibe-installed-runtime-freshness-gate.ps1] parity
+[PASS] [file:scripts/verify/vibe-linux-router-no-pwsh-gate.ps1] canonical exists
+[PASS] [file:scripts/verify/vibe-linux-router-no-pwsh-gate.ps1] installed exists
+[PASS] [file:scripts/verify/vibe-linux-router-no-pwsh-gate.ps1] parity
+[PASS] [file:scripts/verify/vibe-no-silent-fallback-contract-gate.ps1] canonical exists
+[PASS] [file:scripts/verify/vibe-no-silent-fallback-contract-gate.ps1] installed exists
+[PASS] [file:scripts/verify/vibe-no-silent-fallback-contract-gate.ps1] parity
+[PASS] [file:scripts/verify/vibe-no-self-introduced-fallback-gate.ps1] canonical exists
+[PASS] [file:scripts/verify/vibe-no-self-introduced-fallback-gate.ps1] installed exists
+[PASS] [file:scripts/verify/vibe-no-self-introduced-fallback-gate.ps1] parity
+[PASS] [file:scripts/verify/vibe-release-truth-consistency-gate.ps1] canonical exists
+[PASS] [file:scripts/verify/vibe-release-truth-consistency-gate.ps1] installed exists
+[PASS] [file:scripts/verify/vibe-release-truth-consistency-gate.ps1] parity
+[PASS] [file:scripts/verify/vibe-runtime-execution-proof-gate.ps1] canonical exists
+[PASS] [file:scripts/verify/vibe-runtime-execution-proof-gate.ps1] installed exists
+[PASS] [file:scripts/verify/vibe-runtime-execution-proof-gate.ps1] parity
+[PASS] [file:scripts/verify/vibe-release-install-runtime-coherence-gate.ps1] canonical exists
+[PASS] [file:scripts/verify/vibe-release-install-runtime-coherence-gate.ps1] installed exists
+[PASS] [file:scripts/verify/vibe-release-install-runtime-coherence-gate.ps1] parity
+[PASS] [file:config/agency-overlays.json] canonical exists
+[PASS] [file:config/agency-overlays.json] installed exists
+[PASS] [file:config/agency-overlays.json] parity
+[PASS] [file:config/ai-rerank-policy.json] canonical exists
+[PASS] [file:config/ai-rerank-policy.json] installed exists
+[PASS] [file:config/ai-rerank-policy.json] parity
+[PASS] [file:config/adapter-registry.json] canonical exists
+[PASS] [file:config/adapter-registry.json] installed exists
+[PASS] [file:config/adapter-registry.json] parity
+[PASS] [file:config/capability-catalog.json] canonical exists
+[PASS] [file:config/capability-catalog.json] installed exists
+[PASS] [file:config/capability-catalog.json] parity
+[PASS] [file:config/closure-overlay.json] canonical exists
+[PASS] [file:config/closure-overlay.json] installed exists
+[PASS] [file:config/closure-overlay.json] parity
+[PASS] [file:config/confirm-ui-policy.json] canonical exists
+[PASS] [file:config/confirm-ui-policy.json] installed exists
+[PASS] [file:config/confirm-ui-policy.json] parity
+[PASS] [file:config/connector-admission-policy.json] canonical exists
+[PASS] [file:config/connector-admission-policy.json] installed exists
+[PASS] [file:config/connector-admission-policy.json] parity
+[PASS] [file:config/connector-provider-policy.json] canonical exists
+[PASS] [file:config/connector-provider-policy.json] installed exists
+[PASS] [file:config/connector-provider-policy.json] parity
+[PASS] [file:config/connector-sandbox-policy.json] canonical exists
+[PASS] [file:config/connector-sandbox-policy.json] installed exists
+[PASS] [file:config/connector-sandbox-policy.json] parity
+[PASS] [file:config/cuda-kernel-overlay.json] canonical exists
+[PASS] [file:config/cuda-kernel-overlay.json] installed exists
+[PASS] [file:config/cuda-kernel-overlay.json] parity
+[PASS] [file:config/daily-dialectic-guard.json] canonical exists
+[PASS] [file:config/daily-dialectic-guard.json] installed exists
+[PASS] [file:config/daily-dialectic-guard.json] parity
+[PASS] [file:config/data-scale-overlay.json] canonical exists
+[PASS] [file:config/data-scale-overlay.json] installed exists
+[PASS] [file:config/data-scale-overlay.json] parity
+[PASS] [file:config/deep-discovery-policy.json] canonical exists
+[PASS] [file:config/deep-discovery-policy.json] installed exists
+[PASS] [file:config/deep-discovery-policy.json] parity
+[PASS] [file:config/dialectic-team-policy.json] canonical exists
+[PASS] [file:config/dialectic-team-policy.json] installed exists
+[PASS] [file:config/dialectic-team-policy.json] parity
+[PASS] [file:config/docling-provider-policy.json] canonical exists
+[PASS] [file:config/docling-provider-policy.json] installed exists
+[PASS] [file:config/docling-provider-policy.json] parity
+[PASS] [file:config/execution-runtime-policy.json] canonical exists
+[PASS] [file:config/execution-runtime-policy.json] installed exists
+[PASS] [file:config/execution-runtime-policy.json] parity
+[PASS] [file:config/execution-topology-policy.json] canonical exists
+[PASS] [file:config/execution-topology-policy.json] installed exists
+[PASS] [file:config/execution-topology-policy.json] parity
+[PASS] [file:config/exploration-domain-map.json] canonical exists
+[PASS] [file:config/exploration-domain-map.json] installed exists
+[PASS] [file:config/exploration-domain-map.json] parity
+[PASS] [file:config/exploration-intent-profiles.json] canonical exists
+[PASS] [file:config/exploration-intent-profiles.json] installed exists
+[PASS] [file:config/exploration-intent-profiles.json] parity
+[PASS] [file:config/exploration-policy.json] canonical exists
+[PASS] [file:config/exploration-policy.json] installed exists
+[PASS] [file:config/exploration-policy.json] parity
+[PASS] [file:config/fallback-governance.json] canonical exists
+[PASS] [file:config/fallback-governance.json] installed exists
+[PASS] [file:config/fallback-governance.json] parity
+[PASS] [file:config/framework-interop-overlay.json] canonical exists
+[PASS] [file:config/framework-interop-overlay.json] installed exists
+[PASS] [file:config/framework-interop-overlay.json] parity
+[PASS] [file:config/gsd-overlay.json] canonical exists
+[PASS] [file:config/gsd-overlay.json] installed exists
+[PASS] [file:config/gsd-overlay.json] parity
+[PASS] [file:config/heartbeat-policy.json] canonical exists
+[PASS] [file:config/heartbeat-policy.json] installed exists
+[PASS] [file:config/heartbeat-policy.json] parity
+[PASS] [file:config/implementation-guardrails.json] canonical exists
+[PASS] [file:config/implementation-guardrails.json] installed exists
+[PASS] [file:config/implementation-guardrails.json] parity
+[PASS] [file:config/llm-acceleration-policy.json] canonical exists
+[PASS] [file:config/llm-acceleration-policy.json] installed exists
+[PASS] [file:config/llm-acceleration-policy.json] parity
+[PASS] [file:config/memory-backend-adapters.json] canonical exists
+[PASS] [file:config/memory-backend-adapters.json] installed exists
+[PASS] [file:config/memory-backend-adapters.json] parity
+[PASS] [file:config/memory-disclosure-policy.json] canonical exists
+[PASS] [file:config/memory-disclosure-policy.json] installed exists
+[PASS] [file:config/memory-disclosure-policy.json] parity
+[PASS] [file:config/memory-governance.json] canonical exists
+[PASS] [file:config/memory-governance.json] installed exists
+[PASS] [file:config/memory-governance.json] parity
+[PASS] [file:config/memory-ingest-policy.json] canonical exists
+[PASS] [file:config/memory-ingest-policy.json] installed exists
+[PASS] [file:config/memory-ingest-policy.json] parity
+[PASS] [file:config/memory-retrieval-budget-policy.json] canonical exists
+[PASS] [file:config/memory-retrieval-budget-policy.json] installed exists
+[PASS] [file:config/memory-retrieval-budget-policy.json] parity
+[PASS] [file:config/memory-runtime-v3-policy.json] canonical exists
+[PASS] [file:config/memory-runtime-v3-policy.json] installed exists
+[PASS] [file:config/memory-runtime-v3-policy.json] parity
+[PASS] [file:config/memory-stage-activation-policy.json] canonical exists
+[PASS] [file:config/memory-stage-activation-policy.json] installed exists
+[PASS] [file:config/memory-stage-activation-policy.json] parity
+[PASS] [file:config/memory-tier-router.json] canonical exists
+[PASS] [file:config/memory-tier-router.json] installed exists
+[PASS] [file:config/memory-tier-router.json] parity
+[PASS] [file:config/workspace-memory-plane.json] canonical exists
+[PASS] [file:config/workspace-memory-plane.json] installed exists
+[PASS] [file:config/workspace-memory-plane.json] parity
+[PASS] [file:config/ml-lifecycle-overlay.json] canonical exists
+[PASS] [file:config/ml-lifecycle-overlay.json] installed exists
+[PASS] [file:config/ml-lifecycle-overlay.json] parity
+[PASS] [file:config/native-specialist-execution-policy.json] canonical exists
+[PASS] [file:config/native-specialist-execution-policy.json] installed exists
+[PASS] [file:config/native-specialist-execution-policy.json] parity
+[PASS] [file:config/observability-policy.json] canonical exists
+[PASS] [file:config/observability-policy.json] installed exists
+[PASS] [file:config/observability-policy.json] parity
+[PASS] [file:config/operator-preview-contract.json] canonical exists
+[PASS] [file:config/operator-preview-contract.json] installed exists
+[PASS] [file:config/operator-preview-contract.json] parity
+[PASS] [file:config/openspec-policy.json] canonical exists
+[PASS] [file:config/openspec-policy.json] installed exists
+[PASS] [file:config/openspec-policy.json] parity
+[PASS] [file:config/pack-manifest.json] canonical exists
+[PASS] [file:config/pack-manifest.json] installed exists
+[PASS] [file:config/pack-manifest.json] parity
+[PASS] [file:config/phase-cleanup-policy.json] canonical exists
+[PASS] [file:config/phase-cleanup-policy.json] installed exists
+[PASS] [file:config/phase-cleanup-policy.json] parity
+[PASS] [file:config/plan-execution-policy.json] canonical exists
+[PASS] [file:config/plan-execution-policy.json] installed exists
+[PASS] [file:config/plan-execution-policy.json] parity
+[PASS] [file:config/powershell-host-policy.json] canonical exists
+[PASS] [file:config/powershell-host-policy.json] installed exists
+[PASS] [file:config/powershell-host-policy.json] parity
+[PASS] [file:config/plugins-manifest.codex.json] canonical exists
+[PASS] [file:config/plugins-manifest.codex.json] installed exists
+[PASS] [file:config/plugins-manifest.codex.json] parity
+[PASS] [file:config/secrets-policy.json] canonical exists
+[PASS] [file:config/secrets-policy.json] installed exists
+[PASS] [file:config/secrets-policy.json] parity
+[PASS] [file:config/proof-class-registry.json] canonical exists
+[PASS] [file:config/proof-class-registry.json] installed exists
+[PASS] [file:config/proof-class-registry.json] parity
+[PASS] [file:config/project-delivery-acceptance-contract.json] canonical exists
+[PASS] [file:config/project-delivery-acceptance-contract.json] installed exists
+[PASS] [file:config/project-delivery-acceptance-contract.json] parity
+[PASS] [file:config/prompt-asset-boost.json] canonical exists
+[PASS] [file:config/prompt-asset-boost.json] installed exists
+[PASS] [file:config/prompt-asset-boost.json] parity
+[PASS] [file:config/prompt-overlay.json] canonical exists
+[PASS] [file:config/prompt-overlay.json] installed exists
+[PASS] [file:config/prompt-overlay.json] parity
+[PASS] [file:config/python-clean-code-overlay.json] canonical exists
+[PASS] [file:config/python-clean-code-overlay.json] installed exists
+[PASS] [file:config/python-clean-code-overlay.json] parity
+[PASS] [file:config/quality-debt-overlay.json] canonical exists
+[PASS] [file:config/quality-debt-overlay.json] installed exists
+[PASS] [file:config/quality-debt-overlay.json] parity
+[PASS] [file:config/requirement-doc-policy.json] canonical exists
+[PASS] [file:config/requirement-doc-policy.json] installed exists
+[PASS] [file:config/requirement-doc-policy.json] parity
+[PASS] [file:config/retrieval-intent-profiles.json] canonical exists
+[PASS] [file:config/retrieval-intent-profiles.json] installed exists
+[PASS] [file:config/retrieval-intent-profiles.json] parity
+[PASS] [file:config/retrieval-policy.json] canonical exists
+[PASS] [file:config/retrieval-policy.json] installed exists
+[PASS] [file:config/retrieval-policy.json] parity
+[PASS] [file:config/retrieval-rerank-weights.json] canonical exists
+[PASS] [file:config/retrieval-rerank-weights.json] installed exists
+[PASS] [file:config/retrieval-rerank-weights.json] parity
+[PASS] [file:config/retrieval-source-registry.json] canonical exists
+[PASS] [file:config/retrieval-source-registry.json] installed exists
+[PASS] [file:config/retrieval-source-registry.json] parity
+[PASS] [file:config/router-model-governance.json] canonical exists
+[PASS] [file:config/router-model-governance.json] installed exists
+[PASS] [file:config/router-model-governance.json] parity
+[PASS] [file:config/router-provider-defaults.json] canonical exists
+[PASS] [file:config/router-provider-defaults.json] installed exists
+[PASS] [file:config/router-provider-defaults.json] parity
+[PASS] [file:config/router-provider-registry.json] canonical exists
+[PASS] [file:config/router-provider-registry.json] installed exists
+[PASS] [file:config/router-provider-registry.json] parity
+[PASS] [file:config/skill-promotion-policy.json] canonical exists
+[PASS] [file:config/skill-promotion-policy.json] installed exists
+[PASS] [file:config/skill-promotion-policy.json] parity
+[PASS] [file:config/router-thresholds.json] canonical exists
+[PASS] [file:config/router-thresholds.json] installed exists
+[PASS] [file:config/router-thresholds.json] parity
+[PASS] [file:config/skill-alias-map.json] canonical exists
+[PASS] [file:config/skill-alias-map.json] installed exists
+[PASS] [file:config/skill-alias-map.json] parity
+[PASS] [file:config/skill-keyword-index.json] canonical exists
+[PASS] [file:config/skill-keyword-index.json] installed exists
+[PASS] [file:config/skill-keyword-index.json] parity
+[PASS] [file:config/skill-routing-rules.json] canonical exists
+[PASS] [file:config/skill-routing-rules.json] installed exists
+[PASS] [file:config/skill-routing-rules.json] parity
+[PASS] [file:config/runtime-contract.json] canonical exists
+[PASS] [file:config/runtime-contract.json] installed exists
+[PASS] [file:config/runtime-contract.json] parity
+[PASS] [file:config/runtime-input-packet-policy.json] canonical exists
+[PASS] [file:config/runtime-input-packet-policy.json] installed exists
+[PASS] [file:config/runtime-input-packet-policy.json] parity
+[PASS] [file:config/runtime-modes.json] canonical exists
+[PASS] [file:config/runtime-modes.json] installed exists
+[PASS] [file:config/runtime-modes.json] parity
+[PASS] [file:config/specialist-consultation-policy.json] canonical exists
+[PASS] [file:config/specialist-consultation-policy.json] installed exists
+[PASS] [file:config/specialist-consultation-policy.json] parity
+[PASS] [file:config/settings.template.codex.json] canonical exists
+[PASS] [file:config/settings.template.codex.json] installed exists
+[PASS] [file:config/settings.template.codex.json] parity
+[PASS] [file:config/skills-lock.json] canonical exists
+[PASS] [file:config/skills-lock.json] installed exists
+[PASS] [file:config/skills-lock.json] parity
+[PASS] [file:config/system-design-overlay.json] canonical exists
+[PASS] [file:config/system-design-overlay.json] installed exists
+[PASS] [file:config/system-design-overlay.json] parity
+[PASS] [file:config/tool-registry.json] canonical exists
+[PASS] [file:config/tool-registry.json] installed exists
+[PASS] [file:config/tool-registry.json] parity
+[PASS] [file:config/opencode/agents/vibe-implement.md] canonical exists
+[PASS] [file:config/opencode/agents/vibe-implement.md] installed exists
+[PASS] [file:config/opencode/agents/vibe-implement.md] parity
+[PASS] [file:config/opencode/agents/vibe-plan.md] canonical exists
+[PASS] [file:config/opencode/agents/vibe-plan.md] installed exists
+[PASS] [file:config/opencode/agents/vibe-plan.md] parity
+[PASS] [file:config/opencode/agents/vibe-review.md] canonical exists
+[PASS] [file:config/opencode/agents/vibe-review.md] installed exists
+[PASS] [file:config/opencode/agents/vibe-review.md] parity
+[PASS] [file:config/opencode/commands/vibe-implement.md] canonical exists
+[PASS] [file:config/opencode/commands/vibe-implement.md] installed exists
+[PASS] [file:config/opencode/commands/vibe-implement.md] parity
+[PASS] [file:config/opencode/commands/vibe-review.md] canonical exists
+[PASS] [file:config/opencode/commands/vibe-review.md] installed exists
+[PASS] [file:config/opencode/commands/vibe-review.md] parity
+[PASS] [file:config/opencode/commands/vibe.md] canonical exists
+[PASS] [file:config/opencode/commands/vibe.md] installed exists
+[PASS] [file:config/opencode/commands/vibe.md] parity
+[PASS] [file:config/opencode/opencode.json.example] canonical exists
+[PASS] [file:config/opencode/opencode.json.example] installed exists
+[PASS] [file:config/opencode/opencode.json.example] parity
+[PASS] [file:config/upstream-lock.json] canonical exists
+[PASS] [file:config/upstream-lock.json] installed exists
+[PASS] [file:config/upstream-lock.json] parity
+[PASS] [file:config/vibe-entry-surfaces.json] canonical exists
+[PASS] [file:config/vibe-entry-surfaces.json] installed exists
+[PASS] [file:config/vibe-entry-surfaces.json] parity
+[PASS] [file:config/version-governance.json] canonical exists
+[PASS] [file:config/version-governance.json] installed exists
+[PASS] [file:config/version-governance.json] parity
+[PASS] [dir:docs] canonical exists
+[PASS] [dir:docs] installed exists
+[PASS] [dir:docs] no files missing in installed runtime
+[PASS] [dir:docs] no unexpected installed-only files
+[PASS] [dir:docs] file parity
+[PASS] [dir:protocols] canonical exists
+[PASS] [dir:protocols] installed exists
+[PASS] [dir:protocols] no files missing in installed runtime
+[PASS] [dir:protocols] no unexpected installed-only files
+[PASS] [dir:protocols] file parity
+[PASS] [dir:templates] canonical exists
+[PASS] [dir:templates] installed exists
+[PASS] [dir:templates] no files missing in installed runtime
+[PASS] [dir:templates] no unexpected installed-only files
+[PASS] [dir:templates] file parity
+[PASS] [dir:mcp] canonical exists
+[PASS] [dir:mcp] installed exists
+[PASS] [dir:mcp] no files missing in installed runtime
+[PASS] [dir:mcp] no unexpected installed-only files
+[PASS] [dir:mcp] file parity
+[PASS] [dir:apps/vgo-cli] canonical exists
+[PASS] [dir:apps/vgo-cli] installed exists
+[PASS] [dir:apps/vgo-cli] no files missing in installed runtime
+[PASS] [dir:apps/vgo-cli] no unexpected installed-only files
+[PASS] [dir:apps/vgo-cli] file parity
+[PASS] [dir:packages/contracts] canonical exists
+[PASS] [dir:packages/contracts] installed exists
+[PASS] [dir:packages/contracts] no files missing in installed runtime
+[PASS] [dir:packages/contracts] no unexpected installed-only files
+[PASS] [dir:packages/contracts] file parity
+[PASS] [dir:packages/installer-core] canonical exists
+[PASS] [dir:packages/installer-core] installed exists
+[PASS] [dir:packages/installer-core] no files missing in installed runtime
+[PASS] [dir:packages/installer-core] no unexpected installed-only files
+[PASS] [dir:packages/installer-core] file parity
+[PASS] [dir:packages/runtime-core] canonical exists
+[PASS] [dir:packages/runtime-core] installed exists
+[PASS] [dir:packages/runtime-core] no files missing in installed runtime
+[PASS] [dir:packages/runtime-core] no unexpected installed-only files
+[PASS] [dir:packages/runtime-core] file parity
+[PASS] [dir:packages/verification-core] canonical exists
+[PASS] [dir:packages/verification-core] installed exists
+[PASS] [dir:packages/verification-core] no files missing in installed runtime
+[PASS] [dir:packages/verification-core] no unexpected installed-only files
+[PASS] [dir:packages/verification-core] file parity
+[PASS] [marker:SKILL.md] canonical exists
+[PASS] [marker:SKILL.md] installed exists
+[PASS] [marker:SKILL.md] parity
+[PASS] [marker:config/version-governance.json] canonical exists
+[PASS] [marker:config/version-governance.json] installed exists
+[PASS] [marker:config/version-governance.json] parity
+[PASS] [marker:config/plugins-manifest.codex.json] canonical exists
+[PASS] [marker:config/plugins-manifest.codex.json] installed exists
+[PASS] [marker:config/plugins-manifest.codex.json] parity
+[PASS] [marker:config/runtime-script-manifest.json] canonical exists
+[PASS] [marker:config/runtime-script-manifest.json] installed exists
+[PASS] [marker:config/runtime-script-manifest.json] parity
+[PASS] [marker:config/runtime-config-manifest.json] canonical exists
+[PASS] [marker:config/runtime-config-manifest.json] installed exists
+[PASS] [marker:config/runtime-config-manifest.json] parity
+[PASS] [marker:config/secrets-policy.json] canonical exists
+[PASS] [marker:config/secrets-policy.json] installed exists
+[PASS] [marker:config/secrets-policy.json] parity
+[PASS] [marker:config/tool-registry.json] canonical exists
+[PASS] [marker:config/tool-registry.json] installed exists
+[PASS] [marker:config/tool-registry.json] parity
+[PASS] [marker:config/vibe-entry-surfaces.json] canonical exists
+[PASS] [marker:config/vibe-entry-surfaces.json] installed exists
+[PASS] [marker:config/vibe-entry-surfaces.json] parity
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/__init__.py] canonical exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/__init__.py] installed exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/__init__.py] parity
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/main.py] canonical exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/main.py] installed exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/main.py] parity
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/errors.py] canonical exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/errors.py] installed exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/errors.py] parity
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/hosts.py] canonical exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/hosts.py] installed exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/hosts.py] parity
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/process.py] canonical exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/process.py] installed exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/process.py] parity
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/install_support.py] canonical exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/install_support.py] installed exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/install_support.py] parity
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/workspace.py] canonical exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/workspace.py] installed exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/workspace.py] parity
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/commands.py] canonical exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/commands.py] installed exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/commands.py] parity
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/repo.py] canonical exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/repo.py] installed exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/repo.py] parity
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/external.py] canonical exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/external.py] installed exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/external.py] parity
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/output.py] canonical exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/output.py] installed exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/output.py] parity
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/install_gates.py] canonical exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/install_gates.py] installed exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/install_gates.py] parity
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/installer_bridge.py] canonical exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/installer_bridge.py] installed exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/installer_bridge.py] parity
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/skill_surface.py] canonical exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/skill_surface.py] installed exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/skill_surface.py] parity
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/core_bridge.py] canonical exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/core_bridge.py] installed exists
+[PASS] [marker:apps/vgo-cli/src/vgo_cli/core_bridge.py] parity
+[PASS] [marker:packages/contracts/src/vgo_contracts/__init__.py] canonical exists
+[PASS] [marker:packages/contracts/src/vgo_contracts/__init__.py] installed exists
+[PASS] [marker:packages/contracts/src/vgo_contracts/__init__.py] parity
+[PASS] [marker:packages/contracts/src/vgo_contracts/install_ledger.py] canonical exists
+[PASS] [marker:packages/contracts/src/vgo_contracts/install_ledger.py] installed exists
+[PASS] [marker:packages/contracts/src/vgo_contracts/install_ledger.py] parity
+[PASS] [marker:packages/installer-core/src/vgo_installer/__init__.py] canonical exists
+[PASS] [marker:packages/installer-core/src/vgo_installer/__init__.py] installed exists
+[PASS] [marker:packages/installer-core/src/vgo_installer/__init__.py] parity
+[PASS] [marker:packages/installer-core/src/vgo_installer/install_runtime.py] canonical exists
+[PASS] [marker:packages/installer-core/src/vgo_installer/install_runtime.py] installed exists
+[PASS] [marker:packages/installer-core/src/vgo_installer/install_runtime.py] parity
+[PASS] [marker:packages/installer-core/src/vgo_installer/uninstall_runtime.py] canonical exists
+[PASS] [marker:packages/installer-core/src/vgo_installer/uninstall_runtime.py] installed exists
+[PASS] [marker:packages/installer-core/src/vgo_installer/uninstall_runtime.py] parity
+[PASS] [marker:packages/installer-core/src/vgo_installer/ledger_service.py] canonical exists
+[PASS] [marker:packages/installer-core/src/vgo_installer/ledger_service.py] installed exists
+[PASS] [marker:packages/installer-core/src/vgo_installer/ledger_service.py] parity
+[PASS] [marker:install.ps1] canonical exists
+[PASS] [marker:install.ps1] installed exists
+[PASS] [marker:install.ps1] parity
+[PASS] [marker:check.ps1] canonical exists
+[PASS] [marker:check.ps1] installed exists
+[PASS] [marker:check.ps1] parity
+[PASS] [marker:scripts/common/vibe-governance-helpers.ps1] canonical exists
+[PASS] [marker:scripts/common/vibe-governance-helpers.ps1] installed exists
+[PASS] [marker:scripts/common/vibe-governance-helpers.ps1] parity
+[PASS] [marker:scripts/common/adapter_registry_query.py] canonical exists
+[PASS] [marker:scripts/common/adapter_registry_query.py] installed exists
+[PASS] [marker:scripts/common/adapter_registry_query.py] parity
+[PASS] [marker:scripts/runtime/VibeRuntime.Common.ps1] canonical exists
+[PASS] [marker:scripts/runtime/VibeRuntime.Common.ps1] installed exists
+[PASS] [marker:scripts/runtime/VibeRuntime.Common.ps1] parity
+[PASS] [marker:scripts/runtime/VibeMemoryBackends.Common.ps1] canonical exists
+[PASS] [marker:scripts/runtime/VibeMemoryBackends.Common.ps1] installed exists
+[PASS] [marker:scripts/runtime/VibeMemoryBackends.Common.ps1] parity
+[PASS] [marker:scripts/runtime/Freeze-RuntimeInputPacket.ps1] canonical exists
+[PASS] [marker:scripts/runtime/Freeze-RuntimeInputPacket.ps1] installed exists
+[PASS] [marker:scripts/runtime/Freeze-RuntimeInputPacket.ps1] parity
+[PASS] [marker:scripts/runtime/invoke-vibe-runtime.ps1] canonical exists
+[PASS] [marker:scripts/runtime/invoke-vibe-runtime.ps1] installed exists
+[PASS] [marker:scripts/runtime/invoke-vibe-runtime.ps1] parity
+[PASS] [marker:scripts/runtime/Invoke-PlanExecute.ps1] canonical exists
+[PASS] [marker:scripts/runtime/Invoke-PlanExecute.ps1] installed exists
+[PASS] [marker:scripts/runtime/Invoke-PlanExecute.ps1] parity
+[PASS] [marker:scripts/runtime/native_specialist_runner.py] canonical exists
+[PASS] [marker:scripts/runtime/native_specialist_runner.py] installed exists
+[PASS] [marker:scripts/runtime/native_specialist_runner.py] parity
+[PASS] [marker:scripts/runtime/Invoke-AntiProxyGoalDriftCompaction.ps1] canonical exists
+[PASS] [marker:scripts/runtime/Invoke-AntiProxyGoalDriftCompaction.ps1] installed exists
+[PASS] [marker:scripts/runtime/Invoke-AntiProxyGoalDriftCompaction.ps1] parity
+[PASS] [marker:scripts/runtime/Invoke-DeepInterview.ps1] canonical exists
+[PASS] [marker:scripts/runtime/Invoke-DeepInterview.ps1] installed exists
+[PASS] [marker:scripts/runtime/Invoke-DeepInterview.ps1] parity
+[PASS] [marker:scripts/runtime/Invoke-DelegatedLaneUnit.ps1] canonical exists
+[PASS] [marker:scripts/runtime/Invoke-DelegatedLaneUnit.ps1] installed exists
+[PASS] [marker:scripts/runtime/Invoke-DelegatedLaneUnit.ps1] parity
+[PASS] [marker:scripts/runtime/Invoke-PhaseCleanup.ps1] canonical exists
+[PASS] [marker:scripts/runtime/Invoke-PhaseCleanup.ps1] installed exists
+[PASS] [marker:scripts/runtime/Invoke-PhaseCleanup.ps1] parity
+[PASS] [marker:scripts/runtime/Invoke-SkeletonCheck.ps1] canonical exists
+[PASS] [marker:scripts/runtime/Invoke-SkeletonCheck.ps1] installed exists
+[PASS] [marker:scripts/runtime/Invoke-SkeletonCheck.ps1] parity
+[PASS] [marker:scripts/runtime/Invoke-VibeCanonicalEntry.ps1] canonical exists
+[PASS] [marker:scripts/runtime/Invoke-VibeCanonicalEntry.ps1] installed exists
+[PASS] [marker:scripts/runtime/Invoke-VibeCanonicalEntry.ps1] parity
+[PASS] [marker:scripts/runtime/VibeConsultation.Common.ps1] canonical exists
+[PASS] [marker:scripts/runtime/VibeConsultation.Common.ps1] installed exists
+[PASS] [marker:scripts/runtime/VibeConsultation.Common.ps1] parity
+[PASS] [marker:scripts/runtime/VibeExecution.Common.ps1] canonical exists
+[PASS] [marker:scripts/runtime/VibeExecution.Common.ps1] installed exists
+[PASS] [marker:scripts/runtime/VibeExecution.Common.ps1] parity
+[PASS] [marker:scripts/runtime/VibeMemoryActivation.Common.ps1] canonical exists
+[PASS] [marker:scripts/runtime/VibeMemoryActivation.Common.ps1] installed exists
+[PASS] [marker:scripts/runtime/VibeMemoryActivation.Common.ps1] parity
+[PASS] [marker:scripts/runtime/VibeSkillRouting.Common.ps1] canonical exists
+[PASS] [marker:scripts/runtime/VibeSkillRouting.Common.ps1] installed exists
+[PASS] [marker:scripts/runtime/VibeSkillRouting.Common.ps1] parity
+[PASS] [marker:scripts/runtime/VibeSkillUsage.Common.ps1] canonical exists
+[PASS] [marker:scripts/runtime/VibeSkillUsage.Common.ps1] installed exists
+[PASS] [marker:scripts/runtime/VibeSkillUsage.Common.ps1] parity
+[PASS] [marker:scripts/runtime/VibeWorkspaceMemory.Common.ps1] canonical exists
+[PASS] [marker:scripts/runtime/VibeWorkspaceMemory.Common.ps1] installed exists
+[PASS] [marker:scripts/runtime/VibeWorkspaceMemory.Common.ps1] parity
+[PASS] [marker:scripts/runtime/Write-RequirementDoc.ps1] canonical exists
+[PASS] [marker:scripts/runtime/Write-RequirementDoc.ps1] installed exists
+[PASS] [marker:scripts/runtime/Write-RequirementDoc.ps1] parity
+[PASS] [marker:scripts/runtime/Write-XlPlan.ps1] canonical exists
+[PASS] [marker:scripts/runtime/Write-XlPlan.ps1] installed exists
+[PASS] [marker:scripts/runtime/Write-XlPlan.ps1] parity
+[PASS] [marker:scripts/runtime/memory_backend_driver.py] canonical exists
+[PASS] [marker:scripts/runtime/memory_backend_driver.py] installed exists
+[PASS] [marker:scripts/runtime/memory_backend_driver.py] parity
+[PASS] [marker:scripts/runtime/workspace_memory_driver.py] canonical exists
+[PASS] [marker:scripts/runtime/workspace_memory_driver.py] installed exists
+[PASS] [marker:scripts/runtime/workspace_memory_driver.py] parity
+[PASS] [marker:scripts/verify/vibe-bootstrap-doctor-gate.ps1] canonical exists
+[PASS] [marker:scripts/verify/vibe-bootstrap-doctor-gate.ps1] installed exists
+[PASS] [marker:scripts/verify/vibe-bootstrap-doctor-gate.ps1] parity
+[PASS] [marker:scripts/verify/vibe-canonical-entry-truth-gate.ps1] canonical exists
+[PASS] [marker:scripts/verify/vibe-canonical-entry-truth-gate.ps1] installed exists
+[PASS] [marker:scripts/verify/vibe-canonical-entry-truth-gate.ps1] parity
+[PASS] [marker:scripts/verify/vibe-installed-runtime-freshness-gate.ps1] canonical exists
+[PASS] [marker:scripts/verify/vibe-installed-runtime-freshness-gate.ps1] installed exists
+[PASS] [marker:scripts/verify/vibe-installed-runtime-freshness-gate.ps1] parity
+[PASS] [marker:scripts/verify/vibe-release-install-runtime-coherence-gate.ps1] canonical exists
+[PASS] [marker:scripts/verify/vibe-release-install-runtime-coherence-gate.ps1] installed exists
+[PASS] [marker:scripts/verify/vibe-release-install-runtime-coherence-gate.ps1] parity
+[PASS] [marker:scripts/verify/vibe-governed-runtime-contract-gate.ps1] canonical exists
+[PASS] [marker:scripts/verify/vibe-governed-runtime-contract-gate.ps1] installed exists
+[PASS] [marker:scripts/verify/vibe-governed-runtime-contract-gate.ps1] parity
+[PASS] [marker:scripts/verify/vibe-runtime-execution-proof-gate.ps1] canonical exists
+[PASS] [marker:scripts/verify/vibe-runtime-execution-proof-gate.ps1] installed exists
+[PASS] [marker:scripts/verify/vibe-runtime-execution-proof-gate.ps1] parity
+[PASS] [marker:scripts/verify/vibe-linux-router-no-pwsh-gate.ps1] canonical exists
+[PASS] [marker:scripts/verify/vibe-linux-router-no-pwsh-gate.ps1] installed exists
+[PASS] [marker:scripts/verify/vibe-linux-router-no-pwsh-gate.ps1] parity
+[PASS] [marker:scripts/router/resolve-pack-route.ps1] canonical exists
+[PASS] [marker:scripts/router/resolve-pack-route.ps1] installed exists
+[PASS] [marker:scripts/router/resolve-pack-route.ps1] parity
+[PASS] [marker:scripts/router/invoke-pack-route.py] canonical exists
+[PASS] [marker:scripts/router/invoke-pack-route.py] installed exists
+[PASS] [marker:scripts/router/invoke-pack-route.py] parity
+[PASS] [marker:scripts/router/runtime_neutral/router_contract.py] canonical exists
+[PASS] [marker:scripts/router/runtime_neutral/router_contract.py] installed exists
+[PASS] [marker:scripts/router/runtime_neutral/router_contract.py] parity
+[PASS] [marker:packages/runtime-core/src/vgo_runtime/router_bridge.py] canonical exists
+[PASS] [marker:packages/runtime-core/src/vgo_runtime/router_bridge.py] installed exists
+[PASS] [marker:packages/runtime-core/src/vgo_runtime/router_bridge.py] parity
+[PASS] [marker:packages/runtime-core/src/vgo_runtime/router_contract_runtime.py] canonical exists
+[PASS] [marker:packages/runtime-core/src/vgo_runtime/router_contract_runtime.py] installed exists
+[PASS] [marker:packages/runtime-core/src/vgo_runtime/router_contract_runtime.py] parity
+[PASS] [marker:packages/runtime-core/src/vgo_runtime/custom_admission.py] canonical exists
+[PASS] [marker:packages/runtime-core/src/vgo_runtime/custom_admission.py] installed exists
+[PASS] [marker:packages/runtime-core/src/vgo_runtime/custom_admission.py] parity
+[PASS] [marker:scripts/verify/runtime_neutral/router_bridge_gate.py] canonical exists
+[PASS] [marker:scripts/verify/runtime_neutral/router_bridge_gate.py] installed exists
+[PASS] [marker:scripts/verify/runtime_neutral/router_bridge_gate.py] parity
+[PASS] [marker:config/runtime-contract.json] canonical exists
+[PASS] [marker:config/runtime-contract.json] installed exists
+[PASS] [marker:config/runtime-contract.json] parity
+[PASS] [marker:config/runtime-modes.json] canonical exists
+[PASS] [marker:config/runtime-modes.json] installed exists
+[PASS] [marker:config/runtime-modes.json] parity
+[PASS] [marker:config/runtime-input-packet-policy.json] canonical exists
+[PASS] [marker:config/runtime-input-packet-policy.json] installed exists
+[PASS] [marker:config/runtime-input-packet-policy.json] parity
+[PASS] [marker:config/execution-runtime-policy.json] canonical exists
+[PASS] [marker:config/execution-runtime-policy.json] installed exists
+[PASS] [marker:config/execution-runtime-policy.json] parity
+[PASS] [marker:config/specialist-consultation-policy.json] canonical exists
+[PASS] [marker:config/specialist-consultation-policy.json] installed exists
+[PASS] [marker:config/specialist-consultation-policy.json] parity
+[PASS] [marker:config/memory-backend-adapters.json] canonical exists
+[PASS] [marker:config/memory-backend-adapters.json] installed exists
+[PASS] [marker:config/memory-backend-adapters.json] parity
+[PASS] [marker:config/memory-disclosure-policy.json] canonical exists
+[PASS] [marker:config/memory-disclosure-policy.json] installed exists
+[PASS] [marker:config/memory-disclosure-policy.json] parity
+[PASS] [marker:config/memory-ingest-policy.json] canonical exists
+[PASS] [marker:config/memory-ingest-policy.json] installed exists
+[PASS] [marker:config/memory-ingest-policy.json] parity
+[PASS] [marker:config/memory-runtime-v3-policy.json] canonical exists
+[PASS] [marker:config/memory-runtime-v3-policy.json] installed exists
+[PASS] [marker:config/memory-runtime-v3-policy.json] parity
+[PASS] [marker:config/memory-tier-router.json] canonical exists
+[PASS] [marker:config/memory-tier-router.json] installed exists
+[PASS] [marker:config/memory-tier-router.json] parity
+[PASS] [marker:config/workspace-memory-plane.json] canonical exists
+[PASS] [marker:config/workspace-memory-plane.json] installed exists
+[PASS] [marker:config/workspace-memory-plane.json] parity
+[PASS] [marker:config/proof-class-registry.json] canonical exists
+[PASS] [marker:config/proof-class-registry.json] installed exists
+[PASS] [marker:config/proof-class-registry.json] parity
+[PASS] [marker:config/requirement-doc-policy.json] canonical exists
+[PASS] [marker:config/requirement-doc-policy.json] installed exists
+[PASS] [marker:config/requirement-doc-policy.json] parity
+[PASS] [marker:config/plan-execution-policy.json] canonical exists
+[PASS] [marker:config/plan-execution-policy.json] installed exists
+[PASS] [marker:config/plan-execution-policy.json] parity
+[PASS] [marker:config/phase-cleanup-policy.json] canonical exists
+[PASS] [marker:config/phase-cleanup-policy.json] installed exists
+[PASS] [marker:config/phase-cleanup-policy.json] parity
+
+=== Summary ===
+Total assertions: 844
+Passed: 844
+Failed: 0
+Gate Result: PASS
+[PASS] vibe-installed-runtime-freshness-gate passed

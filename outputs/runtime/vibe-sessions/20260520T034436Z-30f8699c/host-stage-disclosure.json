@@ -1,0 +1,43 @@
+{
+  "enabled": true,
+  "protocol_version": "v1",
+  "mode": "progressive_host_stage_disclosure",
+  "append_only": true,
+  "event_count": 1,
+  "last_sequence": 1,
+  "freeze_gate_passed": true,
+  "events": [
+    {
+      "sequence": 1,
+      "emitted_at": "2026-05-20T03:45:14Z",
+      "event_id": "discussion_routing_frozen",
+      "segment_id": "discussion_routing",
+      "stage": "runtime_input_freeze",
+      "category": "routing",
+      "truth_layer": "routing",
+      "status": "informational",
+      "gate_status": null,
+      "skill_count": 2,
+      "skills": [
+        {
+          "skill_id": "openai-docs",
+          "why_now": "overlay recommendation from 'dialectic_team_advice'",
+          "source": null,
+          "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+          "native_skill_description": null,
+          "state": "routed"
+        },
+        {
+          "skill_id": "embedding-strategies",
+          "why_now": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+          "source": null,
+          "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+          "native_skill_description": null,
+          "state": "routed"
+        }
+      ],
+      "rendered_text": "Vibe routed these Skills into the discussion/planning chain:\n- openai-docs [routed] from /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md\n  Why: overlay recommendation from 'dialectic_team_advice'\n- embedding-strategies [routed] from /home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md\n  Why: internal specialist recommender selected a bounded specialist candidate for governed execution"
+    }
+  ],
+  "rendered_text": "Vibe routed these Skills into the discussion/planning chain:\n- openai-docs [routed] from /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md\n  Why: overlay recommendation from 'dialectic_team_advice'\n- embedding-strategies [routed] from /home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md\n  Why: internal specialist recommender selected a bounded specialist candidate for governed execution"
+}

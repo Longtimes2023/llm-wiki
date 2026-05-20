@@ -1,0 +1,100 @@
+{
+  "stage": "phase_cleanup",
+  "run_id": "20260520T054106Z-c8c3438c",
+  "mode": "interactive_governed",
+  "task": "compare local project with GitHub https://github.com/Longtimes2023/llm-wiki iden... Deliverable: Governed implementation artifacts, verification evidence, and cleanup receipts. Constraints: Do not bypass the fixed six-stage governed runtime.; Do not widen scope silently beyond the frozen requirement document.. Update: execute merge: git merge origin/main, resolve conflicts per frozen strategy, git push origin main",
+  "cleanup_mode": "receipt_only",
+  "default_bounded_cleanup_applied": false,
+  "execute_governance_cleanup_requested": false,
+  "managed_node_cleanup_applied": false,
+  "generated_at": "2026-05-20T05:41:47Z",
+  "cleanup_result": null,
+  "cleanup_error": null,
+  "delivery_acceptance": {
+    "report_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/delivery-acceptance-report.json",
+    "markdown_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/delivery-acceptance-report.md",
+    "gate_result": "MANUAL_REVIEW_REQUIRED",
+    "completion_language_allowed": false,
+    "runtime_status": "completed",
+    "readiness_state": "manual_actions_pending",
+    "manual_review_layer_count": 3,
+    "failing_layer_count": 0,
+    "forbidden_completion_hit_count": 1,
+    "incomplete_layers": [
+      "code_task_tdd_evidence_truth",
+      "workflow_completion_truth",
+      "product_acceptance_truth"
+    ],
+    "command_exit_code": 1
+  },
+  "delivery_acceptance_error": null,
+  "skill_usage_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/skill-usage.json",
+  "skill_usage": {
+    "schema_version": 2,
+    "state_model": "binary_used_unused",
+    "used": [
+      {
+        "skill_id": "openai-docs",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7",
+        "evidence": [
+          {
+            "stage": "plan_execute",
+            "artifact_path": "execution-manifest.json",
+            "impact": "Execution manifest preserves binary skill usage truth for openai-docs; execution cannot use routing, hints, consultation, or dispatch alone as usage proof."
+          }
+        ]
+      }
+    ],
+    "unused": null,
+    "used_skills": [
+      "openai-docs"
+    ],
+    "unused_skills": [],
+    "loaded_skills": [
+      {
+        "skill_id": "openai-docs",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7",
+        "load_status": "loaded_full_skill_md",
+        "loaded_at_stage": "skeleton_check",
+        "loaded_byte_count": 3446,
+        "loaded_line_count": 56
+      }
+    ],
+    "evidence": [
+      {
+        "skill_id": "openai-docs",
+        "stage": "requirement_doc",
+        "artifact_ref": "2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+        "impact_summary": "Requirement doc adopts the loaded openai-docs SKILL.md as the workflow authority for downstream planning and completion evidence.",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7"
+      },
+      {
+        "skill_id": "openai-docs",
+        "stage": "xl_plan",
+        "artifact_ref": "2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023-execution-plan.md",
+        "impact_summary": "Execution plan carries the loaded openai-docs SKILL.md workflow authority into the planned verification and completion path.",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7"
+      },
+      {
+        "skill_id": "openai-docs",
+        "stage": "plan_execute",
+        "artifact_ref": "execution-manifest.json",
+        "impact_summary": "Execution manifest preserves binary skill usage truth for openai-docs; execution cannot use routing, hints, consultation, or dispatch alone as usage proof.",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7"
+      }
+    ],
+    "unused_reasons": null
+  },
+  "skill_usage_summary": {
+    "used_skill_count": 1,
+    "unused_skill_count": 1,
+    "loaded_skill_count": 1,
+    "evidence_count": 3
+  },
+  "proof_class": "runtime"
+}

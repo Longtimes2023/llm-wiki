@@ -1,8 +1,8 @@
 ---
-tags: [创意设计, AI, DeepSeek, 视频制作, 3D建模, PPT, Codex, Image 2, 风格迁移]
+tags: [创意设计, AI, DeepSeek, 视频制作, 3D建模, PPT, Codex, Image 2, 风格迁移, Canva, 运营素材]
 created: 2026-04-29
-updated: 2026-05-09
-sources: [2026-04-29-deepseek-5-killer-combinations, 2026-04-29-deepseek-photoshop-script, 2026-04-29-deepseek-ai-video-tutorial, 2026-05-09-codex-visual-style-ppt]
+updated: 2026-05-10
+sources: [2026-04-29-deepseek-5-killer-combinations, 2026-04-29-deepseek-photoshop-script, 2026-04-29-deepseek-ai-video-tutorial, 2026-05-09-codex-visual-style-ppt, 2026-05-10-codex-canva-operations-assets, 2026-05-10-gpt-image-2-prompt-templates]
 ---
 
 # AI 创意设计
@@ -21,6 +21,10 @@ sources: [2026-04-29-deepseek-5-killer-combinations, 2026-04-29-deepseek-photosh
 
 5. **Style Lock + 多宫格策略解决 PPT 视觉一致性难题**：Codex + Image 2 的 visual-style-ppt Skill 通过锁定风格参数（配色、框形、装饰、字号层级）和两段式生成（先多宫格后逐页放大），实现了多页 PPT 的视觉一致性，这是之前 DeepSeek + Gamma 方案无法解决的问题
 
+6. **运营素材的流水线思维替代随机画图思维**：Codex + Canva 的运营素材自动化，核心不是让 AI "随机画图"，而是搭建稳定流水线（选题库→Codex生成素材数据→Canva/HTML模板批量套图→自动质检→人工审核→多平台发布→数据反哺选题）。Codex 承担"模板工程师"角色而非"设计师"角色，先固定5-8套模板再填充字段。提示词分两层（内容层+设计层），素材拆成6个标准字段支持批量化。——来源：[[2026-05-10-codex-canva-operations-assets]]
+
+7. **Prompt-as-Code 把提示词从"散文"升级为"协议"**：329 条 GPT-Image 2 提示词不是简单陈列，而是降维成 JSON/YAML 结构化组件，让 Agent 稳定解析零幻觉、无缝接入工作流、精确控制画面排版。这是提示词从"手工作坊"走向"工业流水线"的关键跃迁——不再是"人肉扒提示词"，而是 Agent 批量出提示词、批量出图一条龙。——来源：[[2026-05-10-gpt-image-2-prompt-templates]]
+
 ## 素材汇总
 
 | 素材标题 | 核心贡献 | 典型工作流 |
@@ -29,6 +33,8 @@ sources: [2026-04-29-deepseek-5-killer-combinations, 2026-04-29-deepseek-photosh
 | DeepSeek 一句话生成 PS 脚本 | 自动化修图新思路 | 自然语言 → JSX 脚本 → 一键修图 |
 | DeepSeek AI 视频制作全流程 | 视频完整生产链路 | 分镜脚本 → 生图 → 动效 → 剪辑 |
 | 当我用Codex做PPT | 视觉风格迁移 PPT 全流程 | 参考图 → Style Lock → 多宫格 → 逐页放大 → 图片版 PPTX |
+| Codex 制作运营素材图调研+落地攻略 | 6种方案+4套工作流+5个提示词模板 | 选题库 → Codex → Canva Bulk Create/Autofill/MCP → 质检 → 发布 |
+| 我逆向了329条GPT-Image2提示词模板 | Prompt-as-Code工业化范式+9大场景 | JSON/YAML Schema → Agent学习 → 批量出提示词 → 批量出图 |
 
 ## 知识体系
 
@@ -119,26 +125,72 @@ sources: [2026-04-29-deepseek-5-killer-combinations, 2026-04-29-deepseek-photosh
 
 **突破意义**：降低 3D 内容生产门槛，普通人也能快速完成从概念到 3D 模型的完整流程
 
+### 领域七：运营素材批量自动化（成熟度：★★★★☆）
+
+**核心组合**：Codex + Canva（Bulk Create/Autofill API/MCP）+ 飞书/Google Sheets + Playwright
+
+**6种方案按团队成熟度递进**：
+1. **Codex + Canva**：自然语言生成品牌一致运营图，Brand Kit锁定字体/颜色/Logo
+2. **Codex + Canva MCP**：AI通过MCP直接调用Canva设计生成、编辑、导出能力，Codex从"写代码"升级为"工作流编排"
+3. **Codex + Canva Bulk Create**：CSV批量填充模板，最低门槛方案，一张模板+CSV一次生成100张图
+4. **Codex + Canva Autofill API**：工程化动态设计生产，需Enterprise，适合有固定品牌模板和数据源的成熟团队
+5. **Codex + GPT Image**：直接生成高质量图，但后期可编辑性差，推荐分工（固定文字用Canva模板，背景氛围图用GPT Image）
+6. **Codex + HTML/SVG/React**：自建素材图生成器，React组件模板+Playwright截图导出，最高自由度
+
+**4套工作流递进**：
+- **A 低门槛版**：ChatGPT/Codex + Sheets + Canva Bulk Create，人工导入CSV
+- **B 半自动版**：Codex + 飞书多维表格 + Canva + 人工审核，Codex生成标题/brief/提示词
+- **C 工程化版**：Codex + Next.js/React + Tailwind + Playwright，内部素材图生成器
+- **D 高级自动化版**：Codex + Canva Autofill API/MCP + Zapier/Make，飞书新增选题自动触发全链路
+
+**核心技巧**：不要让 Codex "自由发挥设计"，而是维护5-8套固定模板；提示词分内容层和设计层；素材拆成6字段（main_title/subtitle/badge_text/visual_direction/CTA/compliance_note）；关键文字放在可编辑模板层而非AI直接渲染；建立自动质检规则
+
+### 领域八：GPT-Image 2 多场景直出（成熟度：★★★★☆）
+
+**核心组合**：Codex + GPT-Image 2（无需 Skill 直接调用）
+
+**9 大场景**：直播画面、手绘水彩城市地图、产品海报、产品拆解图/爆炸视图、技术详解图、社交截图（朋友圈/X）、个人网页、诗词意境图、长卷图
+
+**关键突破**：
+- 中文文字渲染几乎零乱码（之前香蕉生图文字乱码严重）
+- 支持多尺寸直出（长卷图等非常规比例）
+- Codex 直接调用无需 Skill，一分钟出封面图
+- Prompt-as-Code 范式：JSON/YAML 结构化模板 → Agent 学习 → 批量出图
+
+**开源资源**：awesome-gpt-image-2（https://github.com/freestylefly/awesome-gpt-image-2）— 329 条工业级提示词模板
+
+**适用场景**：公众号封面图（Codex + Obsidian）、信息图、海报、地图、诗词插画
+
+**局限**：社交截图以假乱真带来信息安全隐忧；人像细节仍弱于 Nano Banana Pro
+
 ## 综合分析
 
 ### 不同素材的交叉视角
 
 **关于组合工作流的共识**：
-4 篇素材共同强调：AI 工具的价值不在于单独使用，而在于作为"大脑"与各领域专业工具组合。这是目前最实用也最高效的 AI 应用范式。DeepSeek + 专业工具 和 Codex + Image 2 + Skill 是两种不同的组合范式。
+5 篇素材共同强调：AI 工具的价值不在于单独使用，而在于作为"大脑"与各领域专业工具组合。这是目前最实用也最高效的 AI 应用范式。DeepSeek + 专业工具 和 Codex + Image 2 + Skill 和 Codex + Canva 是三种不同的组合范式，分别擅长不同场景。
 
 **关于 PPT 生成的两条路线**：
 - **可编辑路线**（DeepSeek + Gamma）：优点是生成后可修改文字，适合需要频繁调整内容的场景；缺点是视觉风格统一性差
 - **图片版路线**（Codex + Image 2 + Skill）：优点是视觉品质高、风格一致；缺点是打包后不可编辑文字
 两条路线互补而非替代，选择取决于使用场景。
 
+**关于运营素材自动化的新路线**：
+Codex + Canva 开辟了第三条路线：**可编辑模板 + AI数据生成**。Canva 生成的是可编辑设计（品牌文字、CTA都可后期修改），Codex 负责数据生成和流程编排。这条路线同时解决了"可编辑性"和"批量生产"两个痛点，是目前运营素材场景的最佳实践。
+
 **关于风格一致性问题的演进**：
-PS 脚本教程和视频教程都未涉及多图风格一致性问题，而 Codex + Image 2 的 visual-style-ppt Skill 通过 Style Lock + 多宫格策略正面解决了这个问题，这是 AI 创意设计领域的重要进步。
+PS 脚本教程和视频教程都未涉及多图风格一致性问题，而 Codex + Image 2 的 visual-style-ppt Skill 通过 Style Lock + 多宫格策略正面解决了这个问题。运营素材场景中，Canva Brand Kit + 模板化思路则从另一个角度（品牌规范锁定+模板填充而非风格迁移）解决了风格一致性问题。
 
 **关于国产工具链的判断**：
-AI 视频教程特别指出整套工作流全部是国产工具，并对 DeepSeek 的限制注册政策表达了"国产 AI 崛起"的自豪感。但 Codex + Image 2 路线是海外工具链，说明在视觉品质要求高的场景下，海外工具仍有优势。
+AI 视频教程特别指出整套工作流全部是国产工具，并对 DeepSeek 的限制注册政策表达了"国产 AI 崛起"的自豪感。但 Codex + Image 2 路线和 Codex + Canva 路线都是海外工具链，说明在视觉品质要求高和工程化自动化的场景下，海外工具仍有优势。
 
 **关于思路价值大于案例本身**：
-PS 脚本教程和 Codex PPT 教程都强调：核心不是单个案例，而是可复制的范式——前者是"自然语言 → 脚本 → 自动化执行"，后者是"Style Lock + 多宫格 → 视觉一致性"。
+PS 脚本教程、Codex PPT 教程和运营素材攻略都强调：核心不是单个案例，而是可复制的范式——前者是"自然语言 → 脚本 → 自动化执行"，中间是"Style Lock + 多宫格 → 视觉一致性"，后者是"流水线思维 + 模板维护 + 字段标准化 → 批量生产"。新增的 Prompt-as-Code 范式延续了这一脉络——"提示词 → JSON/YAML Schema → Agent 批量调用"，核心不是329个案例本身，而是把案例变成可自动化消费的方法论。
+
+**关于 Codex 调用 Image 2 的两条路线**：
+- **Skill 路线**（visual-style-ppt Skill）：适合复杂多步工作流（PPT风格迁移），需要精确控制生产参数
+- **直接调用路线**（无需 Skill）：适合单图快速生成（封面图、海报、信息图），一分钟出图，简单高效
+两条路线不是替代关系，而是按任务复杂度选择。
 
 ### 趋势与判断
 
@@ -146,7 +198,9 @@ PS 脚本教程和 Codex PPT 教程都强调：核心不是单个案例，而是
 2. **零代码编程普及**：自然语言转代码的能力将让自动化能力普及到每一个普通用户
 3. **内容生产门槛持续降低**：3D 建模、专业视频等曾经高门槛的技能，正在被组合式 AI 工作流拉平
 4. **国产 AI 生态崛起**：从大模型到垂直应用的完整国产工具链已经形成，且质量达到"完胜"级别
-5. **视觉一致性成为新焦点**：随着 AI 图像生成能力提升，多图/多页的视觉一致性问题从"不可能"变为"可工程化解决"，Style Lock 类机制将成标配
+5. **视觉一致性成为新焦点**：随着 AI 图像生成能力提升，多图/多页的视觉一致性问题从"不可能"变为"可工程化解决"，Style Lock 类机制和 Brand Kit + 模板化思路将成为标配
+6. **运营素材从"手工活"走向"流水线"**：Codex + Canva 的组合标志着运营素材生产从"设计师逐张手绘"模式进入"流水线批量生产"模式，模板维护+字段标准化+自动质检的工程化方法论将重塑运营团队的工作方式
+7. **提示词从"散文"走向"协议"**：Prompt-as-Code 范式标志着 AI 创意设计从"手工作坊"（人写人读的散文式提示词）走向"工业流水线"（机器可解析的结构化 Schema），Agent 批量调用将成为标配
 
 ### 未解决的问题
 
@@ -155,11 +209,15 @@ PS 脚本教程和 Codex PPT 教程都强调：核心不是单个案例，而是
 3. **版权归属仍不明确**：多工具组合生成的内容，版权如何界定尚无明确标准
 4. **高级创意仍需人类把控**：AI 擅长执行，但整体创意方向、审美判断仍需人类决策
 5. **Image 2 人像细节不足**：风格迁移场景人像仍是弱项，需要与其他模型（如 Nano Banana Pro）互补
+6. **Canva Autofill API 门槛较高**：面向 Enterprise 用户，小团队无法使用工程化自动方案，只能停留在 Bulk Create 手动导入阶段
+7. **运营素材的合规风险自动化检测尚不成熟**：虽然文章提出质检规则思路，但实际落地仍需人工复核"保分""必过"等风险词和标题与模板类型匹配
+8. **GPT-Image 2 社交截图的以假乱真带来信息安全隐忧**：朋友圈/X截图逼真到"照骗成本太低"，需要警惕深度伪造风险
 
 ## 相关页面
 
 - [[DeepSeek]]
 - [[Codex]]
 - [[GPT Image 2]]
+- [[Canva]]
 - [[提示词工程]]
 - [[AI内容创作]]

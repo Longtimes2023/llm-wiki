@@ -1,0 +1,14 @@
+{
+  "child_run_id": "lane-installed-runtime-freshness-gate",
+  "root_run_id": "20260520T054106Z-c8c3438c",
+  "envelope_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate/delegation-envelope.json",
+  "requirement_doc_path": "/home/steven/llm-wiki/docs/requirements/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+  "execution_plan_path": "/home/steven/llm-wiki/docs/plans/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023-execution-plan.md",
+  "write_scope_valid": true,
+  "prompt_tail_valid": true,
+  "child_run_valid": true,
+  "parent_run_valid": true,
+  "parent_unit_valid": true,
+  "specialist_approval_valid": true,
+  "validated_at": "2026-05-20T05:41:36Z"
+}

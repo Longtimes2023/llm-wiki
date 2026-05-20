@@ -1,0 +1,61 @@
+{
+  "enabled": true,
+  "truth_model": "skill_routing_usage_evidence",
+  "layer_count": 2,
+  "skill_count": 2,
+  "skill_ids": [
+    "openai-docs",
+    "embedding-strategies"
+  ],
+  "layers": [
+    {
+      "layer_id": "discussion_routing",
+      "truth_layer": "routing",
+      "stage": "runtime_input_freeze",
+      "skill_count": 1,
+      "skills": [
+        {
+          "skill_id": "openai-docs",
+          "why_now": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+          "source": null,
+          "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+          "native_skill_description": null,
+          "state": "routed"
+        }
+      ],
+      "rendered_text": "Discussion-chain routed Skills:\n- openai-docs: internal specialist recommender selected a bounded specialist candidate for governed execution (/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md)"
+    },
+    {
+      "layer_id": "execution_dispatch",
+      "truth_layer": "execution",
+      "stage": "plan_execute",
+      "skill_count": 2,
+      "skills": [
+        {
+          "skill_id": "openai-docs",
+          "why_now": "approved for execution-time specialist dispatch under governed vibe",
+          "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+          "native_skill_entrypoint_raw": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+          "entrypoint_path_state": "resolved",
+          "entrypoint_missing": false,
+          "entrypoint_path_invalid": false,
+          "native_skill_description": null,
+          "state": "disclosed_for_execution"
+        },
+        {
+          "skill_id": "embedding-strategies",
+          "why_now": "approved for execution-time specialist dispatch under governed vibe",
+          "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+          "native_skill_entrypoint_raw": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+          "entrypoint_path_state": "resolved",
+          "entrypoint_missing": false,
+          "entrypoint_path_invalid": false,
+          "native_skill_description": null,
+          "state": "disclosed_for_execution"
+        }
+      ],
+      "rendered_text": "Execution-chain specialist disclosure:\n- openai-docs: approved for execution (/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md)\n- embedding-strategies: approved for execution (/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md)"
+    }
+  ],
+  "rendered_text": "Skill routing and usage evidence.\n\nThis disclosure records selected skills and material-use evidence. A selected skill is not a `used` claim; material use requires `skill_usage.used` plus `skill_usage.evidence`.\n\nDiscussion-chain routed Skills:\n- openai-docs: internal specialist recommender selected a bounded specialist candidate for governed execution (/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md)\n\nExecution-chain specialist disclosure:\n- openai-docs: approved for execution (/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md)\n- embedding-strategies: approved for execution (/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md)"
+}

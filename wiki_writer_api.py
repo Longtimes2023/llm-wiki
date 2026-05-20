@@ -55,6 +55,7 @@ class WikiGenerateRequest(BaseModel):
     provider: Optional[str] = Field(default=None, description="Provider profile name (providers/<name>.env). 默认: sticky / .env fallback")
     permission_mode: str = Field(default="acceptEdits", description="权限模式: acceptEdits/askUser/bypassPermissions")
     stream: bool = Field(default=True, description="是否使用流式响应 (SSE)")
+    read_only: bool = Field(default=False, description="True → 仅允许 Skill/Read/Glob/Grep，禁止 Write/Edit/Bash，适用于 Q&A 场景")
 
 
 class WikiGenerateResponse(BaseModel):
@@ -119,7 +120,8 @@ async def generate_wiki_article_stream(
     user_request: str,
     model: Optional[str] = None,
     provider_name: Optional[str] = None,
-    permission_mode: str = "acceptEdits"
+    permission_mode: str = "acceptEdits",
+    read_only: bool = False,
 ) -> AsyncGenerator[str, None]:
     """
     流式生成 wiki 文章
@@ -143,11 +145,16 @@ async def generate_wiki_article_stream(
     # 发送开始事件
     yield f"data: {json.dumps({'type': 'start', 'data': {'model': use_model, 'provider': provider['name'], 'request': user_request}}, ensure_ascii=False)}\n\n"
 
+    allowed_tools = (
+        ["Skill", "Read", "Glob", "Grep"]
+        if read_only
+        else ["Skill", "Read", "Write", "Glob", "Grep", "Bash", "Edit"]
+    )
     options = ClaudeAgentOptions(
         model=use_model,
         permission_mode=permission_mode,
-        setting_sources=["project"],
-        allowed_tools=["Skill", "Read", "Write", "Glob", "Grep", "Bash", "Edit"],
+        setting_sources=["project", "user"],
+        allowed_tools=allowed_tools,
         cwd=WIKI_DIR,
         env={
             "ANTHROPIC_AUTH_TOKEN": provider["auth_token"],
@@ -190,7 +197,8 @@ async def generate_wiki_article_sync(
     user_request: str,
     model: Optional[str] = None,
     provider_name: Optional[str] = None,
-    permission_mode: str = "acceptEdits"
+    permission_mode: str = "acceptEdits",
+    read_only: bool = False,
 ) -> dict:
     """
     同步生成 wiki 文章
@@ -212,11 +220,16 @@ async def generate_wiki_article_sync(
     full_response = []
     tool_calls = []
 
+    allowed_tools = (
+        ["Skill", "Read", "Glob", "Grep"]
+        if read_only
+        else ["Skill", "Read", "Write", "Glob", "Grep", "Bash", "Edit"]
+    )
     options = ClaudeAgentOptions(
         model=use_model,
         permission_mode=permission_mode,
-        setting_sources=["project"],
-        allowed_tools=["Skill", "Read", "Write", "Glob", "Grep", "Bash", "Edit"],
+        setting_sources=["project", "user"],
+        allowed_tools=allowed_tools,
         cwd=WIKI_DIR,
         env={
             "ANTHROPIC_AUTH_TOKEN": provider["auth_token"],
@@ -333,7 +346,8 @@ async def generate_wiki(request: WikiGenerateRequest):
                 user_request=request.request,
                 model=request.model,
                 provider_name=request.provider,
-                permission_mode=request.permission_mode
+                permission_mode=request.permission_mode,
+                read_only=request.read_only,
             ),
             media_type="text/event-stream",
             headers={
@@ -348,7 +362,8 @@ async def generate_wiki(request: WikiGenerateRequest):
             user_request=request.request,
             model=request.model,
             provider_name=request.provider,
-            permission_mode=request.permission_mode
+            permission_mode=request.permission_mode,
+            read_only=request.read_only,
         )
         return JSONResponse(content=result)
 
@@ -373,7 +388,8 @@ async def generate_wiki_sync(request: WikiGenerateRequest):
         user_request=request.request,
         model=request.model,
         provider_name=request.provider,
-        permission_mode=request.permission_mode
+        permission_mode=request.permission_mode,
+        read_only=request.read_only,
     )
     return WikiGenerateResponse(**result)
 

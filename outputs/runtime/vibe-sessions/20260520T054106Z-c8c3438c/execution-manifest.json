@@ -1,0 +1,1202 @@
+{
+  "stage": "plan_execute",
+  "run_id": "20260520T054106Z-c8c3438c",
+  "governance_scope": "root",
+  "mode": "interactive_governed",
+  "internal_grade": "L",
+  "scheduler_kind": "bounded_local_xl_executor",
+  "profile_id": "repo_safe_execution_closure",
+  "requirement_doc_path": "/home/steven/llm-wiki/docs/requirements/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+  "execution_plan_path": "/home/steven/llm-wiki/docs/plans/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023-execution-plan.md",
+  "execution_topology_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-topology.json",
+  "runtime_input_packet_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/runtime-input-packet.json",
+  "skill_usage": {
+    "schema_version": 2,
+    "state_model": "binary_used_unused",
+    "used": [
+      {
+        "skill_id": "openai-docs",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7",
+        "evidence": [
+          {
+            "stage": "plan_execute",
+            "artifact_path": "execution-manifest.json",
+            "impact": "Execution manifest preserves binary skill usage truth for openai-docs; execution cannot use routing, hints, consultation, or dispatch alone as usage proof."
+          }
+        ]
+      }
+    ],
+    "unused": null,
+    "used_skills": [
+      "openai-docs"
+    ],
+    "unused_skills": [],
+    "loaded_skills": [
+      {
+        "skill_id": "openai-docs",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7",
+        "load_status": "loaded_full_skill_md",
+        "loaded_at_stage": "skeleton_check",
+        "loaded_byte_count": 3446,
+        "loaded_line_count": 56
+      }
+    ],
+    "evidence": [
+      {
+        "skill_id": "openai-docs",
+        "stage": "requirement_doc",
+        "artifact_ref": "2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+        "impact_summary": "Requirement doc adopts the loaded openai-docs SKILL.md as the workflow authority for downstream planning and completion evidence.",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7"
+      },
+      {
+        "skill_id": "openai-docs",
+        "stage": "xl_plan",
+        "artifact_ref": "2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023-execution-plan.md",
+        "impact_summary": "Execution plan carries the loaded openai-docs SKILL.md workflow authority into the planned verification and completion path.",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7"
+      },
+      {
+        "skill_id": "openai-docs",
+        "stage": "plan_execute",
+        "artifact_ref": "execution-manifest.json",
+        "impact_summary": "Execution manifest preserves binary skill usage truth for openai-docs; execution cannot use routing, hints, consultation, or dispatch alone as usage proof.",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7"
+      }
+    ],
+    "unused_reasons": null
+  },
+  "skill_routing_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/runtime-input-packet.json",
+  "skill_routing_summary": {
+    "candidate_count": 1,
+    "selected_count": 1,
+    "rejected_count": 0,
+    "used_count": 1,
+    "unused_count": 1
+  },
+  "skill_execution_lock": {
+    "schema_version": "v1",
+    "state": "active",
+    "source": "approved_plan_reentry",
+    "source_run_id": "20260520T040315Z-3aabeae6",
+    "locked_skill_ids": [
+      "openai-docs",
+      "embedding-strategies"
+    ],
+    "locked_dispatch": [
+      {
+        "skill_id": "openai-docs",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "reason": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "task_slice": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "state": "selected",
+        "dispatch_phase": "in_execution",
+        "parallelizable_in_root_xl": true,
+        "native_usage_required": true,
+        "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_root": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs",
+        "bounded_role": "specialist_assist",
+        "must_preserve_workflow": true,
+        "binding_profile": "default",
+        "lane_policy": "inherit_grade",
+        "write_scope": "specialist:openai-docs",
+        "review_mode": "native_contract",
+        "execution_priority": 50,
+        "required_inputs": [
+          "bounded specialist subtask contract",
+          "frozen requirement context",
+          "relevant source files or domain artifacts"
+        ],
+        "expected_outputs": [
+          "bounded specialist findings or code changes",
+          "verification notes aligned with the specialist skill"
+        ],
+        "verification_expectation": "Preserve the specialist skill's native workflow, boundaries, and validation style.",
+        "progressive_load_policy": [
+          "Open the specialist /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md entrypoint first.",
+          "If this specialist is disclosed only by native_skill_entrypoint, keep same-session loading path-based and do not replace it with Skill(openai-docs) unless that skill name is explicitly host-visible in the current session."
+        ],
+        "legacy_source": "route_selected",
+        "locked_for_execution": true,
+        "lock_source": "current_skill_routing_selected",
+        "reconciliation_state": "current_surfaced",
+        "requires_resolution": true
+      },
+      {
+        "skill_id": "embedding-strategies",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+        "reason": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "task_slice": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "state": "selected",
+        "dispatch_phase": "in_execution",
+        "parallelizable_in_root_xl": true,
+        "native_usage_required": true,
+        "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+        "skill_root": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies",
+        "bounded_role": "specialist_assist",
+        "must_preserve_workflow": true,
+        "binding_profile": "default",
+        "lane_policy": "inherit_grade",
+        "write_scope": "specialist:embedding-strategies",
+        "review_mode": "native_contract",
+        "execution_priority": 50,
+        "required_inputs": [
+          "bounded specialist subtask contract",
+          "frozen requirement context",
+          "relevant source files or domain artifacts"
+        ],
+        "expected_outputs": [
+          "bounded specialist findings or code changes",
+          "verification notes aligned with the specialist skill"
+        ],
+        "verification_expectation": "Preserve the specialist skill's native workflow, boundaries, and validation style.",
+        "progressive_load_policy": [
+          "Open the specialist /home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md entrypoint first.",
+          "If this specialist is disclosed only by native_skill_entrypoint, keep same-session loading path-based and do not replace it with Skill(embedding-strategies) unless that skill name is explicitly host-visible in the current session."
+        ],
+        "legacy_source": "route_selected",
+        "locked_for_execution": true,
+        "lock_source": "previous_skill_execution_lock",
+        "reconciliation_state": "inherited_not_currently_surfaced",
+        "requires_resolution": true
+      }
+    ],
+    "resolution_required": true,
+    "resolution_states": [
+      "executed",
+      "not_applicable",
+      "deferred",
+      "failed"
+    ]
+  },
+  "specialist_lock_resolution": {
+    "active": true,
+    "locked_skill_ids": [
+      "openai-docs",
+      "embedding-strategies"
+    ],
+    "executed_skill_ids": [
+      "embedding-strategies",
+      "openai-docs"
+    ],
+    "not_applicable_skill_ids": [],
+    "deferred_skill_ids": [],
+    "failed_skill_ids": [],
+    "unresolved_skill_ids": [],
+    "delivery_blocking": false
+  },
+  "selected_skill_ids": [
+    "openai-docs"
+  ],
+  "execution_memory_context_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/memory-activation/execution-context-pack.json",
+  "generated_at": "2026-05-20T05:41:47Z",
+  "planned_wave_count": 1,
+  "planned_unit_count": 4,
+  "executed_unit_count": 4,
+  "successful_unit_count": 4,
+  "failed_unit_count": 0,
+  "timed_out_unit_count": 0,
+  "proof_class": "runtime",
+  "promotion_suitable": "bounded",
+  "hierarchy": {
+    "governance_scope": "root",
+    "root_run_id": "20260520T054106Z-c8c3438c",
+    "parent_run_id": null,
+    "parent_unit_id": null,
+    "inherited_requirement_doc_path": null,
+    "inherited_execution_plan_path": null,
+    "delegation_envelope_path": null
+  },
+  "authority": {
+    "canonical_requirement_write_allowed": true,
+    "canonical_plan_write_allowed": true,
+    "global_dispatch_allowed": true,
+    "completion_claim_allowed": true
+  },
+  "route_runtime_alignment": {
+    "router_selected_skill": "openai-docs",
+    "runtime_selected_skill": "vibe",
+    "skill_mismatch": true,
+    "confirm_required": false,
+    "requested_host_adapter_id": "claude-code",
+    "effective_host_adapter_id": "claude-code"
+  },
+  "execution_topology": {
+    "path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-topology.json",
+    "delegation_mode": "serial_child_lanes",
+    "wave_execution": "sequential",
+    "step_execution": "sequential",
+    "unit_execution": "sequential",
+    "max_parallel_units": 1,
+    "child_lane_unit_count": 2,
+    "parallelizable_specialist_unit_count": 2,
+    "parallel_candidate_unit_count": 0,
+    "parallel_units_executed_count": 0,
+    "parallel_executed_unit_ids": [],
+    "parallel_execution_windows": [],
+    "serial_execution_order": [
+      "installed-runtime-freshness-gate",
+      "release-install-runtime-coherence-gate",
+      "specialist-in_execution-ungrouped-embedding-strategies-specialist",
+      "specialist-in_execution-ungrouped-openai-docs-specialist"
+    ],
+    "review_mode": "two_stage_after_unit",
+    "specialist_phase_bindings": {
+      "pre_execution": [],
+      "in_execution": [
+        {
+          "skill_id": "openai-docs",
+          "phase_id": null,
+          "reason": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+          "task_slice": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+          "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+          "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+          "dispatch_phase": "in_execution",
+          "parallelizable_in_root_xl": true,
+          "native_usage_required": true,
+          "usage_required": true,
+          "skill_root": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs",
+          "bounded_role": "specialist_assist",
+          "must_preserve_workflow": true,
+          "binding_profile": "default",
+          "lane_policy": "inherit_grade",
+          "write_scope": "specialist:openai-docs",
+          "review_mode": "native_contract",
+          "execution_priority": 50,
+          "required_inputs": [
+            "bounded specialist subtask contract",
+            "frozen requirement context",
+            "relevant source files or domain artifacts"
+          ],
+          "expected_outputs": [
+            "bounded specialist findings or code changes",
+            "verification notes aligned with the specialist skill"
+          ],
+          "verification_expectation": "Preserve the specialist skill's native workflow, boundaries, and validation style.",
+          "progressive_load_policy": [
+            "Open the specialist /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md entrypoint first.",
+            "If this specialist is disclosed only by native_skill_entrypoint, keep same-session loading path-based and do not replace it with Skill(openai-docs) unless that skill name is explicitly host-visible in the current session."
+          ],
+          "locked_for_execution": true,
+          "lock_source": "current_skill_routing_selected",
+          "reconciliation_state": "current_surfaced",
+          "requires_resolution": true
+        },
+        {
+          "skill_id": "embedding-strategies",
+          "phase_id": null,
+          "reason": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+          "task_slice": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+          "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+          "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+          "dispatch_phase": "in_execution",
+          "parallelizable_in_root_xl": true,
+          "native_usage_required": true,
+          "usage_required": true,
+          "skill_root": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies",
+          "bounded_role": "specialist_assist",
+          "must_preserve_workflow": true,
+          "binding_profile": "default",
+          "lane_policy": "inherit_grade",
+          "write_scope": "specialist:embedding-strategies",
+          "review_mode": "native_contract",
+          "execution_priority": 50,
+          "required_inputs": [
+            "bounded specialist subtask contract",
+            "frozen requirement context",
+            "relevant source files or domain artifacts"
+          ],
+          "expected_outputs": [
+            "bounded specialist findings or code changes",
+            "verification notes aligned with the specialist skill"
+          ],
+          "verification_expectation": "Preserve the specialist skill's native workflow, boundaries, and validation style.",
+          "progressive_load_policy": [
+            "Open the specialist /home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md entrypoint first.",
+            "If this specialist is disclosed only by native_skill_entrypoint, keep same-session loading path-based and do not replace it with Skill(embedding-strategies) unless that skill name is explicitly host-visible in the current session."
+          ],
+          "locked_for_execution": true,
+          "lock_source": "previous_skill_execution_lock",
+          "reconciliation_state": "inherited_not_currently_surfaced",
+          "requires_resolution": true
+        }
+      ],
+      "post_execution": [],
+      "verification": []
+    },
+    "dispatch_resolution": {
+      "source": "plan_execute_selected_skill_execution",
+      "frozen_selected_skill_execution_count": 2,
+      "selected_skill_execution_count": 2,
+      "auto_selected_skill_execution_count": 0,
+      "same_round_auto_absorb_applied": false,
+      "skill_execution_resolution_path": null
+    },
+    "two_stage_review": {
+      "enabled": true,
+      "review_receipt_count": 4,
+      "review_receipt_paths": [
+        "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/reviews/lane-installed-runtime-freshness-gate-spec.json",
+        "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/reviews/lane-installed-runtime-freshness-gate-quality.json",
+        "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/reviews/lane-release-install-runtime-coherence-gate-spec.json",
+        "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/reviews/lane-release-install-runtime-coherence-gate-quality.json"
+      ]
+    }
+  },
+  "plan_shadow": {
+    "path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/plan-derived-execution-shadow.json",
+    "candidate_unit_count": 16,
+    "executable_unit_count": 1,
+    "skill_execution_unit_count": 6,
+    "advisory_only_unit_count": 6,
+    "ambiguous_unit_count": 3
+  },
+  "specialist_accounting": {
+    "recommendation_count": 1,
+    "matched_skill_ids": [
+      "openai-docs"
+    ],
+    "surfaced_skill_ids": [
+      "openai-docs"
+    ],
+    "specialist_skill_count": 2,
+    "specialist_skills": [
+      "openai-docs",
+      "embedding-strategies"
+    ],
+    "native_usage_required": true,
+    "execution_mode": "native_bounded_units",
+    "effective_execution_status": "direct_current_session_routed",
+    "skill_execution_unit_count": 2,
+    "recommendations": [
+      {
+        "skill_id": "openai-docs",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "reason": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "task_slice": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "state": "selected",
+        "dispatch_phase": "in_execution",
+        "parallelizable_in_root_xl": true,
+        "native_usage_required": true,
+        "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_root": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs",
+        "bounded_role": "specialist_assist",
+        "must_preserve_workflow": true,
+        "binding_profile": "default",
+        "lane_policy": "inherit_grade",
+        "write_scope": "specialist:openai-docs",
+        "review_mode": "native_contract",
+        "execution_priority": 50,
+        "required_inputs": [
+          "bounded specialist subtask contract",
+          "frozen requirement context",
+          "relevant source files or domain artifacts"
+        ],
+        "expected_outputs": [
+          "bounded specialist findings or code changes",
+          "verification notes aligned with the specialist skill"
+        ],
+        "verification_expectation": "Preserve the specialist skill's native workflow, boundaries, and validation style.",
+        "progressive_load_policy": [
+          "Open the specialist /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md entrypoint first.",
+          "If this specialist is disclosed only by native_skill_entrypoint, keep same-session loading path-based and do not replace it with Skill(openai-docs) unless that skill name is explicitly host-visible in the current session."
+        ],
+        "legacy_source": "route_selected"
+      }
+    ],
+    "selected_skill_execution_count": 2,
+    "selected_skill_execution": [
+      {
+        "skill_id": "openai-docs",
+        "phase_id": null,
+        "reason": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "task_slice": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "dispatch_phase": "in_execution",
+        "parallelizable_in_root_xl": true,
+        "native_usage_required": true,
+        "usage_required": true,
+        "skill_root": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs",
+        "bounded_role": "specialist_assist",
+        "must_preserve_workflow": true,
+        "binding_profile": "default",
+        "lane_policy": "inherit_grade",
+        "write_scope": "specialist:openai-docs",
+        "review_mode": "native_contract",
+        "execution_priority": 50,
+        "required_inputs": [
+          "bounded specialist subtask contract",
+          "frozen requirement context",
+          "relevant source files or domain artifacts"
+        ],
+        "expected_outputs": [
+          "bounded specialist findings or code changes",
+          "verification notes aligned with the specialist skill"
+        ],
+        "verification_expectation": "Preserve the specialist skill's native workflow, boundaries, and validation style.",
+        "progressive_load_policy": [
+          "Open the specialist /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md entrypoint first.",
+          "If this specialist is disclosed only by native_skill_entrypoint, keep same-session loading path-based and do not replace it with Skill(openai-docs) unless that skill name is explicitly host-visible in the current session."
+        ],
+        "locked_for_execution": true,
+        "lock_source": "current_skill_routing_selected",
+        "reconciliation_state": "current_surfaced",
+        "requires_resolution": true
+      },
+      {
+        "skill_id": "embedding-strategies",
+        "phase_id": null,
+        "reason": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "task_slice": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+        "dispatch_phase": "in_execution",
+        "parallelizable_in_root_xl": true,
+        "native_usage_required": true,
+        "usage_required": true,
+        "skill_root": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies",
+        "bounded_role": "specialist_assist",
+        "must_preserve_workflow": true,
+        "binding_profile": "default",
+        "lane_policy": "inherit_grade",
+        "write_scope": "specialist:embedding-strategies",
+        "review_mode": "native_contract",
+        "execution_priority": 50,
+        "required_inputs": [
+          "bounded specialist subtask contract",
+          "frozen requirement context",
+          "relevant source files or domain artifacts"
+        ],
+        "expected_outputs": [
+          "bounded specialist findings or code changes",
+          "verification notes aligned with the specialist skill"
+        ],
+        "verification_expectation": "Preserve the specialist skill's native workflow, boundaries, and validation style.",
+        "progressive_load_policy": [
+          "Open the specialist /home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md entrypoint first.",
+          "If this specialist is disclosed only by native_skill_entrypoint, keep same-session loading path-based and do not replace it with Skill(embedding-strategies) unless that skill name is explicitly host-visible in the current session."
+        ],
+        "locked_for_execution": true,
+        "lock_source": "previous_skill_execution_lock",
+        "reconciliation_state": "inherited_not_currently_surfaced",
+        "requires_resolution": true
+      }
+    ],
+    "frozen_selected_skill_execution_count": 2,
+    "frozen_selected_skill_execution": [
+      {
+        "skill_id": "openai-docs",
+        "phase_id": null,
+        "reason": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "task_slice": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "dispatch_phase": "in_execution",
+        "parallelizable_in_root_xl": true,
+        "native_usage_required": true,
+        "usage_required": true,
+        "skill_root": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs",
+        "bounded_role": "specialist_assist",
+        "must_preserve_workflow": true,
+        "binding_profile": "default",
+        "lane_policy": "inherit_grade",
+        "write_scope": "specialist:openai-docs",
+        "review_mode": "native_contract",
+        "execution_priority": 50,
+        "required_inputs": [
+          "bounded specialist subtask contract",
+          "frozen requirement context",
+          "relevant source files or domain artifacts"
+        ],
+        "expected_outputs": [
+          "bounded specialist findings or code changes",
+          "verification notes aligned with the specialist skill"
+        ],
+        "verification_expectation": "Preserve the specialist skill's native workflow, boundaries, and validation style.",
+        "progressive_load_policy": [
+          "Open the specialist /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md entrypoint first.",
+          "If this specialist is disclosed only by native_skill_entrypoint, keep same-session loading path-based and do not replace it with Skill(openai-docs) unless that skill name is explicitly host-visible in the current session."
+        ],
+        "locked_for_execution": true,
+        "lock_source": "current_skill_routing_selected",
+        "reconciliation_state": "current_surfaced",
+        "requires_resolution": true
+      },
+      {
+        "skill_id": "embedding-strategies",
+        "phase_id": null,
+        "reason": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "task_slice": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+        "dispatch_phase": "in_execution",
+        "parallelizable_in_root_xl": true,
+        "native_usage_required": true,
+        "usage_required": true,
+        "skill_root": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies",
+        "bounded_role": "specialist_assist",
+        "must_preserve_workflow": true,
+        "binding_profile": "default",
+        "lane_policy": "inherit_grade",
+        "write_scope": "specialist:embedding-strategies",
+        "review_mode": "native_contract",
+        "execution_priority": 50,
+        "required_inputs": [
+          "bounded specialist subtask contract",
+          "frozen requirement context",
+          "relevant source files or domain artifacts"
+        ],
+        "expected_outputs": [
+          "bounded specialist findings or code changes",
+          "verification notes aligned with the specialist skill"
+        ],
+        "verification_expectation": "Preserve the specialist skill's native workflow, boundaries, and validation style.",
+        "progressive_load_policy": [
+          "Open the specialist /home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md entrypoint first.",
+          "If this specialist is disclosed only by native_skill_entrypoint, keep same-session loading path-based and do not replace it with Skill(embedding-strategies) unless that skill name is explicitly host-visible in the current session."
+        ],
+        "locked_for_execution": true,
+        "lock_source": "previous_skill_execution_lock",
+        "reconciliation_state": "inherited_not_currently_surfaced",
+        "requires_resolution": true
+      }
+    ],
+    "auto_selected_skill_execution_count": 0,
+    "auto_selected_skill_execution": [],
+    "skill_execution_lock": {
+      "schema_version": "v1",
+      "state": "active",
+      "source": "approved_plan_reentry",
+      "source_run_id": "20260520T040315Z-3aabeae6",
+      "locked_skill_ids": [
+        "openai-docs",
+        "embedding-strategies"
+      ],
+      "locked_dispatch": [
+        {
+          "skill_id": "openai-docs",
+          "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+          "reason": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+          "task_slice": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+          "state": "selected",
+          "dispatch_phase": "in_execution",
+          "parallelizable_in_root_xl": true,
+          "native_usage_required": true,
+          "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+          "skill_root": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs",
+          "bounded_role": "specialist_assist",
+          "must_preserve_workflow": true,
+          "binding_profile": "default",
+          "lane_policy": "inherit_grade",
+          "write_scope": "specialist:openai-docs",
+          "review_mode": "native_contract",
+          "execution_priority": 50,
+          "required_inputs": [
+            "bounded specialist subtask contract",
+            "frozen requirement context",
+            "relevant source files or domain artifacts"
+          ],
+          "expected_outputs": [
+            "bounded specialist findings or code changes",
+            "verification notes aligned with the specialist skill"
+          ],
+          "verification_expectation": "Preserve the specialist skill's native workflow, boundaries, and validation style.",
+          "progressive_load_policy": [
+            "Open the specialist /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md entrypoint first.",
+            "If this specialist is disclosed only by native_skill_entrypoint, keep same-session loading path-based and do not replace it with Skill(openai-docs) unless that skill name is explicitly host-visible in the current session."
+          ],
+          "legacy_source": "route_selected",
+          "locked_for_execution": true,
+          "lock_source": "current_skill_routing_selected",
+          "reconciliation_state": "current_surfaced",
+          "requires_resolution": true
+        },
+        {
+          "skill_id": "embedding-strategies",
+          "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+          "reason": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+          "task_slice": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+          "state": "selected",
+          "dispatch_phase": "in_execution",
+          "parallelizable_in_root_xl": true,
+          "native_usage_required": true,
+          "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+          "skill_root": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies",
+          "bounded_role": "specialist_assist",
+          "must_preserve_workflow": true,
+          "binding_profile": "default",
+          "lane_policy": "inherit_grade",
+          "write_scope": "specialist:embedding-strategies",
+          "review_mode": "native_contract",
+          "execution_priority": 50,
+          "required_inputs": [
+            "bounded specialist subtask contract",
+            "frozen requirement context",
+            "relevant source files or domain artifacts"
+          ],
+          "expected_outputs": [
+            "bounded specialist findings or code changes",
+            "verification notes aligned with the specialist skill"
+          ],
+          "verification_expectation": "Preserve the specialist skill's native workflow, boundaries, and validation style.",
+          "progressive_load_policy": [
+            "Open the specialist /home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md entrypoint first.",
+            "If this specialist is disclosed only by native_skill_entrypoint, keep same-session loading path-based and do not replace it with Skill(embedding-strategies) unless that skill name is explicitly host-visible in the current session."
+          ],
+          "legacy_source": "route_selected",
+          "locked_for_execution": true,
+          "lock_source": "previous_skill_execution_lock",
+          "reconciliation_state": "inherited_not_currently_surfaced",
+          "requires_resolution": true
+        }
+      ],
+      "resolution_required": true,
+      "resolution_states": [
+        "executed",
+        "not_applicable",
+        "deferred",
+        "failed"
+      ]
+    },
+    "skill_execution_lock_active": true,
+    "skill_execution_lock_summary": {
+      "active": true,
+      "locked_skill_count": 2,
+      "locked_skill_ids": [
+        "openai-docs",
+        "embedding-strategies"
+      ],
+      "source": "approved_plan_reentry",
+      "source_run_id": "20260520T040315Z-3aabeae6",
+      "resolution_required": true
+    },
+    "specialist_lock_resolution": {
+      "active": true,
+      "locked_skill_ids": [
+        "openai-docs",
+        "embedding-strategies"
+      ],
+      "executed_skill_ids": [
+        "embedding-strategies",
+        "openai-docs"
+      ],
+      "not_applicable_skill_ids": [],
+      "deferred_skill_ids": [],
+      "failed_skill_ids": [],
+      "unresolved_skill_ids": [],
+      "delivery_blocking": false
+    },
+    "requested_host_adapter_id": "claude-code",
+    "effective_host_adapter_id": "claude-code",
+    "phase_binding_counts": {
+      "pre_execution": 0,
+      "in_execution": 2,
+      "post_execution": 0,
+      "verification": 0
+    },
+    "parallelizable_skill_execution_count": 2,
+    "attempted_specialist_unit_count": 0,
+    "executed_specialist_unit_count": 0,
+    "failed_specialist_unit_count": 0,
+    "direct_routed_skill_execution_unit_count": 2,
+    "direct_routed_skill_execution_units": [
+      {
+        "unit_id": "specialist-in_execution-ungrouped-embedding-strategies-specialist",
+        "skill_id": "embedding-strategies",
+        "dispatch_phase": "in_execution",
+        "binding_profile": "default",
+        "lane_policy": "inherit_grade",
+        "parallelizable": false,
+        "result_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-results/specialist-in_execution-ungrouped-embedding-strategies-specialist.json",
+        "verification_passed": true,
+        "execution_driver": "direct_current_session_route",
+        "live_native_execution": false,
+        "degraded": false,
+        "lane_receipt_path": null
+      },
+      {
+        "unit_id": "specialist-in_execution-ungrouped-openai-docs-specialist",
+        "skill_id": "openai-docs",
+        "dispatch_phase": "in_execution",
+        "binding_profile": "default",
+        "lane_policy": "inherit_grade",
+        "parallelizable": false,
+        "result_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-results/specialist-in_execution-ungrouped-openai-docs-specialist.json",
+        "verification_passed": true,
+        "execution_driver": "direct_current_session_route",
+        "live_native_execution": false,
+        "degraded": false,
+        "lane_receipt_path": null
+      }
+    ],
+    "executed_skill_execution_units": [],
+    "failed_skill_execution_units": [],
+    "blocked_skill_execution_unit_count": 0,
+    "blocked_skill_execution_units": [],
+    "degraded_skill_execution_unit_count": 0,
+    "degraded_skill_execution_units": [],
+    "blocked_skill_ids": [],
+    "degraded_skill_ids": [],
+    "ghost_match_skill_ids": [],
+    "execution_skill_outcome_count": 2,
+    "execution_skill_outcomes": [
+      {
+        "unit_id": "specialist-in_execution-ungrouped-embedding-strategies-specialist",
+        "skill_id": "embedding-strategies",
+        "dispatch_phase": "in_execution",
+        "binding_profile": "default",
+        "lane_policy": "inherit_grade",
+        "parallelizable": false,
+        "result_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-results/specialist-in_execution-ungrouped-embedding-strategies-specialist.json",
+        "verification_passed": true,
+        "execution_driver": "direct_current_session_route",
+        "live_native_execution": false,
+        "degraded": false,
+        "lane_receipt_path": null
+      },
+      {
+        "unit_id": "specialist-in_execution-ungrouped-openai-docs-specialist",
+        "skill_id": "openai-docs",
+        "dispatch_phase": "in_execution",
+        "binding_profile": "default",
+        "lane_policy": "inherit_grade",
+        "parallelizable": false,
+        "result_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-results/specialist-in_execution-ungrouped-openai-docs-specialist.json",
+        "verification_passed": true,
+        "execution_driver": "direct_current_session_route",
+        "live_native_execution": false,
+        "degraded": false,
+        "lane_receipt_path": null
+      }
+    ],
+    "skill_execution_resolution_path": null,
+    "promotion_funnel": {
+      "matched": 1,
+      "surfaced": 1,
+      "dispatched": 2,
+      "executed": 0,
+      "routed": 2,
+      "blocked_due_to_destructive": 0,
+      "degraded_due_to_missing_contract": 0,
+      "ghost_match": 0,
+      "executed_per_matched": 0.0,
+      "executed_rate": 0.0
+    },
+    "original_local_suggestion_count": 0,
+    "original_local_specialist_suggestions": [],
+    "local_suggestion_count": 0,
+    "local_specialist_suggestions": [],
+    "auto_absorb_gate": {
+      "enabled": false,
+      "receipt_path": null,
+      "reason": "skill_execution_lock_is_authority"
+    },
+    "escalation_required": false,
+    "escalation_request_path": null
+  },
+  "specialist_decision": {
+    "decision_state": "approved_dispatch",
+    "resolution_mode": "approved_dispatch",
+    "recommendation_count": 1,
+    "candidate_skill_ids_reviewed": [
+      "openai-docs",
+      "embedding-strategies"
+    ],
+    "selected_skill_ids": [
+      "openai-docs",
+      "embedding-strategies"
+    ],
+    "rejected_candidates": [],
+    "matched_skill_ids": [
+      "openai-docs"
+    ],
+    "surfaced_skill_ids": [
+      "openai-docs"
+    ],
+    "approved_dispatch_skill_ids": [
+      "openai-docs",
+      "embedding-strategies"
+    ],
+    "local_suggestion_skill_ids": [],
+    "blocked_skill_ids": [],
+    "degraded_skill_ids": [],
+    "repo_asset_fallback": {
+      "used": false,
+      "asset_paths": [],
+      "reason": "",
+      "legal_basis": "",
+      "traceability_basis": []
+    },
+    "notes": "Bounded specialist recommendations were surfaced and promoted into effective approved dispatch.",
+    "source": "runtime_structural_projection",
+    "override_source_path": null
+  },
+  "specialist_user_disclosure": {
+    "enabled": true,
+    "stage": "plan_execute",
+    "mode": "selected_skill_execution_pre_execution_unified_once",
+    "timing": "before_execution",
+    "scope": "selected_skill_execution_only",
+    "aggregation": "unified_once",
+    "path_source": "native_skill_entrypoint",
+    "routed_skill_count": 2,
+    "routed_skills": [
+      {
+        "skill_id": "openai-docs",
+        "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "native_skill_entrypoint_raw": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "entrypoint_path_state": "resolved",
+        "entrypoint_missing": false,
+        "entrypoint_path_invalid": false,
+        "entrypoint_requirement_satisfied": true,
+        "native_skill_description": null,
+        "dispatch_phase": "in_execution",
+        "write_scope": "specialist:openai-docs",
+        "review_mode": "native_contract"
+      },
+      {
+        "skill_id": "embedding-strategies",
+        "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+        "native_skill_entrypoint_raw": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+        "entrypoint_path_state": "resolved",
+        "entrypoint_missing": false,
+        "entrypoint_path_invalid": false,
+        "entrypoint_requirement_satisfied": true,
+        "native_skill_description": null,
+        "dispatch_phase": "in_execution",
+        "write_scope": "specialist:embedding-strategies",
+        "review_mode": "native_contract"
+      }
+    ],
+    "rendered_text": "Pre-execution skill disclosure:\n- openai-docs -> /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md\n- embedding-strategies -> /home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md"
+  },
+  "dispatch_integrity": {
+    "recommendation_skill_ids": [
+      "openai-docs"
+    ],
+    "recommendation_resolution_keys": [
+      "in_execution|openai-docs"
+    ],
+    "matched_skill_ids": [
+      "openai-docs"
+    ],
+    "surfaced_skill_ids": [
+      "openai-docs"
+    ],
+    "approved_dispatch_skill_ids": [
+      "openai-docs",
+      "embedding-strategies"
+    ],
+    "approved_dispatch_resolution_keys": [
+      "in_execution|openai-docs",
+      "in_execution|embedding-strategies"
+    ],
+    "local_suggestion_skill_ids": [],
+    "local_suggestion_resolution_keys": [],
+    "blocked_skill_ids": [],
+    "degraded_skill_ids": [],
+    "ghost_match_skill_ids": [],
+    "executed_specialist_skill_ids": [],
+    "executed_specialist_resolution_keys": [],
+    "direct_routed_specialist_skill_ids": [
+      "embedding-strategies",
+      "openai-docs"
+    ],
+    "direct_routed_specialist_resolution_keys": [
+      "in_execution|embedding-strategies",
+      "in_execution|openai-docs"
+    ],
+    "resolved_specialist_skill_ids": [
+      "embedding-strategies",
+      "openai-docs"
+    ],
+    "resolved_specialist_resolution_keys": [
+      "in_execution|embedding-strategies",
+      "in_execution|openai-docs"
+    ],
+    "approved_dispatch_subset_of_recommendations": false,
+    "inherited_root_approval_allowed": false,
+    "approved_dispatch_supported_by_recommendation_or_inherited_approval": false,
+    "approved_dispatch_fully_executed": false,
+    "approved_dispatch_fully_resolved": true,
+    "executed_specialists_subset_of_approved_dispatch": true,
+    "routed_specialists_subset_of_approved_dispatch": true,
+    "local_suggestions_contained": true,
+    "native_contract_complete_for_approved_dispatch": true,
+    "matched_skills_resolved": true,
+    "approved_dispatch_missing_from_recommendations": [
+      "embedding-strategies"
+    ],
+    "approved_dispatch_missing_from_recommendations_resolution_keys": [
+      "in_execution|embedding-strategies"
+    ],
+    "approved_dispatch_not_executed": [
+      "in_execution|openai-docs",
+      "in_execution|embedding-strategies"
+    ],
+    "approved_dispatch_not_resolved": [],
+    "executed_without_approval": [],
+    "routed_without_approval": [],
+    "local_suggestions_executed_without_approval": [],
+    "dispatch_contract_incomplete_skill_ids": [],
+    "proof_passed": false
+  },
+  "status": "completed",
+  "waves": [
+    {
+      "wave_id": "wave-1",
+      "description": "Execute governed runtime proof units against repo-safe local commands.",
+      "status": "completed",
+      "started_at": "2026-05-20T05:41:33Z",
+      "finished_at": "2026-05-20T05:41:46Z",
+      "planned_unit_count": 4,
+      "executed_unit_count": 4,
+      "steps": [
+        {
+          "step_id": "wave-1-step-1",
+          "execution_mode": "sequential",
+          "started_at": "2026-05-20T05:41:33Z",
+          "finished_at": "2026-05-20T05:41:40Z",
+          "planned_unit_count": 1,
+          "executed_unit_count": 1,
+          "status": "completed",
+          "units": [
+            {
+              "unit_id": "installed-runtime-freshness-gate",
+              "wave_id": "wave-1",
+              "step_id": "wave-1-step-1",
+              "lane_id": "lane-installed-runtime-freshness-gate",
+              "lane_kind": "execution_unit",
+              "status": "completed",
+              "exit_code": 0,
+              "timed_out": false,
+              "verification_passed": true,
+              "result_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate/execution-results/installed-runtime-freshness-gate.json",
+              "lane_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate/lane-receipt.json",
+              "skill_id": null,
+              "dispatch_phase": null,
+              "binding_profile": null,
+              "lane_policy": null,
+              "write_scope": "scripts/verify",
+              "execution_driver": null,
+              "live_native_execution": false,
+              "degraded": false,
+              "prompt_path": null,
+              "prompt_injection_complete": false,
+              "missing_prompt_injection_fields": null
+            }
+          ]
+        },
+        {
+          "step_id": "wave-1-step-2",
+          "execution_mode": "sequential",
+          "started_at": "2026-05-20T05:41:40Z",
+          "finished_at": "2026-05-20T05:41:45Z",
+          "planned_unit_count": 1,
+          "executed_unit_count": 1,
+          "status": "completed",
+          "units": [
+            {
+              "unit_id": "release-install-runtime-coherence-gate",
+              "wave_id": "wave-1",
+              "step_id": "wave-1-step-2",
+              "lane_id": "lane-release-install-runtime-coherence-gate",
+              "lane_kind": "execution_unit",
+              "status": "completed",
+              "exit_code": 0,
+              "timed_out": false,
+              "verification_passed": true,
+              "result_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-release-install-runtime-coherence-gate/execution-results/release-install-runtime-coherence-gate.json",
+              "lane_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-release-install-runtime-coherence-gate/lane-receipt.json",
+              "skill_id": null,
+              "dispatch_phase": null,
+              "binding_profile": null,
+              "lane_policy": null,
+              "write_scope": "scripts/verify",
+              "execution_driver": null,
+              "live_native_execution": false,
+              "degraded": false,
+              "prompt_path": null,
+              "prompt_injection_complete": false,
+              "missing_prompt_injection_fields": null
+            }
+          ]
+        },
+        {
+          "step_id": "wave-1-specialist-in_execution-group-1-serial-1",
+          "execution_mode": "sequential",
+          "started_at": "2026-05-20T05:41:45Z",
+          "finished_at": "2026-05-20T05:41:46Z",
+          "planned_unit_count": 1,
+          "executed_unit_count": 1,
+          "status": "completed",
+          "units": [
+            {
+              "unit_id": "specialist-in_execution-ungrouped-embedding-strategies-specialist",
+              "wave_id": "wave-1",
+              "step_id": "wave-1-specialist-in_execution-group-1-serial-1",
+              "lane_id": "specialist-in_execution-ungrouped-embedding-strategies",
+              "lane_kind": "skill_execution",
+              "status": "completed",
+              "exit_code": 0,
+              "timed_out": false,
+              "verification_passed": true,
+              "result_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-results/specialist-in_execution-ungrouped-embedding-strategies-specialist.json",
+              "lane_receipt_path": null,
+              "skill_id": "embedding-strategies",
+              "dispatch_phase": "in_execution",
+              "binding_profile": "default",
+              "lane_policy": "inherit_grade",
+              "write_scope": "specialist:embedding-strategies",
+              "execution_driver": "direct_current_session_route",
+              "live_native_execution": false,
+              "degraded": false,
+              "prompt_path": null,
+              "prompt_injection_complete": false,
+              "missing_prompt_injection_fields": null
+            }
+          ]
+        },
+        {
+          "step_id": "wave-1-specialist-in_execution-group-1-serial-2",
+          "execution_mode": "sequential",
+          "started_at": "2026-05-20T05:41:46Z",
+          "finished_at": "2026-05-20T05:41:46Z",
+          "planned_unit_count": 1,
+          "executed_unit_count": 1,
+          "status": "completed",
+          "units": [
+            {
+              "unit_id": "specialist-in_execution-ungrouped-openai-docs-specialist",
+              "wave_id": "wave-1",
+              "step_id": "wave-1-specialist-in_execution-group-1-serial-2",
+              "lane_id": "specialist-in_execution-ungrouped-openai-docs",
+              "lane_kind": "skill_execution",
+              "status": "completed",
+              "exit_code": 0,
+              "timed_out": false,
+              "verification_passed": true,
+              "result_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-results/specialist-in_execution-ungrouped-openai-docs-specialist.json",
+              "lane_receipt_path": null,
+              "skill_id": "openai-docs",
+              "dispatch_phase": "in_execution",
+              "binding_profile": "default",
+              "lane_policy": "inherit_grade",
+              "write_scope": "specialist:openai-docs",
+              "execution_driver": "direct_current_session_route",
+              "live_native_execution": false,
+              "degraded": false,
+              "prompt_path": null,
+              "prompt_injection_complete": false,
+              "missing_prompt_injection_fields": null
+            }
+          ]
+        }
+      ],
+      "units": [
+        {
+          "unit_id": "installed-runtime-freshness-gate",
+          "wave_id": "wave-1",
+          "step_id": "wave-1-step-1",
+          "lane_id": "lane-installed-runtime-freshness-gate",
+          "lane_kind": "execution_unit",
+          "status": "completed",
+          "exit_code": 0,
+          "timed_out": false,
+          "verification_passed": true,
+          "result_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate/execution-results/installed-runtime-freshness-gate.json",
+          "lane_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate/lane-receipt.json",
+          "skill_id": null,
+          "dispatch_phase": null,
+          "binding_profile": null,
+          "lane_policy": null,
+          "write_scope": "scripts/verify",
+          "execution_driver": null,
+          "live_native_execution": false,
+          "degraded": false,
+          "prompt_path": null,
+          "prompt_injection_complete": false,
+          "missing_prompt_injection_fields": null
+        },
+        {
+          "unit_id": "release-install-runtime-coherence-gate",
+          "wave_id": "wave-1",
+          "step_id": "wave-1-step-2",
+          "lane_id": "lane-release-install-runtime-coherence-gate",
+          "lane_kind": "execution_unit",
+          "status": "completed",
+          "exit_code": 0,
+          "timed_out": false,
+          "verification_passed": true,
+          "result_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-release-install-runtime-coherence-gate/execution-results/release-install-runtime-coherence-gate.json",
+          "lane_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-release-install-runtime-coherence-gate/lane-receipt.json",
+          "skill_id": null,
+          "dispatch_phase": null,
+          "binding_profile": null,
+          "lane_policy": null,
+          "write_scope": "scripts/verify",
+          "execution_driver": null,
+          "live_native_execution": false,
+          "degraded": false,
+          "prompt_path": null,
+          "prompt_injection_complete": false,
+          "missing_prompt_injection_fields": null
+        },
+        {
+          "unit_id": "specialist-in_execution-ungrouped-embedding-strategies-specialist",
+          "wave_id": "wave-1",
+          "step_id": "wave-1-specialist-in_execution-group-1-serial-1",
+          "lane_id": "specialist-in_execution-ungrouped-embedding-strategies",
+          "lane_kind": "skill_execution",
+          "status": "completed",
+          "exit_code": 0,
+          "timed_out": false,
+          "verification_passed": true,
+          "result_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-results/specialist-in_execution-ungrouped-embedding-strategies-specialist.json",
+          "lane_receipt_path": null,
+          "skill_id": "embedding-strategies",
+          "dispatch_phase": "in_execution",
+          "binding_profile": "default",
+          "lane_policy": "inherit_grade",
+          "write_scope": "specialist:embedding-strategies",
+          "execution_driver": "direct_current_session_route",
+          "live_native_execution": false,
+          "degraded": false,
+          "prompt_path": null,
+          "prompt_injection_complete": false,
+          "missing_prompt_injection_fields": null
+        },
+        {
+          "unit_id": "specialist-in_execution-ungrouped-openai-docs-specialist",
+          "wave_id": "wave-1",
+          "step_id": "wave-1-specialist-in_execution-group-1-serial-2",
+          "lane_id": "specialist-in_execution-ungrouped-openai-docs",
+          "lane_kind": "skill_execution",
+          "status": "completed",
+          "exit_code": 0,
+          "timed_out": false,
+          "verification_passed": true,
+          "result_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-results/specialist-in_execution-ungrouped-openai-docs-specialist.json",
+          "lane_receipt_path": null,
+          "skill_id": "openai-docs",
+          "dispatch_phase": "in_execution",
+          "binding_profile": "default",
+          "lane_policy": "inherit_grade",
+          "write_scope": "specialist:openai-docs",
+          "execution_driver": "direct_current_session_route",
+          "live_native_execution": false,
+          "degraded": false,
+          "prompt_path": null,
+          "prompt_injection_complete": false,
+          "missing_prompt_injection_fields": null
+        }
+      ]
+    }
+  ]
+}

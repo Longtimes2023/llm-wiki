@@ -1,0 +1,22 @@
+{
+  "lane": "serena",
+  "stage": "deep_interview",
+  "task": "compare local project with GitHub https://github.com/Longtimes2023/llm-wiki identify differences especially UI parts from scripts to quartz copy determine proper sync git push strategy",
+  "top_k": 3,
+  "max_chars_per_item": 240,
+  "keywords": [
+    "compare",
+    "local",
+    "project",
+    "with",
+    "github",
+    "https",
+    "//github",
+    "com/longtimes2023/llm-wiki",
+    "identify",
+    "differences",
+    "especially",
+    "parts"
+  ],
+  "project_key_source": null
+}

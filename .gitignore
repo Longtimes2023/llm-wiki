@@ -38,4 +38,5 @@ scripts/ingest_metrics.jsonl
 # Provider profiles — real creds gitignored, only .env.example tracked
 providers/*.env
 providers/.active
+providers/.active_chat
 !providers/*.env.example

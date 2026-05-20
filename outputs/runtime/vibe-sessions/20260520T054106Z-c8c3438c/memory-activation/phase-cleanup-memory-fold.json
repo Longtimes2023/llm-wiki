@@ -1,0 +1,20 @@
+{
+  "stage": "phase_cleanup",
+  "fold_kind": "deepagent_memory_fold_local",
+  "generated_at": "2026-05-20T05:41:48Z",
+  "working_memory": [
+    "Requirement doc: /home/steven/llm-wiki/docs/requirements/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+    "Execution plan: /home/steven/llm-wiki/docs/plans/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023-execution-plan.md",
+    "Runtime status: completed"
+  ],
+  "tool_memory": [
+    "Execution manifest: /home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-manifest.json",
+    "Cleanup receipt: /home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/cleanup-receipt.json"
+  ],
+  "evidence_anchors": [
+    "/home/steven/llm-wiki/docs/requirements/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+    "/home/steven/llm-wiki/docs/plans/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023-execution-plan.md",
+    "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-manifest.json",
+    "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/cleanup-receipt.json"
+  ]
+}

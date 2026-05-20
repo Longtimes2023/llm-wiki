@@ -23,6 +23,7 @@ from rich.markdown import Markdown
 from dotenv import load_dotenv
 import json
 import os
+import re
 import sys
 import time
 import argparse
@@ -56,7 +57,12 @@ async def generate_wiki_article(
         provider = resolve_provider(provider_override)
     except (FileNotFoundError, RuntimeError) as e:
         console.print(Panel(f"❌ Provider config error: {e}", title="Error", border_style="red"))
-        return ""
+        # Marker + exit 2 lets raw-watcher.sh classify this as a config error (deterministic,
+        # do NOT retry the fallback chain — a missing/broken profile fails identically on every attempt).
+        # sys.stdout.write (not rich's print) — Rich wraps long error messages and breaks the watcher's grep.
+        sys.stdout.write(f"\n[CONFIG_ERROR] {e}\n")
+        sys.stdout.flush()
+        sys.exit(2)
 
     # 配置选项 - 关键配置：
     # 1. setting_sources=["project"] - 启用项目级 skill 扫描
@@ -80,7 +86,7 @@ async def generate_wiki_article(
     options = ClaudeAgentOptions(
         model=provider["model"],
         permission_mode="acceptEdits",  # 关键：自动接受所有编辑操作，不询问用户
-        setting_sources=["project"],  # 关键：启用项目级设置扫描
+        setting_sources=["project", "user"],  # project: llm-wiki-skill; user: baoyu-url-to-markdown, youtube-transcript, officecli
         allowed_tools=["Skill", "Read", "Write", "Glob", "Grep", "Bash", "Edit"],  # 关键：允许调用 Skill 和 Edit
         cwd=wiki_dir,  # 关键：设置工作目录为 wiki 文件夹，skill 会在这里查找 .wiki-schema.md
         env={
@@ -166,9 +172,18 @@ async def generate_wiki_article(
             "cost_usd": cost,
         }
         # Last line — must be standalone, no trailing prints after.
-        # Leading "\n" ensures METRICS is at start of a line even if previous output
-        # didn't end with a newline (e.g. SDK error JSON without trailing \n).
-        print(f"\n[METRICS] {json.dumps(metrics, ensure_ascii=False)}")
+        # Use sys.stdout.write (not rich's print) to bypass Rich's text wrapping —
+        # Rich wraps to 80 cols even when stdout is a file, which breaks the watcher's
+        # single-line grep. BEGIN/END markers + compact JSON ensure clean capture.
+        # Also re-emit any [FETCH_FAIL] {...} markers the agent emitted in its text
+        # response: Rich wrapped them in display, so the on-disk OUTPUT_TMP has them
+        # broken across physical lines. Re-emit unwrapped so raw-watcher's grep can match.
+        full_text = "".join(full_response)
+        for m in re.finditer(r'\[FETCH_FAIL\]\s*\{[^}]*\}', full_text):
+            sys.stdout.write(f"\n{m.group(0)}\n")
+        compact = json.dumps(metrics, ensure_ascii=False, separators=(",", ":"))
+        sys.stdout.write(f"\n[METRICS_BEGIN]{compact}[METRICS_END]\n")
+        sys.stdout.flush()
         return "".join(full_response)
 
 

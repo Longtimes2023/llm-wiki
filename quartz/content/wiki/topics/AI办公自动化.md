@@ -1,8 +1,8 @@
 ---
 tags: [办公自动化, DeepSeek, Excel, Word, VBA, 效率提升]
 created: 2026-04-29
-updated: 2026-04-29
-sources: [2026-04-29-deepseek-excel-integration, 2026-04-29-deepseek-word-integration, 2026-04-29-deepseek-10-work-tips]
+updated: 2026-05-13
+sources: [2026-04-29-deepseek-excel-integration, 2026-04-29-deepseek-word-integration, 2026-04-29-deepseek-10-work-tips, 2026-05-13-ai-agent-productivity-20x]
 ---
 
 # AI 办公自动化
@@ -19,6 +19,8 @@ sources: [2026-04-29-deepseek-excel-integration, 2026-04-29-deepseek-word-integr
 
 4. **使用技巧的杠杆效应显著**：同样的 AI，掌握正确使用方法的用户效率是普通用户的数倍。提问质量、互动方式、能力利用三个维度的方法构成完整方法论
 
+5. **办公自动化正在从单工具内嵌走向跨 SaaS 编排**：新一代效率提升不只是在 Excel/Word 里嵌入 AI，而是让 Agent 结合 `agents.md`、`memory.md`、[[Skill]] 与 [[MCP 模型上下文协议]]，跨 Gmail、日历、Notion、Stripe 等工具自动执行完整任务链，把人从工具操作者变成数字团队管理者——来源：[[2026-05-13-ai-agent-productivity-20x]]
+
 ## 素材汇总
 
 | 素材标题 | 核心贡献 | 关键技术 |
@@ -26,6 +28,7 @@ sources: [2026-04-29-deepseek-excel-integration, 2026-04-29-deepseek-word-integr
 | DeepSeek Excel 集成教程 | 三步实现 Excel AI 化 | VBA + API + 按钮宏 |
 | DeepSeek Word 集成教程 | 双模型支持的智能续写 | VBA + 双模型切换 + 选中交互 |
 | DeepSeek 高效工作十法 | 三维度完整使用方法论 | 提问技巧 + 互动策略 + 能力利用 |
+| 生产力提升20倍的秘密：用AI Agent把一周工作压缩进一天 | 将办公自动化从 Office 内嵌扩展到跨 Gmail/Calendar/Notion/Stripe 的 Agent 编排，并强调 `agents.md`、`memory.md`、Skill 与 MCP 是可迁移的数字工作流资产 | Agent harness + Context Engineering + MCP + Skill + 定时调度 |
 
 ## 知识体系
 

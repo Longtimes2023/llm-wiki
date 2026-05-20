@@ -25,12 +25,41 @@ if [ ! -d "$DST_DIR" ]; then
   exit 1
 fi
 
+# Stage 0: orphan rescue — files that exist in quartz/content/ but not in ai-wiki/
+# would be wiped by rsync --delete. If any future code path writes only to quartz,
+# this guard rescues those files back to ai-wiki/ before the destructive rsync runs.
+# Excludes _quarantine/ (intentionally one-sided).
+log "scanning for orphans (quartz-only files)"
+orphan_count=0
+while IFS= read -r f; do
+  [ -z "$f" ] && continue
+  src_target="$SRC_DIR$f"
+  mkdir -p "$(dirname "$src_target")"
+  cp -p "$DST_DIR$f" "$src_target"
+  log "WARN: orphan rescued from quartz/content/: $f"
+  orphan_count=$((orphan_count+1))
+done < <(comm -23 \
+  <(cd "$DST_DIR" && find . -type f -name '*.md' \
+      ! -path './_quarantine/*' \
+      ! -path './.obsidian/*' \
+      ! -path './.git/*' \
+      | sed 's|^\./||' | sort) \
+  <(cd "$SRC_DIR" && find . -type f -name '*.md' \
+      ! -path './_quarantine/*' \
+      ! -path './.obsidian/*' \
+      ! -path './.git/*' \
+      | sed 's|^\./||' | sort))
+if [ "$orphan_count" -gt 0 ]; then
+  log "orphan rescue: $orphan_count file(s) copied back to ai-wiki/"
+fi
+
 # Stage 1: rsync ai-wiki → quartz/content
 log "syncing $SRC_DIR -> $DST_DIR"
 rsync -a --delete \
   --exclude='.obsidian/' \
   --exclude='.git/' \
   --exclude='*.tmp' \
+  --exclude='_quarantine/' \
   "$SRC_DIR" "$DST_DIR" 2>&1 | tee -a "$LOG_FILE"
 log "rsync done"
 
@@ -47,14 +76,67 @@ if [ -z "${CLOUDFLARE_API_TOKEN:-}" ] || [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ] || 
   exit 0
 fi
 
-# Stage 3: clean Quartz cache + build static
+# Stage 3: clean Quartz cache + build static (with quarantine + retry on YAML failures)
 log "building Quartz..."
 cd "$QUARTZ_DIR"
 rm -rf public .quartz-cache 2>/dev/null || true
-if ! npx quartz build > /tmp/quartz-build.log 2>&1; then
-  log "Quartz build FAILED — see /tmp/quartz-build.log"
-  tail -20 /tmp/quartz-build.log >> "$LOG_FILE"
+
+# Quarantine lives source-side (ai-wiki/_quarantine/) so it's persistent across syncs.
+# rsync excludes _quarantine/ both directions, so it never bounces between trees.
+QUARANTINE_DIR="${SRC_DIR}_quarantine"
+mkdir -p "$QUARANTINE_DIR"
+QUARANTINED=()
+BUILD_OK=0
+for q_attempt in 1 2 3; do
+  if npx quartz build > /tmp/quartz-build.log 2>&1; then
+    BUILD_OK=1
+    break
+  fi
+  # Quartz error format (verified from historic logs):
+  #   Failed to process markdown `content/wiki/topics/<file>.md`: bad indentation ...
+  # Path is wrapped in backticks; may contain CJK + spaces. Extract between backticks.
+  BAD_FILE_REL=$(grep -oE '`content/[^`]+\.md`' /tmp/quartz-build.log | head -1 | tr -d '`')
+  if [ -z "$BAD_FILE_REL" ] || [ ! -f "$QUARTZ_DIR/$BAD_FILE_REL" ]; then
+    log "Quartz build FAILED (attempt $q_attempt) — can't identify offending file, giving up"
+    tail -20 /tmp/quartz-build.log >> "$LOG_FILE"
+    exit 1
+  fi
+  # Strip leading "content/" → relative path inside ai-wiki/ and inside _quarantine/.
+  rel_inside="${BAD_FILE_REL#content/}"
+  src_path="$SRC_DIR$rel_inside"
+  q_target="$QUARANTINE_DIR/$rel_inside"
+  log "quarantining $rel_inside (Quartz build error, attempt $q_attempt)"
+  mkdir -p "$(dirname "$q_target")"
+  # Prefer moving the source-side file (the actual offender). Fall back to copying from
+  # quartz if source has been mutated since rsync (shouldn't happen, defensive).
+  if [ -f "$src_path" ]; then
+    mv "$src_path" "$q_target"
+  else
+    cp "$QUARTZ_DIR/$BAD_FILE_REL" "$q_target"
+  fi
+  # Remove the broken copy from quartz so the next build attempt succeeds.
+  rm -f "$QUARTZ_DIR/$BAD_FILE_REL"
+  QUARANTINED+=("$rel_inside")
+done
+
+if [ "$BUILD_OK" -ne 1 ]; then
+  log "Quartz build FAILED after 3 quarantine attempts, giving up"
   exit 1
+fi
+
+if [ "${#QUARANTINED[@]}" -gt 0 ]; then
+  log "quarantined ${#QUARANTINED[@]} file(s): ${QUARANTINED[*]}"
+  # Append a single audit entry to ai-wiki/log.md so operator can review later.
+  {
+    echo ""
+    echo "## $(date '+%F') quarantine | Quartz build YAML errors"
+    echo ""
+    for q in "${QUARANTINED[@]}"; do
+      echo "- \`$q\` → moved to \`ai-wiki/_quarantine/\` (fix YAML rồi mv lại vị trí cũ để re-ingest)"
+    done
+    echo ""
+    echo "---"
+  } >> "$SRC_DIR/log.md"
 fi
 build_files=$(find public -type f 2>/dev/null | wc -l)
 log "Quartz build OK ($build_files files emitted)"

@@ -1,0 +1,17 @@
+{
+  "stage": "skeleton_check",
+  "owner": "state_store",
+  "status": "fallback_local_digest",
+  "generated_at": "2026-05-20T05:41:12Z",
+  "source_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/skeleton-receipt.json",
+  "items": [
+    "Task focus: compare local project with GitHub https://github.com/Longtimes2023/llm-wiki iden... Deliverable: Governed implementation artifacts, verification evidence, and cleanup receipts. Constraints: Do not bypass the...",
+    "Git branch: ",
+    "All required governed runtime prerequisite paths are present."
+  ],
+  "budget": {
+    "top_k": 3,
+    "max_tokens": 96,
+    "max_chars_per_item": 220
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "stage": "plan_execute",
+  "source_stage": null,
+  "owner": "state_store",
+  "disclosure_level": "execution_relevant",
+  "generated_at": "2026-05-20T05:41:32Z",
+  "capsule_count": 0,
+  "selected_capsules": [],
+  "items": [],
+  "estimated_tokens": 0,
+  "budget": {
+    "top_k": 3,
+    "max_tokens": 120,
+    "max_chars_per_item": 240
+  }
+}

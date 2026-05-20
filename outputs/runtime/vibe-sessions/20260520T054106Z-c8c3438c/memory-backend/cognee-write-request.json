@@ -1,0 +1,71 @@
+{
+  "task": "compare local project with GitHub https://github.com/Longtimes2023/llm-wiki iden... Deliverable: Governed implementation artifacts, verification evidence, and cleanup receipts. Constraints: Do not bypass the fixed six-stage governed runtime.; Do not widen scope silently beyond the frozen requirement document.. Update: execute merge: git merge origin/main, resolve conflicts per frozen strategy, git push origin main",
+  "relations": [
+    {
+      "source": "compare-local-project-with-github-https-github-com-longtimes2023",
+      "relation": "specified_by",
+      "target": "2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+      "evidence_paths": [
+        "/home/steven/llm-wiki/docs/requirements/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md"
+      ],
+      "keywords": [
+        "compare",
+        "local",
+        "project",
+        "with",
+        "github",
+        "https",
+        "//github",
+        "com/longtimes2023/llm-wiki",
+        "iden",
+        "deliverable",
+        "governed",
+        "implementation"
+      ]
+    },
+    {
+      "source": "compare-local-project-with-github-https-github-com-longtimes2023",
+      "relation": "planned_in",
+      "target": "2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023-execution-plan.md",
+      "evidence_paths": [
+        "/home/steven/llm-wiki/docs/plans/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023-execution-plan.md"
+      ],
+      "keywords": [
+        "compare",
+        "local",
+        "project",
+        "with",
+        "github",
+        "https",
+        "//github",
+        "com/longtimes2023/llm-wiki",
+        "iden",
+        "deliverable",
+        "governed",
+        "implementation"
+      ]
+    },
+    {
+      "source": "compare-local-project-with-github-https-github-com-longtimes2023",
+      "relation": "executed_as",
+      "target": "execution-manifest.json",
+      "evidence_paths": [
+        "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-manifest.json"
+      ],
+      "keywords": [
+        "compare",
+        "local",
+        "project",
+        "with",
+        "github",
+        "https",
+        "//github",
+        "com/longtimes2023/llm-wiki",
+        "iden",
+        "deliverable",
+        "governed",
+        "implementation"
+      ]
+    }
+  ]
+}

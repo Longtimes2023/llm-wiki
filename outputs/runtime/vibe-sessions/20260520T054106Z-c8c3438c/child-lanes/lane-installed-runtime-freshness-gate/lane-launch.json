@@ -1,0 +1,42 @@
+{
+  "lane_id": "lane-installed-runtime-freshness-gate",
+  "lane_root": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate",
+  "spec_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate/lane-spec.json",
+  "helper_script_path": "/home/steven/.claude/skills/vibe/scripts/runtime/Invoke-DelegatedLaneUnit.ps1",
+  "host_kind": "pwsh",
+  "powershell_host_path": "/snap/powershell/351/opt/powershell/pwsh",
+  "fallback_used": false,
+  "resolved_command": "/snap/powershell/351/opt/powershell/pwsh",
+  "resolved_arguments": [
+    "-NoProfile",
+    "-File",
+    "/home/steven/.claude/skills/vibe/scripts/runtime/Invoke-DelegatedLaneUnit.ps1",
+    "-LaneSpecPath",
+    "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate/lane-spec.json"
+  ],
+  "arguments_render_mode": "RenderedString",
+  "payload_contract_version": "1.0",
+  "requested_lane_root": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate",
+  "resolved_lane_root": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate",
+  "lane_root_valid": true,
+  "lane_root_fallback_reason": null,
+  "requested_working_directory": "/home/steven/.claude/skills/vibe",
+  "resolved_repo_root": "/home/steven/.claude/skills/vibe",
+  "effective_working_directory": "/home/steven/.claude/skills/vibe",
+  "resolved_working_directory": "/home/steven/.claude/skills/vibe",
+  "repo_root_valid": true,
+  "fallback_reason": null,
+  "preflight": {
+    "executable_exists": true,
+    "executable_is_file": true,
+    "working_directory_exists": true,
+    "working_directory_is_directory": true,
+    "script_exists": true,
+    "script_is_file": true,
+    "script_used_as_executable": false
+  },
+  "stdout_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate/lane-process.stdout.log",
+  "stderr_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate/lane-process.stderr.log",
+  "payload_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate/lane-payload.json",
+  "generated_at": "2026-05-20T05:41:34Z"
+}

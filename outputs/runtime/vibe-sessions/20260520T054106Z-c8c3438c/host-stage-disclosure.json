@@ -1,0 +1,70 @@
+{
+  "enabled": true,
+  "protocol_version": "v1",
+  "mode": "progressive_host_stage_disclosure",
+  "append_only": true,
+  "event_count": 2,
+  "last_sequence": 2,
+  "freeze_gate_passed": true,
+  "events": [
+    {
+      "sequence": 1,
+      "emitted_at": "2026-05-20T05:41:29Z",
+      "event_id": "discussion_routing_frozen",
+      "segment_id": "discussion_routing",
+      "stage": "runtime_input_freeze",
+      "category": "routing",
+      "truth_layer": "routing",
+      "status": "informational",
+      "gate_status": null,
+      "skill_count": 1,
+      "skills": {
+        "skill_id": "openai-docs",
+        "why_now": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "source": null,
+        "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "native_skill_description": null,
+        "state": "routed"
+      },
+      "rendered_text": "Vibe routed these Skills into the discussion/planning chain:\n- openai-docs [routed] from /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md\n  Why: internal specialist recommender selected a bounded specialist candidate for governed execution"
+    },
+    {
+      "sequence": 2,
+      "emitted_at": "2026-05-20T05:41:33Z",
+      "event_id": "execution_dispatch_confirmed",
+      "segment_id": "execution_dispatch",
+      "stage": "plan_execute",
+      "category": "execution",
+      "truth_layer": "execution",
+      "status": "execution_disclosure",
+      "gate_status": null,
+      "skill_count": 2,
+      "skills": [
+        {
+          "skill_id": "openai-docs",
+          "why_now": "approved for execution-time specialist dispatch under governed vibe",
+          "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+          "native_skill_entrypoint_raw": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+          "entrypoint_path_state": "resolved",
+          "entrypoint_missing": false,
+          "entrypoint_path_invalid": false,
+          "native_skill_description": null,
+          "state": "disclosed_for_execution"
+        },
+        {
+          "skill_id": "embedding-strategies",
+          "why_now": "approved for execution-time specialist dispatch under governed vibe",
+          "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+          "native_skill_entrypoint_raw": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+          "entrypoint_path_state": "resolved",
+          "entrypoint_missing": false,
+          "entrypoint_path_invalid": false,
+          "native_skill_description": null,
+          "state": "disclosed_for_execution"
+        }
+      ],
+      "rendered_text": "Selected skills are available for execution. This is not a `used` claim; final use must come from `skill_usage.used` and evidence.\n- openai-docs [disclosed_for_execution] from /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md\n  Why: approved for execution-time specialist dispatch under governed vibe\n- embedding-strategies [disclosed_for_execution] from /home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md\n  Why: approved for execution-time specialist dispatch under governed vibe"
+    }
+  ],
+  "rendered_text": "Vibe routed these Skills into the discussion/planning chain:\n- openai-docs [routed] from /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md\n  Why: internal specialist recommender selected a bounded specialist candidate for governed execution\n\nSelected skills are available for execution. This is not a `used` claim; final use must come from `skill_usage.used` and evidence.\n- openai-docs [disclosed_for_execution] from /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md\n  Why: approved for execution-time specialist dispatch under governed vibe\n- embedding-strategies [disclosed_for_execution] from /home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md\n  Why: approved for execution-time specialist dispatch under governed vibe"
+}

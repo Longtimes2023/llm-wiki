@@ -3,9 +3,9 @@ type: entity
 name: Dify
 category: 开发工具
 tags: [低代码, Agent, RAG, 工作流, 可视化编排]
-sources: [2026-04-29-yupi-ai-guide-programming-tech]
+sources: [2026-04-29-yupi-ai-guide-programming-tech, 2026-05-10-skills-monetization-5-points]
 created: 2026-04-29
-updated: 2026-04-29
+updated: 2026-05-10
 ---
 
 # Dify
@@ -51,6 +51,8 @@ Dify 是一款低代码 AI 应用开发平台，提供可视化的方式构建 A
 - 不会写代码也能搞复杂 AI 应用
 - 低代码平台的代表产品
 
+- **[[2026-05-10-skills-monetization-5-points]]**：伍德安思壮将Dify定位为Skills变现"工具封装"阶段的推荐工具——拖拽式操作把大模型、知识库、流程节点拼起来，1天就能生成一个独立的工具链接。相比Prompt版（10分钟但体验差）和简单前端（3天但专业感强），Dify工具封装是"有产品感"和"快速出活"之间的最佳平衡点，用户不用自己复制Prompt，直接在工具里输入内容就能得到结果，体验更好。
+
 ## 实用信息
 
 ### 官方资源
@@ -67,6 +69,7 @@ Dify 是一款低代码 AI 应用开发平台，提供可视化的方式构建 A
 | 客服机器人 | ⭐⭐⭐⭐ | 配置化实现智能客服 |
 | 复杂多 Agent 系统 | ⭐⭐⭐ | 工作流编排多智能体 |
 | 超大规模定制 | ⭐⭐ | 可能需要自定义开发 |
+| Skill封装变现 | ⭐⭐⭐⭐⭐ | 1天做出有产品感的独立工具链接，Prompt→产品的最佳过渡方案 |
 
 ### 优势
 - 入门门槛极低
@@ -97,3 +100,4 @@ Dify 是一款低代码 AI 应用开发平台，提供可视化的方式构建 A
 - [[Spring AI]]
 - [[LangChain4j]]
 - [[AI编程开发]]
+- [[Skills变现]]

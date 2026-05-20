@@ -1,0 +1,55 @@
+{
+  "ok": true,
+  "status": "backend_write",
+  "lane": "cognee",
+  "store_path": "/home/steven/.claude/skills/vibe/.vibeskills/memory/workspace-memory-plane.jsonl",
+  "project_key": "vibe",
+  "project_key_source": "workspace_plane",
+  "item_count": 3,
+  "items": [
+    "Persisted Cognee relation: compare-local-project-with-github-https-github-com-longtimes2023 specified_by 2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+    "Persisted Cognee relation: compare-local-project-with-github-https-github-com-longtimes2023 planned_in 2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023-execution-plan.md",
+    "Persisted Cognee relation: compare-local-project-with-github-https-github-com-longtimes2023 executed_as execution-manifest.json"
+  ],
+  "capsule_count": 3,
+  "capsules": [
+    {
+      "capsule_id": "f5aae44f01175063",
+      "owner": "Cognee",
+      "lane": "cognee",
+      "kind": "entity_relation_ingest",
+      "disclosure_level": "bounded",
+      "summary": "specified_by",
+      "updated_at": "2026-05-20T05:41:48Z"
+    },
+    {
+      "capsule_id": "678caf5823f3ab08",
+      "owner": "Cognee",
+      "lane": "cognee",
+      "kind": "entity_relation_ingest",
+      "disclosure_level": "bounded",
+      "summary": "planned_in",
+      "updated_at": "2026-05-20T05:41:48Z"
+    },
+    {
+      "capsule_id": "9e5d0e2f0c8539fc",
+      "owner": "Cognee",
+      "lane": "cognee",
+      "kind": "entity_relation_ingest",
+      "disclosure_level": "bounded",
+      "summary": "executed_as",
+      "updated_at": "2026-05-20T05:41:48Z"
+    }
+  ],
+  "suppressed_count": 0,
+  "workspace_memory_plane": {
+    "schema_version": 1,
+    "workspace_root": "/home/steven/.claude/skills/vibe",
+    "workspace_sidecar_root": "/home/steven/.claude/skills/vibe/.vibeskills",
+    "descriptor_path": "/home/steven/.claude/skills/vibe/.vibeskills/project.json",
+    "workspace_id": "ws:a9049691fb498e5b9b12319b",
+    "plane_path": "/home/steven/.claude/skills/vibe/.vibeskills/memory/workspace-memory-plane.jsonl"
+  },
+  "driver_mode": "compatibility_shell",
+  "generated_at": "2026-05-20T05:41:48Z"
+}

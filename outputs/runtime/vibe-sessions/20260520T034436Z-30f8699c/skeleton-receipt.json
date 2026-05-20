@@ -1,0 +1,60 @@
+{
+  "stage": "skeleton_check",
+  "run_id": "20260520T034436Z-30f8699c",
+  "mode": "interactive_governed",
+  "task": "compare local project with GitHub https://github.com/Longtimes2023/llm-wiki identify differences especially UI parts from scripts to quartz copy determine proper sync git push strategy",
+  "generated_at": "2026-05-20T03:44:55Z",
+  "repo_root": "/home/steven/.claude/skills/vibe",
+  "git_branch": null,
+  "git_status": [],
+  "required_paths": [
+    {
+      "path": "SKILL.md",
+      "exists": true
+    },
+    {
+      "path": "protocols/runtime.md",
+      "exists": true
+    },
+    {
+      "path": "protocols/think.md",
+      "exists": true
+    },
+    {
+      "path": "protocols/do.md",
+      "exists": true
+    },
+    {
+      "path": "protocols/team.md",
+      "exists": true
+    },
+    {
+      "path": "protocols/retro.md",
+      "exists": true
+    },
+    {
+      "path": "config/runtime-contract.json",
+      "exists": true
+    },
+    {
+      "path": "config/runtime-modes.json",
+      "exists": true
+    },
+    {
+      "path": "config/requirement-doc-policy.json",
+      "exists": true
+    },
+    {
+      "path": "config/plan-execution-policy.json",
+      "exists": true
+    },
+    {
+      "path": "config/phase-cleanup-policy.json",
+      "exists": true
+    }
+  ],
+  "existing_requirement_docs": [
+    "2026-05-09-cloud-pipeline-migration.md"
+  ],
+  "existing_plan_docs": []
+}

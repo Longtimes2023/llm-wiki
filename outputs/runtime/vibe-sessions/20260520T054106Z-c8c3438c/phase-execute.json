@@ -1,0 +1,261 @@
+{
+  "stage": "plan_execute",
+  "run_id": "20260520T054106Z-c8c3438c",
+  "governance_scope": "root",
+  "mode": "interactive_governed",
+  "internal_grade": "L",
+  "status": "completed",
+  "requirement_doc_path": "/home/steven/llm-wiki/docs/requirements/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+  "execution_plan_path": "/home/steven/llm-wiki/docs/plans/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023-execution-plan.md",
+  "runtime_input_packet_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/runtime-input-packet.json",
+  "execution_memory_context_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/memory-activation/execution-context-pack.json",
+  "plan_shadow_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/plan-derived-execution-shadow.json",
+  "execution_manifest_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-manifest.json",
+  "skill_usage_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/skill-usage.json",
+  "skill_usage": {
+    "schema_version": 2,
+    "state_model": "binary_used_unused",
+    "used": [
+      {
+        "skill_id": "openai-docs",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7",
+        "evidence": [
+          {
+            "stage": "plan_execute",
+            "artifact_path": "execution-manifest.json",
+            "impact": "Execution manifest preserves binary skill usage truth for openai-docs; execution cannot use routing, hints, consultation, or dispatch alone as usage proof."
+          }
+        ]
+      }
+    ],
+    "unused": null,
+    "used_skills": [
+      "openai-docs"
+    ],
+    "unused_skills": [],
+    "loaded_skills": [
+      {
+        "skill_id": "openai-docs",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7",
+        "load_status": "loaded_full_skill_md",
+        "loaded_at_stage": "skeleton_check",
+        "loaded_byte_count": 3446,
+        "loaded_line_count": 56
+      }
+    ],
+    "evidence": [
+      {
+        "skill_id": "openai-docs",
+        "stage": "requirement_doc",
+        "artifact_ref": "2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+        "impact_summary": "Requirement doc adopts the loaded openai-docs SKILL.md as the workflow authority for downstream planning and completion evidence.",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7"
+      },
+      {
+        "skill_id": "openai-docs",
+        "stage": "xl_plan",
+        "artifact_ref": "2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023-execution-plan.md",
+        "impact_summary": "Execution plan carries the loaded openai-docs SKILL.md workflow authority into the planned verification and completion path.",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7"
+      },
+      {
+        "skill_id": "openai-docs",
+        "stage": "plan_execute",
+        "artifact_ref": "execution-manifest.json",
+        "impact_summary": "Execution manifest preserves binary skill usage truth for openai-docs; execution cannot use routing, hints, consultation, or dispatch alone as usage proof.",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7"
+      }
+    ],
+    "unused_reasons": null
+  },
+  "execution_proof_manifest_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-proof/manifest.json",
+  "execution_topology_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-topology.json",
+  "executed_unit_count": 4,
+  "successful_unit_count": 4,
+  "failed_unit_count": 0,
+  "delegated_lane_count": 2,
+  "review_receipt_count": 4,
+  "specialist_recommendation_count": 1,
+  "skill_execution_unit_count": 2,
+  "selected_skill_execution_count": 2,
+  "blocked_skill_execution_unit_count": 0,
+  "degraded_skill_execution_unit_count": 0,
+  "execution_skill_outcome_count": 2,
+  "skill_execution_resolution_path": null,
+  "attempted_specialist_unit_count": 0,
+  "executed_specialist_unit_count": 0,
+  "failed_specialist_unit_count": 0,
+  "direct_routed_skill_execution_unit_count": 2,
+  "specialist_execution_status": "direct_current_session_routed",
+  "specialist_skills": [
+    "openai-docs",
+    "embedding-strategies"
+  ],
+  "auto_approved_specialist_unit_count": 0,
+  "local_specialist_suggestion_count": 0,
+  "specialist_decision": {
+    "decision_state": "approved_dispatch",
+    "resolution_mode": "approved_dispatch",
+    "recommendation_count": 1,
+    "candidate_skill_ids_reviewed": [
+      "openai-docs",
+      "embedding-strategies"
+    ],
+    "selected_skill_ids": [
+      "openai-docs",
+      "embedding-strategies"
+    ],
+    "rejected_candidates": [],
+    "matched_skill_ids": [
+      "openai-docs"
+    ],
+    "surfaced_skill_ids": [
+      "openai-docs"
+    ],
+    "approved_dispatch_skill_ids": [
+      "openai-docs",
+      "embedding-strategies"
+    ],
+    "local_suggestion_skill_ids": [],
+    "blocked_skill_ids": [],
+    "degraded_skill_ids": [],
+    "repo_asset_fallback": {
+      "used": false,
+      "asset_paths": [],
+      "reason": "",
+      "legal_basis": "",
+      "traceability_basis": []
+    },
+    "notes": "Bounded specialist recommendations were surfaced and promoted into effective approved dispatch.",
+    "source": "runtime_structural_projection",
+    "override_source_path": null
+  },
+  "specialist_user_disclosure": {
+    "enabled": true,
+    "stage": "plan_execute",
+    "mode": "selected_skill_execution_pre_execution_unified_once",
+    "timing": "before_execution",
+    "scope": "selected_skill_execution_only",
+    "aggregation": "unified_once",
+    "path_source": "native_skill_entrypoint",
+    "routed_skill_count": 2,
+    "routed_skills": [
+      {
+        "skill_id": "openai-docs",
+        "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "native_skill_entrypoint_raw": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "entrypoint_path_state": "resolved",
+        "entrypoint_missing": false,
+        "entrypoint_path_invalid": false,
+        "entrypoint_requirement_satisfied": true,
+        "native_skill_description": null,
+        "dispatch_phase": "in_execution",
+        "write_scope": "specialist:openai-docs",
+        "review_mode": "native_contract"
+      },
+      {
+        "skill_id": "embedding-strategies",
+        "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+        "native_skill_entrypoint_raw": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+        "entrypoint_path_state": "resolved",
+        "entrypoint_missing": false,
+        "entrypoint_path_invalid": false,
+        "entrypoint_requirement_satisfied": true,
+        "native_skill_description": null,
+        "dispatch_phase": "in_execution",
+        "write_scope": "specialist:embedding-strategies",
+        "review_mode": "native_contract"
+      }
+    ],
+    "rendered_text": "Pre-execution skill disclosure:\n- openai-docs -> /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md\n- embedding-strategies -> /home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md"
+  },
+  "dispatch_integrity_proof_passed": false,
+  "dispatch_integrity": {
+    "recommendation_skill_ids": [
+      "openai-docs"
+    ],
+    "recommendation_resolution_keys": [
+      "in_execution|openai-docs"
+    ],
+    "matched_skill_ids": [
+      "openai-docs"
+    ],
+    "surfaced_skill_ids": [
+      "openai-docs"
+    ],
+    "approved_dispatch_skill_ids": [
+      "openai-docs",
+      "embedding-strategies"
+    ],
+    "approved_dispatch_resolution_keys": [
+      "in_execution|openai-docs",
+      "in_execution|embedding-strategies"
+    ],
+    "local_suggestion_skill_ids": [],
+    "local_suggestion_resolution_keys": [],
+    "blocked_skill_ids": [],
+    "degraded_skill_ids": [],
+    "ghost_match_skill_ids": [],
+    "executed_specialist_skill_ids": [],
+    "executed_specialist_resolution_keys": [],
+    "direct_routed_specialist_skill_ids": [
+      "embedding-strategies",
+      "openai-docs"
+    ],
+    "direct_routed_specialist_resolution_keys": [
+      "in_execution|embedding-strategies",
+      "in_execution|openai-docs"
+    ],
+    "resolved_specialist_skill_ids": [
+      "embedding-strategies",
+      "openai-docs"
+    ],
+    "resolved_specialist_resolution_keys": [
+      "in_execution|embedding-strategies",
+      "in_execution|openai-docs"
+    ],
+    "approved_dispatch_subset_of_recommendations": false,
+    "inherited_root_approval_allowed": false,
+    "approved_dispatch_supported_by_recommendation_or_inherited_approval": false,
+    "approved_dispatch_fully_executed": false,
+    "approved_dispatch_fully_resolved": true,
+    "executed_specialists_subset_of_approved_dispatch": true,
+    "routed_specialists_subset_of_approved_dispatch": true,
+    "local_suggestions_contained": true,
+    "native_contract_complete_for_approved_dispatch": true,
+    "matched_skills_resolved": true,
+    "approved_dispatch_missing_from_recommendations": [
+      "embedding-strategies"
+    ],
+    "approved_dispatch_missing_from_recommendations_resolution_keys": [
+      "in_execution|embedding-strategies"
+    ],
+    "approved_dispatch_not_executed": [
+      "in_execution|openai-docs",
+      "in_execution|embedding-strategies"
+    ],
+    "approved_dispatch_not_resolved": [],
+    "executed_without_approval": [],
+    "routed_without_approval": [],
+    "local_suggestions_executed_without_approval": [],
+    "dispatch_contract_incomplete_skill_ids": [],
+    "proof_passed": false
+  },
+  "escalation_required": false,
+  "escalation_request_path": null,
+  "completion_claim_allowed": true,
+  "proof_class": "runtime",
+  "verification_contract": [
+    "No completion claim without verification evidence.",
+    "All subagent prompts must end with $vibe.",
+    "Specialist help must preserve native workflow and remain bounded under vibe governance.",
+    "Child-governed lanes may not issue final completion claims or mutate canonical requirement/plan truth.",
+    "Phase cleanup must run after execution."
+  ],
+  "generated_at": "2026-05-20T05:41:47Z"
+}

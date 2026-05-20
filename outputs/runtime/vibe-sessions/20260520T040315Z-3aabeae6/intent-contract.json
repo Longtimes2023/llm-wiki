@@ -1,0 +1,32 @@
+{
+  "generated_at": "2026-05-20T04:03:48Z",
+  "title": "compare local project with GitHub https://github.com/Longtimes2023/llm-wiki iden...",
+  "goal": "compare local project with GitHub https://github.com/Longtimes2023/llm-wiki iden...",
+  "deliverable": "Governed implementation artifacts, verification evidence, and cleanup receipts",
+  "constraints": [
+    "Do not bypass the fixed six-stage governed runtime.",
+    "Do not widen scope silently beyond the frozen requirement document."
+  ],
+  "acceptance_criteria": [
+    "Requirement document is frozen before execution.",
+    "Execution plan exists before implementation.",
+    "Verification evidence exists before completion claims.",
+    "Phase cleanup receipt is produced."
+  ],
+  "non_goals": [
+    "Do not treat M/L/XL as user-facing entry branches.",
+    "Do not introduce a second router or control plane."
+  ],
+  "risk_tolerance": "moderate",
+  "autonomy_mode": "interactive_governed",
+  "open_questions": [],
+  "inference_notes": [
+    "This contract was derived from the raw task text.",
+    "Interactive mode may still surface explicit clarification questions outside the script path."
+  ],
+  "assumptions": [
+    "Interactive clarification is allowed if unresolved ambiguity materially changes implementation."
+  ],
+  "internal_grade": "L",
+  "source_task": "compare local project with GitHub https://github.com/Longtimes2023/llm-wiki iden... Deliverable: Governed implementation artifacts, verification evidence, and cleanup receipts. Constraints: Do not bypass the fixed six-stage governed runtime.; Do not widen scope silently beyond the frozen requirement document.. Update: merge origin/main into local main: pull UI redesign commits from GitHub, resolve conflicts favoring local for ai-wiki/backend files and GitHub for quartz UI files, then git push"
+}

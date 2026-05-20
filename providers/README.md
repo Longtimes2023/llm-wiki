@@ -22,8 +22,8 @@ cp providers/anthropic.env.example providers/myprovider.env
 
 Trong Telegram chat:
 ```
-/provider                 # show active + list available
-/provider deepseek        # switch sticky
+/provider                 # show active ingest + chat + list available
+/provider deepseek        # switch sticky ingest provider
 ```
 
 Hoặc:
@@ -32,6 +32,24 @@ echo deepseek > providers/.active
 ```
 
 Switch instant — không kill ingest đang chạy. Ingest tiếp theo sẽ pick provider mới.
+
+## Chat (Q&A) provider — tách riêng để giảm cost
+
+Telegram bot có 2 path: **ingest** (đắt, dùng model mạnh cho wiki generation) và **chat/Q&A** (Read/Glob/Grep search wiki, dùng model rẻ là đủ). Mỗi path có sentinel riêng:
+
+- `providers/.active`      → ingest sticky default
+- `providers/.active_chat` → chat sticky default (Q&A path)
+
+Nếu `.active_chat` không có / rỗng → Q&A fallback sang ingest provider (backward compat).
+
+```
+/chatprovider             # show active chat + list available
+/chatprovider haiku-chat  # switch chat to Haiku (rẻ ~15× so với Opus)
+```
+
+Hoặc env var (bootstrap fallback): `CHAT_PROVIDER=haiku-chat` trong main `.env`.
+
+Profile recommend cho chat: `providers/haiku-chat.env` (template đã tạo sẵn, điền `ANTHROPIC_AUTH_TOKEN` rồi `/chatprovider haiku-chat`).
 
 ## A/B test 1 URL với nhiều provider
 
@@ -57,4 +75,4 @@ Profile có giá → cost tự tính; không có → fallback `total_cost_usd` t
 
 ## Gitignore
 
-`providers/*.env` và `providers/.active` đều gitignored. Chỉ `.env.example` được track. Đừng commit creds.
+`providers/*.env`, `providers/.active`, `providers/.active_chat` đều gitignored. Chỉ `.env.example` được track. Đừng commit creds.

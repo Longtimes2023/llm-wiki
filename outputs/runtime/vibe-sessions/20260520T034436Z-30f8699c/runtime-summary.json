@@ -1,0 +1,249 @@
+{
+  "run_id": "20260520T034436Z-30f8699c",
+  "governance_scope": "root",
+  "mode": "interactive_governed",
+  "task": "compare local project with GitHub https://github.com/Longtimes2023/llm-wiki identify differences especially UI parts from scripts to quartz copy determine proper sync git push strategy",
+  "generated_at": "2026-05-20T03:45:18Z",
+  "artifact_root": "/home/steven/llm-wiki",
+  "session_root": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c",
+  "session_root_relative": "outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c",
+  "hierarchy": {
+    "root_run_id": "20260520T034436Z-30f8699c",
+    "parent_run_id": null,
+    "parent_unit_id": null,
+    "inherited_requirement_doc_path": null,
+    "inherited_execution_plan_path": null,
+    "delegation_envelope_path": null
+  },
+  "stage_order": [
+    "skeleton_check",
+    "deep_interview",
+    "requirement_doc",
+    "xl_plan",
+    "plan_execute",
+    "phase_cleanup"
+  ],
+  "executed_stage_order": [
+    "skeleton_check",
+    "deep_interview",
+    "requirement_doc"
+  ],
+  "terminal_stage": "requirement_doc",
+  "artifacts": {
+    "skeleton_receipt": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/skeleton-receipt.json",
+    "runtime_input_packet": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/runtime-input-packet.json",
+    "governance_capsule": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/governance-capsule.json",
+    "stage_lineage": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/stage-lineage.json",
+    "intent_contract": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/intent-contract.json",
+    "requirement_doc": "/home/steven/llm-wiki/docs/requirements/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+    "requirement_receipt": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/requirement-doc-receipt.json",
+    "execution_plan": null,
+    "execution_plan_receipt": null,
+    "execute_receipt": null,
+    "execution_manifest": null,
+    "execution_topology": null,
+    "execution_proof_manifest": null,
+    "specialist_lifecycle_disclosure": null,
+    "host_stage_disclosure": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/host-stage-disclosure.json",
+    "host_user_briefing": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/host-user-briefing.md",
+    "cleanup_receipt": null,
+    "delivery_acceptance_report": null,
+    "delivery_acceptance_markdown": null,
+    "memory_activation_report": null,
+    "memory_activation_markdown": null,
+    "delegation_envelope": null,
+    "delegation_validation_receipt": null
+  },
+  "storage": {
+    "workspace_root": "/home/steven/.claude/skills/vibe",
+    "workspace_sidecar_root": "/home/steven/.claude/skills/vibe/.vibeskills",
+    "project_descriptor_path": "/home/steven/.claude/skills/vibe/.vibeskills/project.json",
+    "artifact_root": "/home/steven/llm-wiki",
+    "artifact_root_source": "explicit_override",
+    "default_workspace_sidecar_artifact_root": false,
+    "host_sidecar_root": "/home/steven/.claude/.vibeskills",
+    "workspace_memory_identity_root": "/home/steven/.claude/skills/vibe/.vibeskills/project.json",
+    "workspace_memory_identity_scope": "workspace",
+    "workspace_memory_driver_contract": "workspace_shared_memory_v1",
+    "workspace_memory_logical_owners": [
+      "state_store",
+      "serena",
+      "ruflo",
+      "cognee"
+    ]
+  },
+  "memory_activation": null,
+  "delivery_acceptance": null,
+  "specialist_decision": null,
+  "specialist_user_disclosure": null,
+  "specialist_consultation": null,
+  "specialist_lifecycle_disclosure": null,
+  "host_stage_disclosure": {
+    "enabled": true,
+    "protocol_version": "v1",
+    "mode": "progressive_host_stage_disclosure",
+    "append_only": true,
+    "event_count": 1,
+    "last_sequence": 1,
+    "freeze_gate_passed": true,
+    "events": [
+      {
+        "sequence": 1,
+        "emitted_at": "2026-05-20T03:45:14Z",
+        "event_id": "discussion_routing_frozen",
+        "segment_id": "discussion_routing",
+        "stage": "runtime_input_freeze",
+        "category": "routing",
+        "truth_layer": "routing",
+        "status": "informational",
+        "gate_status": null,
+        "skill_count": 2,
+        "skills": [
+          {
+            "skill_id": "openai-docs",
+            "why_now": "overlay recommendation from 'dialectic_team_advice'",
+            "source": null,
+            "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+            "native_skill_description": null,
+            "state": "routed"
+          },
+          {
+            "skill_id": "embedding-strategies",
+            "why_now": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+            "source": null,
+            "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+            "native_skill_description": null,
+            "state": "routed"
+          }
+        ],
+        "rendered_text": "Vibe routed these Skills into the discussion/planning chain:\n- openai-docs [routed] from /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md\n  Why: overlay recommendation from 'dialectic_team_advice'\n- embedding-strategies [routed] from /home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md\n  Why: internal specialist recommender selected a bounded specialist candidate for governed execution"
+      }
+    ],
+    "rendered_text": "Vibe routed these Skills into the discussion/planning chain:\n- openai-docs [routed] from /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md\n  Why: overlay recommendation from 'dialectic_team_advice'\n- embedding-strategies [routed] from /home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md\n  Why: internal specialist recommender selected a bounded specialist candidate for governed execution"
+  },
+  "host_user_briefing": {
+    "enabled": true,
+    "mode": "bounded_return_host_briefing",
+    "freeze_gate_passed": true,
+    "segment_count": 1,
+    "segments": [
+      {
+        "segment_id": "bounded_return_control",
+        "stage": "requirement_doc",
+        "category": "runtime_control",
+        "truth_layer": "runtime_control",
+        "status": "return_control_required",
+        "gate_status": null,
+        "skill_count": 0,
+        "skills": [],
+        "rendered_text": "Bounded governed stop reached. Return control to the user now.\n- terminal stage: `requirement_doc`\n- source run id: `20260520T034436Z-30f8699c`\n- allowed follow-up entries: `vibe`\n- next governed stage after approval: `xl_plan`\n- approval kind: `requirement_confirmation`\n- preferred structured approval action: `approve_requirement`\n- approval instruction: Review the frozen requirement document with the user and wait for an explicit approve/revise reply before planning. Do not auto-continue into `xl_plan` in the same assistant turn.\n- do not continue in the same assistant turn; wait for a new user message before consuming re-entry credentials\n- if you intentionally continue, forward `--continue-from-run-id 20260520T034436Z-30f8699c` and `--bounded-reentry-token 9f20495c891443f581ff61a4c5541f65` from the latest runtime summary",
+        "control_owner": "user",
+        "source_run_id": "20260520T034436Z-30f8699c",
+        "reentry_token": "9f20495c891443f581ff61a4c5541f65",
+        "terminal_stage": "requirement_doc",
+        "next_stage": "xl_plan",
+        "approval_kind": "requirement_confirmation",
+        "approval_prompt": "Review the frozen requirement document with the user and wait for an explicit approve/revise reply before planning. Do not auto-continue into `xl_plan` in the same assistant turn.",
+        "host_decision_contract": {
+          "protocol_version": "v1",
+          "decision_kind": "approval_response",
+          "decision_context": "bounded_stage_reentry",
+          "pending_terminal_stage": "requirement_doc",
+          "next_stage": "xl_plan",
+          "approval_kind": "requirement_confirmation",
+          "allowed_decision_actions": [
+            "approve",
+            "approve_requirement",
+            "approve_requirement_doc",
+            "approve_requirements",
+            "revise",
+            "request_changes",
+            "request_revise",
+            "revise_requirement",
+            "revise_requirement_doc",
+            "revise_requirements"
+          ],
+          "preferred_decision_action": "approve_requirement",
+          "preferred_payload": {
+            "decision_kind": "approval_response",
+            "decision_action": "approve_requirement",
+            "approval_decision": "approve"
+          }
+        },
+        "allowed_followup_entry_ids": [
+          "vibe"
+        ]
+      }
+    ],
+    "rendered_text": "Governed runtime host briefing:\n\nBounded governed stop reached. Return control to the user now.\n- terminal stage: `requirement_doc`\n- source run id: `20260520T034436Z-30f8699c`\n- allowed follow-up entries: `vibe`\n- next governed stage after approval: `xl_plan`\n- approval kind: `requirement_confirmation`\n- preferred structured approval action: `approve_requirement`\n- approval instruction: Review the frozen requirement document with the user and wait for an explicit approve/revise reply before planning. Do not auto-continue into `xl_plan` in the same assistant turn.\n- do not continue in the same assistant turn; wait for a new user message before consuming re-entry credentials\n- if you intentionally continue, forward `--continue-from-run-id 20260520T034436Z-30f8699c` and `--bounded-reentry-token 9f20495c891443f581ff61a4c5541f65` from the latest runtime summary"
+  },
+  "bounded_return_control": {
+    "protocol_version": "v1",
+    "enabled": true,
+    "explicit_user_reentry_required": true,
+    "explicit_new_user_message_required": true,
+    "control_owner": "user",
+    "source_run_id": "20260520T034436Z-30f8699c",
+    "source_entry_intent_id": "vibe",
+    "terminal_stage": "requirement_doc",
+    "next_stage": "xl_plan",
+    "approval_kind": "requirement_confirmation",
+    "approval_prompt": "Review the frozen requirement document with the user and wait for an explicit approve/revise reply before planning. Do not auto-continue into `xl_plan` in the same assistant turn.",
+    "host_decision_contract": {
+      "protocol_version": "v1",
+      "decision_kind": "approval_response",
+      "decision_context": "bounded_stage_reentry",
+      "pending_terminal_stage": "requirement_doc",
+      "next_stage": "xl_plan",
+      "approval_kind": "requirement_confirmation",
+      "allowed_decision_actions": [
+        "approve",
+        "approve_requirement",
+        "approve_requirement_doc",
+        "approve_requirements",
+        "revise",
+        "request_changes",
+        "request_revise",
+        "revise_requirement",
+        "revise_requirement_doc",
+        "revise_requirements"
+      ],
+      "preferred_decision_action": "approve_requirement",
+      "preferred_payload": {
+        "decision_kind": "approval_response",
+        "decision_action": "approve_requirement",
+        "approval_decision": "approve"
+      }
+    },
+    "allowed_followup_entry_ids": [
+      "vibe"
+    ],
+    "reentry_token": "9f20495c891443f581ff61a4c5541f65",
+    "rendered_text": "Bounded governed stop reached. Return control to the user now.\n- terminal stage: `requirement_doc`\n- source run id: `20260520T034436Z-30f8699c`\n- explicit user re-entry required before later stages: `true`\n- allowed follow-up entries: `vibe`\n- next governed stage after approval: `xl_plan`\n- approval kind: `requirement_confirmation`\n- preferred structured approval action: `approve_requirement`\n- approval instruction: Review the frozen requirement document with the user and wait for an explicit approve/revise reply before planning. Do not auto-continue into `xl_plan` in the same assistant turn.\n- the host may translate the user's natural-language approval into a structured decision; exact keywords are not required\n- continuation token: `9f20495c891443f581ff61a4c5541f65`"
+  },
+  "artifacts_relative": {
+    "skeleton_receipt": "outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/skeleton-receipt.json",
+    "runtime_input_packet": "outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/runtime-input-packet.json",
+    "governance_capsule": "outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/governance-capsule.json",
+    "stage_lineage": "outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/stage-lineage.json",
+    "intent_contract": "outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/intent-contract.json",
+    "requirement_doc": "docs/requirements/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+    "requirement_receipt": "outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/requirement-doc-receipt.json",
+    "execution_plan": null,
+    "execution_plan_receipt": null,
+    "execute_receipt": null,
+    "execution_manifest": null,
+    "execution_topology": null,
+    "execution_proof_manifest": null,
+    "specialist_lifecycle_disclosure": null,
+    "host_stage_disclosure": "outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/host-stage-disclosure.json",
+    "host_user_briefing": "outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/host-user-briefing.md",
+    "cleanup_receipt": null,
+    "delivery_acceptance_report": null,
+    "delivery_acceptance_markdown": null,
+    "memory_activation_report": null,
+    "memory_activation_markdown": null,
+    "delegation_envelope": null,
+    "delegation_validation_receipt": null
+  }
+}

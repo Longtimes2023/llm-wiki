@@ -1,0 +1,9 @@
+{
+  "lane_id": "lane-installed-runtime-freshness-gate",
+  "review_kind": "spec",
+  "passed": true,
+  "governance_scope": "root",
+  "generated_at": "2026-05-20T05:41:40Z",
+  "source_lane_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate/lane-receipt.json",
+  "notes": "Spec compliance review confirms the delegated lane completed inside the frozen scope."
+}

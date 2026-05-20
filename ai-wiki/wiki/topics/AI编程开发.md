@@ -1,8 +1,8 @@
 ---
 tags: [AI编程, DeepSeek, Cursor, 开发效率, 架构图, 游戏开发, Spring AI, RAG, Agent]
 created: 2026-04-29
-updated: 2026-04-29
-sources: [2026-04-29-deepseek-vscode-integration, 2026-04-29-deepseek-python-local-setup, 2026-04-29-ai-architecture-diagram-tutorial, 2026-04-29-ai-game-development-3h-28w, 2026-04-29-deepseek-cline-ios-app, 2026-04-29-yupi-ai-guide-intro, 2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-tools, 2026-04-29-yupi-ai-guide-programming-tips, 2026-04-29-yupi-ai-guide-programming-tech]
+updated: 2026-05-13
+sources: [2026-04-29-deepseek-vscode-integration, 2026-04-29-deepseek-python-local-setup, 2026-04-29-ai-architecture-diagram-tutorial, 2026-04-29-ai-game-development-3h-28w, 2026-04-29-deepseek-cline-ios-app, 2026-04-29-yupi-ai-guide-intro, 2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-tools, 2026-04-29-yupi-ai-guide-programming-tips, 2026-04-29-yupi-ai-guide-programming-tech, 2026-05-11-claude-code-6-skills, 2026-05-13-ai-agent-productivity-20x]
 ---
 
 # AI 编程开发全景
@@ -20,6 +20,10 @@ sources: [2026-04-29-deepseek-vscode-integration, 2026-04-29-deepseek-python-loc
 4. **"迭代开发"比"一次完美"更重要**：第一版难看功能简陋没关系，AI 时代最核心的能力是快速把想法变成可运行的原型，然后持续迭代
 
 5. **未来程序员 = AI 操控师**：把自己的经验和 AI 融合，驾驭 AI 更快完成工作，而不是被 AI 淘汰
+
+6. **Claude Code Skill 装太多会降触发准确率**：装 30+ 个 Skill 实测触发准确率掉到 50% 以下，官方建议 20-30 个且贴自己工作流。筛选唯一标准"能不能替我每天省掉一步手动动作"，注意"Setup Porn"陷阱——来源：[[2026-05-11-claude-code-6-skills]]
+
+7. **AI 编程正在从提示词技巧升级为上下文资产管理**：Claude Code、Codex、Manus 等 harness 的差异不如 `agents.md`、`memory.md`、Skill 文件与 MCP 连接方式重要；真正可迁移的生产力来自上下文、记忆、工具和技能组合成的数字团队系统——来源：[[2026-05-13-ai-agent-productivity-20x]]
 
 ## AI 核心概念体系
 
@@ -285,6 +289,26 @@ IDE: PyCharm Community Edition（免费）
 - 支持读取、修改、创建工程文件
 - 支持执行终端命令
 
+### 场景六：Claude Code Skill 工作流增强
+
+Claude Code 的 Skill 机制按需加载，不用时不占上下文。通用类 3 个精选 Skill：
+
+**Skill Creator（官方元技能）**：
+- 主动问流程怎么跑，帮你写 SKILL.md + 生成测试用例
+- 10 多个独立来源把它放在起点，几乎所有教程开篇都是它
+- 典型指令："把我昨天手动跑的选题流程打包成 skill"
+
+**Planning with Files（社区，13,410 Stars）**：
+- 解决长文/长代码"写到后面忘开头"的问题
+- 强制 Claude 先写 task_plan.md，每两步更新 findings.md / progress.md
+- 给 Claude 外挂硬盘记事，对话再长也不会忘自己在干什么
+
+**Document & Presentation Skills（官方全家桶）**：
+- PDF/Word/Excel/PPT 一句话转换
+- 典型场景：23 页 PDF → 10 页品牌色 Slide
+
+**选择原则**：控制总量 20 个以内确保触发准确率；手动跑同一任务 3 次以上再用 Skill Creator 打包；警惕"Setup Porn"（拿配置当拖延借口）。——来源：[[2026-05-11-claude-code-6-skills]]
+
 ## 工具选型决策树
 
 ```
@@ -343,3 +367,4 @@ IDE: PyCharm Community Edition（免费）
 - [[AI内容创作]]
 - [[鱼皮 AI 指南]]
 - [[独立开发者]]
+- [[Skill]]

@@ -1,0 +1,35 @@
+{
+  "stage": "requirement_doc",
+  "source_stage": "bounded_memory_recall",
+  "owner": "state_store",
+  "disclosure_level": "decision_focused",
+  "generated_at": "2026-05-20T03:45:16Z",
+  "capsule_count": 1,
+  "selected_capsules": [
+    {
+      "capsule_id": "833459251a9d116c",
+      "owner": "state_store",
+      "lane": null,
+      "kind": "fallback_digest",
+      "updated_at": null,
+      "title": "Task focus: compare local project with GitHub https://github.com/Longtimes2023/llm-wiki identify differences especially UI parts from script...",
+      "why_now": "Matched state_store memory for requirement_doc.",
+      "expansion_ref": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T034436Z-30f8699c/memory-activation/skeleton-local-digest.json#833459251a9d116c",
+      "summary_lines": [
+        "Task focus: compare local project with GitHub https://github.com/Longtimes2023/llm-wiki identify differences especially UI parts from scripts to quartz copy determine proper sync git push strategy",
+        "Git branch: ",
+        "All required governed runtime prerequisite paths are present."
+      ]
+    }
+  ],
+  "items": [
+    "Task focus: compare local project with GitHub https://github.com/Longtimes2023/llm-wiki identify differences especially UI parts from scripts to quartz copy determine proper sync git push strategy",
+    "Git branch: "
+  ],
+  "estimated_tokens": 52,
+  "budget": {
+    "top_k": 2,
+    "max_tokens": 120,
+    "max_chars_per_item": 260
+  }
+}

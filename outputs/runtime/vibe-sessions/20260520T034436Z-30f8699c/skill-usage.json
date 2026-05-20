@@ -1,0 +1,66 @@
+{
+  "schema_version": 2,
+  "state_model": "binary_used_unused",
+  "used": [
+    {
+      "skill_id": "embedding-strategies",
+      "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+      "skill_md_sha256": "f1e255d875e447e2c66f5d4bc5ed0576579a9f39f3ca14150c79757896911964",
+      "evidence": [
+        {
+          "stage": "requirement_doc",
+          "artifact_path": "2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+          "impact": "Requirement doc adopts the loaded embedding-strategies SKILL.md as the workflow authority for downstream planning and completion evidence."
+        }
+      ]
+    }
+  ],
+  "unused": [
+    {
+      "skill_id": "openai-docs",
+      "reason": "selected_but_no_artifact_impact"
+    }
+  ],
+  "used_skills": [
+    "embedding-strategies"
+  ],
+  "unused_skills": [
+    "openai-docs"
+  ],
+  "loaded_skills": [
+    {
+      "skill_id": "openai-docs",
+      "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+      "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7",
+      "load_status": "loaded_full_skill_md",
+      "loaded_at_stage": "skeleton_check",
+      "loaded_byte_count": 3446,
+      "loaded_line_count": 56
+    },
+    {
+      "skill_id": "embedding-strategies",
+      "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+      "skill_md_sha256": "f1e255d875e447e2c66f5d4bc5ed0576579a9f39f3ca14150c79757896911964",
+      "load_status": "loaded_full_skill_md",
+      "loaded_at_stage": "skeleton_check",
+      "loaded_byte_count": 14558,
+      "loaded_line_count": 479
+    }
+  ],
+  "evidence": [
+    {
+      "skill_id": "embedding-strategies",
+      "stage": "requirement_doc",
+      "artifact_ref": "2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+      "impact_summary": "Requirement doc adopts the loaded embedding-strategies SKILL.md as the workflow authority for downstream planning and completion evidence.",
+      "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/embedding-strategies/SKILL.runtime-mirror.md",
+      "skill_md_sha256": "f1e255d875e447e2c66f5d4bc5ed0576579a9f39f3ca14150c79757896911964"
+    }
+  ],
+  "unused_reasons": [
+    {
+      "skill_id": "openai-docs",
+      "reason": "selected_but_no_artifact_impact"
+    }
+  ]
+}

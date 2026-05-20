@@ -1,0 +1,44 @@
+{
+  "lane_id": "lane-installed-runtime-freshness-gate",
+  "lane_kind": "execution_unit",
+  "lane_root": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate",
+  "run_id": "lane-installed-runtime-freshness-gate",
+  "mode": "interactive_governed",
+  "governance_scope": "child",
+  "root_run_id": "20260520T054106Z-c8c3438c",
+  "parent_run_id": "20260520T054106Z-c8c3438c",
+  "parent_unit_id": "installed-runtime-freshness-gate",
+  "requirement_doc_path": "/home/steven/llm-wiki/docs/requirements/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+  "execution_plan_path": "/home/steven/llm-wiki/docs/plans/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023-execution-plan.md",
+  "repo_root": "/home/steven/.claude/skills/vibe",
+  "default_timeout_seconds": 240,
+  "parallelizable": false,
+  "write_scope": "scripts/verify",
+  "review_mode": "two_stage_after_unit",
+  "delegation_envelope_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/child-lanes/lane-installed-runtime-freshness-gate/delegation-envelope.json",
+  "tokens": {
+    "${RUN_ID}": "20260520T054106Z-c8c3438c",
+    "${ROOT_RUN_ID}": "20260520T054106Z-c8c3438c",
+    "${REQUIREMENT_DOC}": "/home/steven/llm-wiki/docs/requirements/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+    "${TARGET_ROOT}": "/home/steven/.claude",
+    "${REPO_ROOT}": "/home/steven/.claude/skills/vibe",
+    "${SESSION_ROOT}": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c",
+    "${EXECUTION_PLAN}": "/home/steven/llm-wiki/docs/plans/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023-execution-plan.md"
+  },
+  "unit": {
+    "unit_id": "installed-runtime-freshness-gate",
+    "kind": "powershell_file",
+    "parallelizable": true,
+    "write_scope": "scripts/verify",
+    "script_path": "scripts/verify/vibe-installed-runtime-freshness-gate.ps1",
+    "arguments": [
+      "-TargetRoot",
+      "${TARGET_ROOT}"
+    ],
+    "cwd": "${REPO_ROOT}",
+    "timeout_seconds": 240,
+    "expected_exit_code": 0,
+    "expected_artifacts": []
+  },
+  "dispatch": null
+}

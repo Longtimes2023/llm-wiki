@@ -1,0 +1,16 @@
+[Unit]
+Description=LLM Wiki Q&A API (FastAPI/Claude Agent SDK)
+After=default.target
+
+[Service]
+Type=simple
+Environment=PATH=__NODE_PATH__:__HOME__/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=__PROJECT_DIR__/.venv/bin/python __PROJECT_DIR__/wiki_writer_api.py
+WorkingDirectory=__PROJECT_DIR__
+Restart=on-failure
+RestartSec=5
+StandardOutput=append:__PROJECT_DIR__/scripts/wiki_api.log
+StandardError=append:__PROJECT_DIR__/scripts/wiki_api.log
+
+[Install]
+WantedBy=default.target

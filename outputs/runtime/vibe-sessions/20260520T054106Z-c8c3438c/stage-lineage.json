@@ -1,0 +1,68 @@
+{
+  "run_id": "20260520T054106Z-c8c3438c",
+  "root_run_id": "20260520T054106Z-c8c3438c",
+  "stages": [
+    {
+      "stage_name": "skeleton_check",
+      "run_id": "20260520T054106Z-c8c3438c",
+      "root_run_id": "20260520T054106Z-c8c3438c",
+      "previous_stage_name": null,
+      "previous_stage_receipt_path": null,
+      "current_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/skeleton-receipt.json",
+      "transition_validated": true,
+      "validated_at": "2026-05-20T05:41:12Z"
+    },
+    {
+      "stage_name": "deep_interview",
+      "run_id": "20260520T054106Z-c8c3438c",
+      "root_run_id": "20260520T054106Z-c8c3438c",
+      "previous_stage_name": "skeleton_check",
+      "previous_stage_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/skeleton-receipt.json",
+      "current_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/intent-contract.json",
+      "transition_validated": true,
+      "validated_at": "2026-05-20T05:41:30Z"
+    },
+    {
+      "stage_name": "requirement_doc",
+      "run_id": "20260520T054106Z-c8c3438c",
+      "root_run_id": "20260520T054106Z-c8c3438c",
+      "previous_stage_name": "deep_interview",
+      "previous_stage_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/intent-contract.json",
+      "current_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/requirement-doc-receipt.json",
+      "transition_validated": true,
+      "validated_at": "2026-05-20T05:41:31Z"
+    },
+    {
+      "stage_name": "xl_plan",
+      "run_id": "20260520T054106Z-c8c3438c",
+      "root_run_id": "20260520T054106Z-c8c3438c",
+      "previous_stage_name": "requirement_doc",
+      "previous_stage_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/requirement-doc-receipt.json",
+      "current_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-plan-receipt.json",
+      "transition_validated": true,
+      "validated_at": "2026-05-20T05:41:32Z"
+    },
+    {
+      "stage_name": "plan_execute",
+      "run_id": "20260520T054106Z-c8c3438c",
+      "root_run_id": "20260520T054106Z-c8c3438c",
+      "previous_stage_name": "xl_plan",
+      "previous_stage_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/execution-plan-receipt.json",
+      "current_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/phase-execute.json",
+      "transition_validated": true,
+      "validated_at": "2026-05-20T05:41:47Z"
+    },
+    {
+      "stage_name": "phase_cleanup",
+      "run_id": "20260520T054106Z-c8c3438c",
+      "root_run_id": "20260520T054106Z-c8c3438c",
+      "previous_stage_name": "plan_execute",
+      "previous_stage_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/phase-execute.json",
+      "current_receipt_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T054106Z-c8c3438c/cleanup-receipt.json",
+      "transition_validated": true,
+      "validated_at": "2026-05-20T05:41:48Z"
+    }
+  ],
+  "last_stage_name": "phase_cleanup",
+  "updated_at": "2026-05-20T05:41:48Z"
+}

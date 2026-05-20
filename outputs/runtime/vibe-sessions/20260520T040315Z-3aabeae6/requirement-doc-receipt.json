@@ -1,0 +1,69 @@
+{
+  "stage": "requirement_doc",
+  "run_id": "20260520T040315Z-3aabeae6",
+  "governance_scope": "root",
+  "mode": "interactive_governed",
+  "requirement_doc_path": "/home/steven/llm-wiki/docs/requirements/2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+  "child_requirement_handoff_path": null,
+  "canonical_write_allowed": true,
+  "inherited_requirement_doc_path": null,
+  "runtime_input_packet_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T040315Z-3aabeae6/runtime-input-packet.json",
+  "code_task_tdd_decision": {
+    "mode": "required",
+    "source": "runtime_inference",
+    "reason": "The task includes implementation or defect-correction intent that requires code-task TDD evidence.",
+    "exception": null
+  },
+  "skill_usage_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T040315Z-3aabeae6/skill-usage.json",
+  "skill_usage": {
+    "schema_version": 2,
+    "state_model": "binary_used_unused",
+    "used": [
+      {
+        "skill_id": "openai-docs",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7",
+        "evidence": [
+          {
+            "stage": "requirement_doc",
+            "artifact_path": "2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+            "impact": "Requirement doc adopts the loaded openai-docs SKILL.md as the workflow authority for downstream planning and completion evidence."
+          }
+        ]
+      }
+    ],
+    "unused": null,
+    "used_skills": [
+      "openai-docs"
+    ],
+    "unused_skills": [],
+    "loaded_skills": [
+      {
+        "skill_id": "openai-docs",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7",
+        "load_status": "loaded_full_skill_md",
+        "loaded_at_stage": "skeleton_check",
+        "loaded_byte_count": 3446,
+        "loaded_line_count": 56
+      }
+    ],
+    "evidence": [
+      {
+        "skill_id": "openai-docs",
+        "stage": "requirement_doc",
+        "artifact_ref": "2026-05-20-compare-local-project-with-github-https-github-com-longtimes2023.md",
+        "impact_summary": "Requirement doc adopts the loaded openai-docs SKILL.md as the workflow authority for downstream planning and completion evidence.",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_sha256": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7"
+      }
+    ],
+    "unused_reasons": null
+  },
+  "memory_context_path": "/home/steven/llm-wiki/outputs/runtime/vibe-sessions/20260520T040315Z-3aabeae6/memory-activation/requirement-context-pack.json",
+  "memory_context_item_count": 2,
+  "memory_context_estimated_tokens": 59,
+  "memory_disclosure_level": "decision_focused",
+  "memory_capsule_count": 1,
+  "generated_at": "2026-05-20T04:03:49Z"
+}

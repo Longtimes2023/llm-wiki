@@ -1,0 +1,189 @@
+{
+  "generated_at": "2026-05-20T04:03:50Z",
+  "run_id": "20260520T040315Z-3aabeae6",
+  "governance_scope": "root",
+  "grade": "L",
+  "profile_id": "repo_safe_execution_closure",
+  "delegation_mode": "serial_child_lanes",
+  "review_mode": "two_stage_after_unit",
+  "specialist_execution_mode": "native_bounded_units",
+  "max_parallel_units": 1,
+  "specialist_phase_bindings": {
+    "pre_execution": [],
+    "in_execution": [
+      {
+        "skill_id": "openai-docs",
+        "phase_id": null,
+        "reason": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "task_slice": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+        "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+        "dispatch_phase": "in_execution",
+        "parallelizable_in_root_xl": true,
+        "native_usage_required": true,
+        "usage_required": true,
+        "skill_root": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs",
+        "bounded_role": "specialist_assist",
+        "must_preserve_workflow": true,
+        "binding_profile": "default",
+        "lane_policy": "inherit_grade",
+        "write_scope": "specialist:openai-docs",
+        "review_mode": "native_contract",
+        "execution_priority": 50,
+        "required_inputs": [
+          "bounded specialist subtask contract",
+          "frozen requirement context",
+          "relevant source files or domain artifacts"
+        ],
+        "expected_outputs": [
+          "bounded specialist findings or code changes",
+          "verification notes aligned with the specialist skill"
+        ],
+        "verification_expectation": "Preserve the specialist skill's native workflow, boundaries, and validation style.",
+        "progressive_load_policy": [
+          "Open the specialist /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md entrypoint first.",
+          "If this specialist is disclosed only by native_skill_entrypoint, keep same-session loading path-based and do not replace it with Skill(openai-docs) unless that skill name is explicitly host-visible in the current session."
+        ]
+      }
+    ],
+    "post_execution": [],
+    "verification": []
+  },
+  "parallelizable_specialist_unit_count": 1,
+  "waves": [
+    {
+      "wave_id": "wave-1",
+      "description": "Execute governed runtime proof units against repo-safe local commands.",
+      "steps": [
+        {
+          "step_id": "wave-1-step-1",
+          "execution_mode": "sequential",
+          "review_mode": "two_stage_after_unit",
+          "max_parallel_units": 1,
+          "units": [
+            {
+              "lane_id": "lane-runtime-neutral-freshness-gate-tests",
+              "lane_kind": "execution_unit",
+              "source_unit_id": "runtime-neutral-freshness-gate-tests",
+              "parallelizable": false,
+              "write_scope": "tests/runtime_neutral",
+              "review_mode": "two_stage_after_unit",
+              "unit": {
+                "unit_id": "runtime-neutral-freshness-gate-tests",
+                "kind": "python_command",
+                "parallelizable": true,
+                "write_scope": "tests/runtime_neutral",
+                "command": "${VGO_PYTHON}",
+                "arguments": [
+                  "-m",
+                  "unittest",
+                  "discover",
+                  "-s",
+                  "tests/runtime_neutral",
+                  "-p",
+                  "test_freshness_gate.py",
+                  "-v"
+                ],
+                "cwd": "${REPO_ROOT}",
+                "timeout_seconds": 240,
+                "expected_exit_code": 0,
+                "expected_artifacts": []
+              }
+            }
+          ]
+        },
+        {
+          "step_id": "wave-1-step-2",
+          "execution_mode": "sequential",
+          "review_mode": "two_stage_after_unit",
+          "max_parallel_units": 1,
+          "units": [
+            {
+              "lane_id": "lane-release-install-runtime-coherence-gate",
+              "lane_kind": "execution_unit",
+              "source_unit_id": "release-install-runtime-coherence-gate",
+              "parallelizable": false,
+              "write_scope": "scripts/verify",
+              "review_mode": "two_stage_after_unit",
+              "unit": {
+                "unit_id": "release-install-runtime-coherence-gate",
+                "kind": "powershell_file",
+                "parallelizable": true,
+                "write_scope": "scripts/verify",
+                "script_path": "scripts/verify/vibe-release-install-runtime-coherence-gate.ps1",
+                "arguments": [],
+                "cwd": "${REPO_ROOT}",
+                "timeout_seconds": 240,
+                "expected_exit_code": 0,
+                "expected_artifacts": []
+              }
+            }
+          ]
+        },
+        {
+          "step_id": "wave-1-specialist-in_execution-group-1-serial-1",
+          "execution_mode": "sequential",
+          "review_mode": "native_contract",
+          "max_parallel_units": 1,
+          "phase_id": "ungrouped",
+          "stage_order": 9999,
+          "stage_type": "",
+          "stage_label": "",
+          "units": [
+            {
+              "lane_id": "specialist-in_execution-ungrouped-openai-docs",
+              "lane_kind": "skill_execution",
+              "source_unit_id": "openai-docs",
+              "specialist_skill_id": "openai-docs",
+              "dispatch_phase": "in_execution",
+              "binding_profile": "default",
+              "lane_policy": "inherit_grade",
+              "execution_priority": 50,
+              "parallelizable": false,
+              "write_scope": "specialist:openai-docs",
+              "review_mode": "native_contract",
+              "phase_id": "ungrouped",
+              "stage_order": 9999,
+              "stage_type": null,
+              "stage_label": null,
+              "dispatch": {
+                "skill_id": "openai-docs",
+                "phase_id": null,
+                "reason": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+                "task_slice": "internal specialist recommender selected a bounded specialist candidate for governed execution",
+                "native_skill_entrypoint": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+                "skill_md_path": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md",
+                "dispatch_phase": "in_execution",
+                "parallelizable_in_root_xl": true,
+                "native_usage_required": true,
+                "usage_required": true,
+                "skill_root": "/home/steven/.claude/skills/vibe/bundled/skills/openai-docs",
+                "bounded_role": "specialist_assist",
+                "must_preserve_workflow": true,
+                "binding_profile": "default",
+                "lane_policy": "inherit_grade",
+                "write_scope": "specialist:openai-docs",
+                "review_mode": "native_contract",
+                "execution_priority": 50,
+                "required_inputs": [
+                  "bounded specialist subtask contract",
+                  "frozen requirement context",
+                  "relevant source files or domain artifacts"
+                ],
+                "expected_outputs": [
+                  "bounded specialist findings or code changes",
+                  "verification notes aligned with the specialist skill"
+                ],
+                "verification_expectation": "Preserve the specialist skill's native workflow, boundaries, and validation style.",
+                "progressive_load_policy": [
+                  "Open the specialist /home/steven/.claude/skills/vibe/bundled/skills/openai-docs/SKILL.runtime-mirror.md entrypoint first.",
+                  "If this specialist is disclosed only by native_skill_entrypoint, keep same-session loading path-based and do not replace it with Skill(openai-docs) unless that skill name is explicitly host-visible in the current session."
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
