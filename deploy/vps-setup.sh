@@ -109,6 +109,17 @@ cd "$PROJECT_DIR"
 uv sync
 ok "venv tại .venv/, deps installed"
 
+# ---------- Step 5b: Quartz npm deps ----------
+if [ -f "$PROJECT_DIR/quartz/package.json" ]; then
+  if [ ! -d "$PROJECT_DIR/quartz/node_modules" ] || [ ! -d "$PROJECT_DIR/quartz/node_modules/yargs" ]; then
+    info "[5b] npm install trong quartz/"
+    (cd "$PROJECT_DIR/quartz" && npm install --no-audit --no-fund)
+    ok "quartz/node_modules installed"
+  else
+    ok "[5b] quartz/node_modules đã có"
+  fi
+fi
+
 # ---------- Step 6: .env ----------
 ENV_FILE="$PROJECT_DIR/.env"
 if [ ! -f "$ENV_FILE" ]; then

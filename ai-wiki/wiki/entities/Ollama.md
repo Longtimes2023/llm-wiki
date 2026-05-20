@@ -2,10 +2,18 @@
 type: entity
 name: Ollama
 category: 开发工具
-tags: [本地部署, 开源模型, 私有化, 数据安全]
-sources: [2026-04-29-yupi-ai-guide-programming-tech, 2026-04-29-deepseek-python-local-setup]
+tags:
+  - 本地部署
+  - 开源模型
+  - 私有化
+  - 数据安全
+sources:
+  - 2026-04-29-yupi-ai-guide-programming-tech
+  - 2026-04-29-deepseek-python-local-setup
+  - 2026-05-17-pm-ai-knowledge-base-design-practice
+  - 2026-05-18-woshipm-ai-knowledge-management-design-practice
 created: 2026-04-29
-updated: 2026-04-29
+updated: 2026-05-18
 ---
 
 # Ollama
@@ -54,6 +62,16 @@ Ollama 是一款开源的本地大模型部署工具，能够一键部署和运�
 - PyCharm + CodeGPT + Ollama 本地部署方案
 - 本地运行开源模型，成本更低
 - 完全可控，无数据泄露风险
+
+来自 [[2026-05-17-pm-ai-knowledge-base-design-practice]]：
+- Ollama在这篇产品实践里承担的是“价值验证器”角色：先证明文档问答可行，再决定是否升级为云端产品
+- 本地部署最大的优势仍然是数据可控和零云成本，但一旦用户需要手机访问、多人共享或免安装使用，Ollama 方案会被可用性和协作性短板限制
+- 作者把 Ollama 与 Dify、本地 Qwen 模型组合成原型，说明它很适合MVP早期低成本试验，而不一定适合作为最终组织级知识库的交付形态
+
+来自 [[2026-05-18-woshipm-ai-knowledge-management-design-practice]]：
+- 这篇素材再次强化了 Ollama 的定位：它非常适合在个人电脑上快速验证“文档能否被对话式调用”，但不天然等于一个可交付给团队的知识产品
+- 文章把本地知识库比作“桌上盆栽”——离不开工位、关机即不可用——这个比喻准确指出了Ollama方案在可达性上的根本限制
+- 因而 Ollama 更像 AI 知识管理产品早期的原型工具或私有化试验工具，后续是否继续沿用，取决于是否要支持多端访问、协作和统一治理
 
 ## 实用信息
 
