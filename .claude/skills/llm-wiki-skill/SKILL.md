@@ -112,6 +112,33 @@ bash ${SKILL_DIR}/scripts/adapter-state.sh classify-run <source_id> <exit_code> 
 
 ---
 
+## index.md Dashboard 保护规则
+
+**触发条件**：写 / 更新 `index.md` 之前，先读一次现有内容，检查是否包含以下 HTML section 标记：
+
+- `<section class="wiki-hero">`
+- `<section class="wiki-stats">`
+- `<section class="wiki-topics">`
+- `<section class="wiki-sources">`
+- `<section class="wiki-synthesis">`
+- `<section class="wiki-comparisons">`
+- `<section class="wiki-recent">`
+
+**如果检测到任何一个**：当前 `index.md` 是 dashboard 版本，必须保留整体 HTML 结构。**只允许就地用 Edit 工具修改 section 内部的数字、列表项、链接**，禁止重写整个文件、禁止退回到纯 markdown 模板。
+
+具体规则：
+- 统计数字（`<div class="num">…</div>`）：用最新的素材数 / 实体数 / 主题数 / 综合数 / 最近日期覆盖
+- 主题卡片（`wiki-topics` 下的 `.card`）：调整 `.meta` 中的 `N 篇素材` 计数；新增主题时仿照现有卡片结构追加
+- 素材分类（`wiki-sources` 下的 `.source-cat`）：调整 `.cat-count`，并在对应 `<ul>` 中新增 `<li><a>` 条目
+- 综合 / 对比（`wiki-synthesis` / `wiki-comparisons`）：调整 `.section-badge` 数字并在 `.synth-list-cards` 中新增条目；comparisons 仍为空时保留 `.comp-empty` 占位
+- 最近更新（`wiki-recent` 下的 `<ul>`）：在列表顶部插入新条目，保留 `<span class="date">` / `<span class="title">` / `<span class="tag">` 结构
+
+**锚文本禁用 ` / `**：Quartz 的 alias 插件会把含 `/` 的 anchor text 解释为路径并只保留最后一段，导致标题被截断。带分隔符的标题统一用 ` · `（中点）替代。
+
+**如果未检测到**（init 之后还没装 dashboard，或者用户主动改回纯 markdown）：按原 schema 的纯 markdown 结构维护，无需强行套 HTML。
+
+---
+
 ## 工作流路由
 
 根据用户的意图，路由到对应的工作流：
@@ -355,10 +382,12 @@ bash ${SKILL_DIR}/scripts/adapter-state.sh classify-run <source_id> <exit_code> 
      - sources 字段写入本次素材
    - **结构一致性**：确保主题页结构与其他主题页一致
 
-7. **更新 index.md**：
-   - 在对应分类下添加新条目
+7. **更新 index.md**（遵守 [index.md Dashboard 保护规则](#indexmd-dashboard-保护规则)）：
+   - **先读现有 index.md** 检测是否含 `<section class="wiki-*">` 标记
+   - 若含 dashboard：用 Edit 工具就地更新对应 section 的统计数字、素材分类 `<ul>` 中追加 `<li>`、最近更新顶部插入新条目
+   - 若不含 dashboard：按原纯 markdown 结构在对应分类下添加新条目，更新概览统计数字
    - **所有 `[[链接]]` 必须使用与文件名一致的名称**
-   - 更新概览统计数字
+   - **锚文本禁用 ` / `**，含分隔符的标题用 ` · ` 替代
 
 8. **更新 log.md**：
    - 追加格式：`## {日期} ingest | {素材标题}`
@@ -406,7 +435,7 @@ bash ${SKILL_DIR}/scripts/adapter-state.sh classify-run <source_id> <exit_code> 
    - 如果对应实体页已存在 → 追加一句话说明
    - 如果不存在 → 在摘要页中用纯文本标注（**不要用** `[待创建: [[概念名]]]`，避免生成断链）
    - 如果概念被 3 篇以上素材提及 → 优先创建对应实体页，而非留待创建标记
-4. **更新 index.md 和 log.md**
+4. **更新 index.md 和 log.md**（index.md 遵守 [Dashboard 保护规则](#indexmd-dashboard-保护规则)：检测到 `<section class="wiki-*">` 时只就地编辑，禁止重写）
 5. **跳过**：主题页创建/更新、overview 更新
 
 6. **向用户展示简化结果**（按 `WIKI_LANG` 切换语言）：
@@ -469,7 +498,7 @@ bash ${SKILL_DIR}/scripts/adapter-state.sh classify-run <source_id> <exit_code> 
    （英文版按「输出语言规则」生成，结构相同。）
 
 6. **全部完成后**：
-   - 运行一次 index.md 全量更新
+   - 运行一次 index.md 全量更新（遵守 [Dashboard 保护规则](#indexmd-dashboard-保护规则)：含 `<section class="wiki-*">` 时只能用 Edit 工具就地刷新统计 / 列表，禁止 Write 重写整个文件）
    - 运行一次 overview.md 全量更新（用实际统计数据覆盖）
    - **执行后置链接校验**（防止断链和孤立页面累积）：
      - 扫描所有 wiki 文件中的 `[[链接]]`，逐一检查对应 .md 文件是否存在
@@ -524,7 +553,7 @@ bash ${SKILL_DIR}/scripts/adapter-state.sh classify-run <source_id> <exit_code> 
    - 如果多个素材有不同观点，分别列出并标注来源
 5. **建议回写**：
    - 如果这个回答产生了有价值的分析或综合，询问用户是否保存为新的 wiki 页面
-   - 如果保存 → 创建新页面（`wiki/synthesis/` 或 `wiki/comparisons/`），更新 index.md 和 log.md
+   - 如果保存 → 创建新页面（`wiki/synthesis/` 或 `wiki/comparisons/`），更新 index.md（遵守 [Dashboard 保护规则](#indexmd-dashboard-保护规则)）和 log.md
 
 ---
 
@@ -698,8 +727,9 @@ bash ${SKILL_DIR}/scripts/adapter-state.sh classify-run <source_id> <exit_code> 
    ```
    （英文版按「输出语言规则」生成，结构相同。）
 
-4. **更新 index.md 和 log.md**：
-   - index.md 的"综合分析"分类下添加新报告条目
+4. **更新 index.md 和 log.md**（index.md 遵守 [Dashboard 保护规则](#indexmd-dashboard-保护规则)）：
+   - 含 dashboard：在 `<section class="wiki-synthesis">` 内的 `.synth-list-cards` 顶部插入 `<a class="synth-item">` 条目，并把 `.section-badge` 数字 +1
+   - 不含 dashboard：在 index.md 的"综合分析"分类下添加新报告条目
    - log.md 追加：`## {日期} digest | {主题}`
 
 5. **向用户展示结果**（按 `WIKI_LANG` 切换语言）：
