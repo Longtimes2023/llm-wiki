@@ -178,9 +178,22 @@ async def generate_wiki_article(
         # Also re-emit any [FETCH_FAIL] {...} markers the agent emitted in its text
         # response: Rich wrapped them in display, so the on-disk OUTPUT_TMP has them
         # broken across physical lines. Re-emit unwrapped so raw-watcher's grep can match.
+        # Defensive filter: the agent sometimes leaks the template payload (e.g.
+        # {"source_id":"真实来源ID",...}) at the end of a successful digest. Suppress
+        # those — raw-watcher.sh has a second placeholder filter, but emitting the
+        # marker at all is wrong because it puts the bot into "fetch failed" UX.
         full_text = "".join(full_response)
+        _PLACEHOLDER_TOKENS = (
+            "真实来源ID", "真实原始URL", "真实一句话原因", "真实单一状态值",
+            "<id>", "<source_id>", "<url>", "<status>", "<reason>", "<一句话原因>",
+            "https://example.com/post",
+            "403|paywall|empty|timeout|runtime_failed",
+        )
         for m in re.finditer(r'\[FETCH_FAIL\]\s*\{[^}]*\}', full_text):
-            sys.stdout.write(f"\n{m.group(0)}\n")
+            payload = m.group(0)
+            if any(tok in payload for tok in _PLACEHOLDER_TOKENS):
+                continue
+            sys.stdout.write(f"\n{payload}\n")
         compact = json.dumps(metrics, ensure_ascii=False, separators=(",", ":"))
         sys.stdout.write(f"\n[METRICS_BEGIN]{compact}[METRICS_END]\n")
         sys.stdout.flush()
