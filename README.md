@@ -1,18 +1,22 @@
-# LLM Wiki - 个人 AI 知识库系统
+**Language / 语言 / Ngôn ngữ**: **中文** · [English](README.en.md) · [Tiếng Việt](README.vi.md)
 
-基于 [Karpathy llm-wiki]方法论，利用 AI 持续构建和维护你的个人知识库。支持从多种素材源（网页、推特、公众号、小红书、知乎、YouTube、PDF、本地文件）自动整理为结构化的 wiki，并通过 Quartz 发布为静态wiki知识库网站。 并通过 claude_agent_sdk 调用 claude agent 使用 llm-wiki ,提供api接口对外访问服务 。
+---
 
-Claude Agent SDK + LLM-wiki，最强大的agentic RAG 。 本项目主要展示了我制作的 llm-wiki 怎样通过 Claude Agent SDK 转为 agentic rag， 效果非常好的。 核心文件是： 7_wiki_writer.py ， wiki_writer_api.py 。
+# LLM Wiki — 个人 AI 知识库系统
+
+基于 [Karpathy llm-wiki](https://github.com/karpathy/llm-wiki) 方法论，利用 AI 持续构建和维护你的个人知识库。支持从多种素材源（网页、推特、公众号、小红书、知乎、YouTube、PDF、本地文件）自动整理为结构化的 wiki，并通过 Quartz 发布为静态 wiki 知识库网站。同时通过 `claude_agent_sdk` 调用 Claude Agent 使用 llm-wiki，提供 API 接口对外访问服务。
+
+Claude Agent SDK + LLM-wiki，最强大的 agentic RAG。本项目主要展示了我制作的 llm-wiki 怎样通过 Claude Agent SDK 转为 agentic RAG，效果非常好。核心文件是：`7_wiki_writer.py`、`wiki_writer_api.py`。
 
 ## 🤔 什么是 LLM-wiki？
-LLM Wiki：用大语言模型把你的零散知识，自动整理成一部结构化的“个人百科全书”。传统的做法是，每次你想问 AI 一个问题，AI 都要重新翻一遍你的所有资料，找到相关的再回答你（这叫 RAG，检索增强生成）。这就好比你每次问图书管理员一个问题，他都要把整个图书馆的书重新翻一遍。Karpathy 说，这太蠢了。正确的做法是：让 AI 当一个“知识编译器”，先把你的所有资料读一遍，整理成一本结构清晰、彼此关联的百科全书。以后你再提问，AI 直接翻这本百科书就行了。
 
-原来的RAG系统的完整链路是这样的：ingest → chunk → index → retrieve → rerank → prompt-pack → generate → cite ， Karpathy 大神的确非常深刻，过去几年最重要的ai概念都是他总结出来，都是看起来很简单，但是达到了最本质。llm wiki被大大低估了，这个东西就是开发ai的根。 我给你看看， 其实k大神的意思是这些， 这个wiki格式是非常重要，ai就是靠这个组织了整个知识 所以，它一下子解决了rag全部问题，我已经不再用rag了，因为这个才是答案。 除了rag，它可以一键生成wiki网站，真正的知识库 幸好我测试多个，现在知道这个好东西，基于这个东西，我可以搞很多厉害的项目，因为 理解越深，生成越深，本质就是这样搞ai 。 目前项目的wiki文件夹就是放wiki资料的地方，我暂时放了 鱼皮大牛 写的一些开源文章，用来测试效果。
+LLM Wiki：用大语言模型把你的零散知识，自动整理成一部结构化的"个人百科全书"。传统的做法是，每次你想问 AI 一个问题，AI 都要重新翻一遍你的所有资料，找到相关的再回答你（这叫 RAG，检索增强生成）。这就好比你每次问图书管理员一个问题，他都要把整个图书馆的书重新翻一遍。Karpathy 说，这太蠢了。正确的做法是：让 AI 当一个"知识编译器"，先把你的所有资料读一遍，整理成一本结构清晰、彼此关联的百科全书。以后你再提问，AI 直接翻这本百科书就行了。
+
+原来的 RAG 系统的完整链路是这样的：ingest → chunk → index → retrieve → rerank → prompt-pack → generate → cite。Karpathy 大神的确非常深刻，过去几年最重要的 AI 概念都是他总结出来，都是看起来很简单，但是达到了最本质。llm-wiki 被大大低估了，这个东西就是开发 AI 的根。我给你看看，其实 K 大神的意思是这些：这个 wiki 格式是非常重要，AI 就是靠这个组织了整个知识。所以，它一下子解决了 RAG 全部问题，我已经不再用 RAG 了，因为这个才是答案。除了 RAG，它可以一键生成 wiki 网站，真正的知识库。幸好我测试多个，现在知道这个好东西，基于这个东西，我可以搞很多厉害的项目，因为理解越深，生成越深，本质就是这样搞 AI。目前项目的 wiki 文件夹就是放 wiki 资料的地方，我暂时放了鱼皮大牛写的一些开源文章，用来测试效果。
 
 项目参考了优秀的开源项目：
-https://github.com/kenneth-liao/claude-agent-sdk-intro ，
-https://github.com/sdyckjq-lab/llm-wiki-skill
-
+- https://github.com/kenneth-liao/claude-agent-sdk-intro
+- https://github.com/sdyckjq-lab/llm-wiki-skill
 
 特别感谢佬友：https://linux.do/
 
@@ -29,8 +33,8 @@ https://github.com/sdyckjq-lab/llm-wiki-skill
 | `init` | 初始化新知识库，创建目录结构和配置 |
 | `ingest` | 消化单篇素材（URL / 文件 / 粘贴文本），自动提取实体和主题 |
 | `batch-ingest` | 批量处理多文件（.md / .txt / .pdf / .html） |
-| `query` | 查询知识库，返回带来源引用的综合回答 |
-| `digest` | 深度综合报告，跨素材分析特定主题 |
+| `query` | 查询知识库,返回带来源引用的综合回答 |
+| `digest` | 深度综合报告,跨素材分析特定主题 |
 | `lint` | 健康检查：孤立页面、断链、内容质量 |
 | `status` | 查看知识库状态：来源分布、页面统计、近期活动 |
 | `graph` | 生成 Mermaid 知识图谱，可视化实体关系 |
@@ -73,7 +77,7 @@ ai-wiki/
 
 **详细使用步骤：**
 
-❯ ai-guide 是 收集回来的资料， 现在需求为 需要你利用 llm-wiki skill 对这些资料进行分析整理成wiki,请你完成
+❯ ai-guide 是收集回来的资料，现在需求为需要你利用 llm-wiki skill 对这些资料进行分析整理成 wiki，请你完成。
 
 ![](./图片1.png)
 
@@ -101,13 +105,12 @@ npx quartz build
 npx wrangler pages deploy public
 ```
 
+**在 Claude Code 中使用 skill 的步骤：**
 
-
-**claude code里面详细使用skill步骤：**
-
-❯ 请利用 quartz-wiki skill 把 ai-wiki 制作成 quartz网站
+❯ 请利用 quartz-wiki skill 把 ai-wiki 制作成 quartz 网站。
 
 当前部署地址：`http://wikilego.liangdabiao.com/`
+
 ![](./图片2.png)
 
 ### 3. Claude Agent SDK — 对外服务
@@ -355,88 +358,88 @@ llm-wiki-skill-main/
 - [Quartz v4 文档](https://quartz.jzhao.xyz/)
 - [Karpathy llm-wiki](https://github.com/karpathy/llm-wiki)
 
-## 📱 Telegram bot 懒人 ingest
+## 📱 Telegram Bot 懒人 ingest
 
-`telegram_bot.py` cho phép paste link vào Telegram chat → bot tự động đẩy vào pipeline `raw-watcher.sh` → reply lại link Quartz wiki khi xử lý xong. Không đụng pipeline có sẵn.
+`telegram_bot.py` 允许在 Telegram 聊天中粘贴链接 → bot 自动推入 `raw-watcher.sh` pipeline → 处理完成后回复 Quartz wiki 链接。不影响现有 pipeline。
 
-### Setup (5 phút)
+### 安装（5 分钟）
 
-1. **Tạo bot qua [@BotFather](https://t.me/BotFather)** → copy token dạng `1234567890:AAAA...`.
-2. **Chat với bot mới tạo** 1 lần (gửi bất kỳ tin nhắn nào).
-3. **Lấy chat_id của bạn**:
+1. **通过 [@BotFather](https://t.me/BotFather) 创建 bot** → 复制 `1234567890:AAAA...` 格式的 token。
+2. **给新建的 bot 发一条消息**（任意内容）。
+3. **获取你的 chat_id**：
    ```bash
    uv run python telegram_bot.py --getchatid
    ```
-   Bot sẽ in `chat_id=...` rồi exit.
-4. **Điền `.env`** (xem `.env.example` for template):
+   bot 会输出 `chat_id=...` 然后退出。
+4. **填写 `.env`**（模板见 `.env.example`）：
    ```
    TELEGRAM_BOT_TOKEN=<from BotFather>
    TELEGRAM_ALLOWED_CHAT_ID=<from step 3>
    QUARTZ_PUBLIC_BASE_URL=https://your-site.pages.dev
    ```
-5. **Enable systemd user service** (auto-start cùng WSL):
+5. **启用 systemd user service**（随 WSL 自动启动）：
    ```bash
    systemctl --user daemon-reload
    systemctl --user enable --now llm-wiki-telegram-bot
    systemctl --user status llm-wiki-telegram-bot
    ```
 
-### Sử dụng
+### 使用方法
 
-Mở Telegram chat với bot → paste URL bài viết → đợi 1-3 phút → bot reply link wiki.
+打开 Telegram 与 bot 的聊天 → 粘贴文章 URL → 等待 1-3 分钟 → bot 回复 wiki 链接。
 
 ```
 You: https://www.woshipm.com/pd/6384384.html
-Bot: 🔄 Đã nhận URL — đang đẩy vào pipeline...
-Bot: ✅ Đã ingest + deploy xong!
+Bot: 🔄 已接收 URL — 正在推入 pipeline...
+Bot: ✅ ingest + deploy 完成！
      Wiki source: https://your-site.pages.dev/sources/2026-05-07-...
 ```
 
-Logs: `scripts/telegram_bot.log` (bot) + `scripts/watcher.log` (pipeline).
+日志：`scripts/telegram_bot.log`（bot）+ `scripts/watcher.log`（pipeline）。
 
-Stop/restart:
+停止 / 重启：
 ```bash
 systemctl --user stop llm-wiki-telegram-bot
 systemctl --user restart llm-wiki-telegram-bot
 ```
 
-## ☁️ Cloud mode — chạy không cần máy local
+## ☁️ Cloud 模式 — 无需常开本地机器
 
-Local mode ở trên cần WSL2 mở 24/7. Nếu muốn tắt máy mà bot vẫn xử lý link, có 2 hướng:
+上面的 Local 模式需要 WSL2 24/7 开机。如果想关机也能让 bot 继续处理链接，有 2 个方向：
 
-### Hướng 1: VPS (recommend, đơn giản nhất)
+### 方向 1：VPS（推荐，最简单）
 
-Port y nguyên local stack lên 1 VPS Ubuntu nhỏ (~$5/tháng). Code không đổi, chỉ đổi host. Setup ~10 phút.
+把 local stack 完整迁移到 1 台小型 Ubuntu VPS（约 $5/月）。代码无需改动，只换 host。约 10 分钟搭好。
 
-→ Xem [`deploy/README.md`](deploy/README.md)
+→ 参见 [`deploy/README.md`](deploy/README.md)
 
-### Hướng 2: GitHub Actions + Cloudflare Worker (free, phức tạp hơn)
+### 方向 2：GitHub Actions + Cloudflare Worker（免费，更复杂）
 
 ```
-Telegram → Cloudflare Worker (webhook, always-on, free)
+Telegram → Cloudflare Worker（webhook, always-on, 免费）
         → repository_dispatch → GitHub Actions
-        → workflow chạy 7_wiki_writer.py + commit ai-wiki/ → push main
-        → Cloudflare Pages auto-build từ commit → site live
-        → workflow gửi Telegram reply với URL khi xong
+        → workflow 运行 7_wiki_writer.py + commit ai-wiki/ → push main
+        → Cloudflare Pages 从 commit 自动构建 → 站点上线
+        → workflow 完成后通过 Telegram 回复 URL
 ```
 
-### Setup
+### 配置步骤
 
-1. **GitHub Actions secrets** — repo Settings → Secrets and variables → Actions:
-   - `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_BASE_URL`, `MODEL`
-   - `TELEGRAM_BOT_TOKEN` (cùng token với local mode)
-   - `QUARTZ_PUBLIC_BASE_URL`, `CLOUDFLARE_PAGES_PROJECT`
+1. **GitHub Actions secrets** — repo Settings → Secrets and variables → Actions：
+   - `ANTHROPIC_AUTH_TOKEN`、`ANTHROPIC_BASE_URL`、`MODEL`
+   - `TELEGRAM_BOT_TOKEN`（与 local 模式同一 token）
+   - `QUARTZ_PUBLIC_BASE_URL`、`CLOUDFLARE_PAGES_PROJECT`
 
-2. **Probe trước khi tin** (Phase 1 của plan):
+2. **先做 Probe 验证**（Phase 1）：
    ```bash
    gh workflow run probe-ingest.yml -f url='https://karpathy.bearblog.dev/llm-os/'
    ```
-   Tab Actions → xem run mới, download artifact `probe-output` để check log. Nếu skill ingest chạy được → tiếp tục.
+   Actions 标签 → 查看新建的 run，下载 `probe-output` artifact 检查日志。skill ingest 跑通后 → 继续下一步。
 
-3. **Deploy Cloudflare Worker** — xem [`cloudflare-worker/README.md`](cloudflare-worker/README.md) cho các bước chi tiết (`wrangler login`, set secrets, `wrangler deploy`, `setWebhook`).
+3. **部署 Cloudflare Worker** — 详细步骤见 [`cloudflare-worker/README.md`](cloudflare-worker/README.md)（`wrangler login`、设置 secrets、`wrangler deploy`、`setWebhook`）。
 
-4. **Bật Cloudflare Pages auto-build từ Git** — Pages dashboard → project → Settings → Builds & deployments → Connect to Git → repo `liangdabiao/llm-wiki`, branch `main`. Build command: `cd quartz && rm -rf public .quartz-cache && npx quartz build`. Output: `quartz/public`.
+4. **开启 Cloudflare Pages 从 Git 自动构建** — Pages dashboard → 项目 → Settings → Builds & deployments → Connect to Git → repo `liangdabiao/llm-wiki`、branch `main`。Build command：`cd quartz && rm -rf public .quartz-cache && npx quartz build`。Output：`quartz/public`。
 
-5. **Test e2e**: tắt WSL hoàn toàn, gửi 1 URL Telegram → ack < 5s → 2-6 phút sau nhận URL wiki final → click load thành công.
+5. **端到端测试**：完全关闭 WSL，发送 1 个 Telegram URL → ack < 5s → 2-6 分钟后收到 wiki 最终 URL → 点击成功加载。
 
-Local mode và cloud mode KHÔNG xung đột. Có thể chạy cả hai (local nhanh hơn khi máy mở; cloud là fallback). Để tránh ingest 2 lần cùng URL: **không chạy đồng thời** `telegram_bot.py` local và webhook cloud trên cùng 1 bot token.
+Local 模式和 Cloud 模式不冲突。可以同时运行（local 在开机时更快；cloud 作为 fallback）。为避免同一 URL 被 ingest 两次：**不要同时运行** `telegram_bot.py`（local）和 webhook（cloud）在同一个 bot token 上。
