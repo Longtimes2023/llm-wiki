@@ -13,15 +13,33 @@ SOURCES_DIR="$PROJECT_DIR/$WIKI_NAME/wiki/sources"
 LOG_FILE="$PROJECT_DIR/scripts/watcher.log"
 STATE_FILE="$PROJECT_DIR/scripts/watcher.state"
 FAILED_FILE="$PROJECT_DIR/scripts/watcher.failed"
+LOCK_FILE="$PROJECT_DIR/scripts/raw-watcher.lock"
 DEBOUNCE_SECONDS=3
 MAX_ATTEMPTS=3
 
-log() {
-  echo "[$(date '+%F %T')] $*" | tee -a "$LOG_FILE"
-}
-
 mkdir -p "$WATCH_DIR" "$SOURCES_DIR"
 touch "$LOG_FILE" "$STATE_FILE" "$FAILED_FILE"
+
+exec 9>"$LOCK_FILE"
+if ! flock -n 9; then
+  printf '[%s] watcher already running, exiting\n' "$(date '+%Y-%m-%d %H:%M:%S')" >> "$LOG_FILE"
+  exit 0
+fi
+
+remove_from_failed() {
+  local FILE="$1"
+  [ -f "$FAILED_FILE" ] || return 0
+  local TMP
+  TMP=$(mktemp)
+  grep -vxF "$FILE" "$FAILED_FILE" > "$TMP" || true
+  mv "$TMP" "$FAILED_FILE"
+}
+
+log() {
+  # systemd unit redirects stdout/stderr to $LOG_FILE via StandardOutput=append.
+  # Echo once to stdout; do not also tee to LOG_FILE or every line lands twice.
+  echo "[$(date '+%F %T')] $*"
+}
 
 # Try ingesting one file. Returns 0 on verified success, 1 on failure, 2 on dedup-skip, 3 on config error.
 # Failure conditions:
@@ -55,7 +73,7 @@ ingest_one_file() {
       [ -f "$OLD_FILE" ] || continue
       OLD_URL=$(awk '/^source_url:/{print $2; exit}' "$OLD_FILE" 2>/dev/null)
       if [ "$OLD_URL" = "$NEW_URL" ]; then
-        log "DEDUP_SKIP: same URL as $OLD_FILE — skipping ingest, no rebuild needed"
+        log "DEDUP_SKIP: $FILE same URL as $OLD_FILE — skipping ingest, no rebuild needed"
         rm -f "$OUTPUT_TMP"
         return 2
       fi
@@ -134,8 +152,28 @@ ingest_one_file() {
     RAW_BASENAME=$(basename "$FILE")
     local ENRICHED
     ENRICHED=$(echo "$FETCH_FAIL_LINE" | sed "s|}\$|,\"raw_file\":\"$RAW_BASENAME\"}|")
-    echo "$ENRICHED" >> "$PROJECT_DIR/scripts/ingest_failures.jsonl"
-    log "fetch_fail: $ENRICHED"
+    if python3 - <<'PY' "$ENRICHED"
+import json
+import sys
+
+obj = json.loads(sys.argv[1])
+placeholders = {
+    "source_id": {"<id>", "<source_id>", "真实来源ID"},
+    "url": {"<url>", "https://example.com/post", "真实原始URL"},
+    "reason": {"<一句话原因>", "<reason>", "真实一句话原因"},
+    "status": {"403|paywall|empty|timeout|runtime_failed", "<status>", "真实单一状态值"},
+}
+for key, invalid_values in placeholders.items():
+    value = obj.get(key)
+    if isinstance(value, str) and value.strip() in invalid_values:
+        raise SystemExit(1)
+PY
+    then
+      echo "$ENRICHED" >> "$PROJECT_DIR/scripts/ingest_failures.jsonl"
+      log "fetch_fail: $ENRICHED"
+    else
+      log "fetch_fail skipped placeholder payload for $(basename "$FILE"): $FETCH_FAIL_LINE"
+    fi
   fi
 
   # Config error (deterministic): exit 2 + [CONFIG_ERROR] marker in output. Never retry —
@@ -201,6 +239,14 @@ ingest_one_file() {
   fi
 
   # Failure check 3: wiki/sources/ did not grow → no actual ingest happened
+  # If the agent explicitly said this was a duplicate/skip, keep it out of failed state.
+  if grep -q "DEDUP_SKIP:" "$OUTPUT_TMP"; then
+    local DUP_LINE
+    DUP_LINE=$(grep -m1 -oE 'DEDUP_SKIP: .*' "$OUTPUT_TMP" | head -c 200)
+    log "INGEST SKIPPED (dedup signaled by agent): $DUP_LINE"
+    rm -f "$OUTPUT_TMP"
+    return 2
+  fi
   if [ -n "$FETCH_FAIL_LINE" ]; then
     log "INGEST FAILED (source fetch): $FETCH_FAIL_LINE"
   else
@@ -261,6 +307,7 @@ process_file() {
     set -e
 
     if [ "$rc" -eq 0 ]; then
+      remove_from_failed "$FILE"
       echo "$FILE" >> "$STATE_FILE"
       log "marked as processed in state"
 
@@ -272,6 +319,7 @@ process_file() {
       fi
       return 0
     elif [ "$rc" -eq 2 ]; then
+      remove_from_failed "$FILE"
       echo "$FILE" >> "$STATE_FILE"
       log "marked as processed (dedup skip) — no rebuild"
       return 0

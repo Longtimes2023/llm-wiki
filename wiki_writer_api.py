@@ -30,6 +30,7 @@ from dotenv import load_dotenv
 
 from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions
 from claude_agent_sdk.types import ResultMessage
+from claude_agent_sdk._errors import CLINotFoundError
 
 # 强制从 .env 文件加载，覆盖系统环境变量
 load_dotenv(override=True)
@@ -40,6 +41,7 @@ from providers.loader import resolve as resolve_provider
 
 # 默认模型 (fallback shown in /health; actual resolution per-request)
 DEFAULT_MODEL = os.getenv("MODEL", "claude-sonnet-4-20250514")
+CLAUDE_CLI_PATH = os.getenv("CLAUDE_CLI_PATH", "").strip() or None
 
 # 获取 wiki 目录路径
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -159,7 +161,9 @@ async def generate_wiki_article_stream(
         env={
             "ANTHROPIC_AUTH_TOKEN": provider["auth_token"],
             "ANTHROPIC_BASE_URL": provider["base_url"],
-        }
+            **({"CLAUDE_CODE_CLI_PATH": CLAUDE_CLI_PATH} if CLAUDE_CLI_PATH else {}),
+        },
+        extra_args={"cli-path": CLAUDE_CLI_PATH} if CLAUDE_CLI_PATH else {},
     )
     
     try:
@@ -188,6 +192,12 @@ async def generate_wiki_article_stream(
             # 发送完成事件
             yield f"data: {json.dumps({'type': 'done', 'data': '生成完成'}, ensure_ascii=False)}\n\n"
             
+    except CLINotFoundError as e:
+        detail = (
+            f"Claude Code CLI not found: {e}. "
+            "Set CLAUDE_CLI_PATH to the claude binary path or ensure `claude` is on PATH for the API service user."
+        )
+        yield f"data: {json.dumps({'type': 'error', 'data': detail}, ensure_ascii=False)}\n\n"
     except Exception as e:
         error_msg = str(e)
         yield f"data: {json.dumps({'type': 'error', 'data': error_msg}, ensure_ascii=False)}\n\n"
@@ -234,7 +244,9 @@ async def generate_wiki_article_sync(
         env={
             "ANTHROPIC_AUTH_TOKEN": provider["auth_token"],
             "ANTHROPIC_BASE_URL": provider["base_url"],
-        }
+            **({"CLAUDE_CODE_CLI_PATH": CLAUDE_CLI_PATH} if CLAUDE_CLI_PATH else {}),
+        },
+        extra_args={"cli-path": CLAUDE_CLI_PATH} if CLAUDE_CLI_PATH else {},
     )
     
     try:
@@ -277,6 +289,13 @@ async def generate_wiki_article_sync(
             "cost_usd": cost,
         }
         
+    except CLINotFoundError as e:
+        detail = (
+            f"Claude Code CLI not found: {e}. "
+            "Set CLAUDE_CLI_PATH to the claude binary path or ensure `claude` is on PATH for the API service user."
+        )
+        print(detail)
+        raise HTTPException(status_code=500, detail=detail)
     except Exception as e:
         import traceback
         error_detail = f"生成失败: {str(e)}\n{traceback.format_exc()}"

@@ -103,6 +103,15 @@ bash ${SKILL_DIR}/scripts/adapter-state.sh classify-run <source_id> <exit_code> 
 
 ---
 
+- 如果所有自动提取路径都失败，并且你需要给 watcher 输出结构化失败信息，只能输出带真实观测值的 `[FETCH_FAIL]` JSON。
+- 只在你已经知道实际字段值时输出 `[FETCH_FAIL]`；未知字段可以省略，但绝不要输出占位符 token。
+- `status` 必须是单个真实状态值，例如 `runtime_failed`、`paywall`、`empty`、`timeout`，不要输出枚举模板。
+- `url` 必须是本次素材的真实原始 URL；禁止使用示例域名（如 `example.com`）或任何演示值。
+- `reason` 必须是本次失败的真实一句话观察；不要复用演示短语，除非日志里真的出现了那句话。
+- 禁止输出这类占位符或示例内容：`<id>`、`<url>`、`<一句话原因>`、`403|paywall|empty|timeout|runtime_failed`、`https://example.com/post`
+
+---
+
 ## 工作流路由
 
 根据用户的意图，路由到对应的工作流：
@@ -274,8 +283,8 @@ bash ${SKILL_DIR}/scripts/adapter-state.sh classify-run <source_id> <exit_code> 
 
 **素材抓取彻底失败时**：当所有自动抓取（WebFetch、baoyu-url-to-markdown、youtube-transcript、其他注册的 adapter）和手动回退都无法获取有效素材文本，需要放弃 ingest 时，**必须在退出前 print 一行结构化标记**到 stdout：
 
-```
-[FETCH_FAIL] {"source_id":"<id>","url":"<url>","status":"403|paywall|empty|timeout|runtime_failed","reason":"<一句话原因>"}
+```text
+[FETCH_FAIL] {"source_id":"真实来源ID","url":"真实原始URL","status":"真实单一状态值","reason":"真实一句话原因"}
 ```
 
 字段说明：

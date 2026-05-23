@@ -13,7 +13,10 @@ LOG_FILE="$PROJECT_DIR/scripts/watcher.log"
 ENV_FILE="$PROJECT_DIR/.env"
 
 log() {
-  echo "[$(date '+%F %T')] [sync] $*" | tee -a "$LOG_FILE"
+  # raw-watcher.sh invokes this script with `>> "$LOG_FILE" 2>&1`, so a plain
+  # stdout echo already persists. Adding `tee -a "$LOG_FILE"` here would write
+  # every line twice. Just echo.
+  echo "[$(date '+%F %T')] [sync] $*"
 }
 
 if [ ! -d "$SRC_DIR" ]; then
@@ -60,7 +63,7 @@ rsync -a --delete \
   --exclude='.git/' \
   --exclude='*.tmp' \
   --exclude='_quarantine/' \
-  "$SRC_DIR" "$DST_DIR" 2>&1 | tee -a "$LOG_FILE"
+  "$SRC_DIR" "$DST_DIR" 2>&1
 log "rsync done"
 
 # Stage 2: load Cloudflare credentials from .env (skip deploy if missing)
@@ -95,7 +98,10 @@ for q_attempt in 1 2 3; do
   # Quartz error format (verified from historic logs):
   #   Failed to process markdown `content/wiki/topics/<file>.md`: bad indentation ...
   # Path is wrapped in backticks; may contain CJK + spaces. Extract between backticks.
-  BAD_FILE_REL=$(grep -oE '`content/[^`]+\.md`' /tmp/quartz-build.log | head -1 | tr -d '`')
+  # `|| true` is load-bearing: under `set -euo pipefail`, grep returning 1 (no match)
+  # would kill the script silently before the "can't identify offending file" log
+  # below ever runs. The conditional below handles the empty-string case.
+  BAD_FILE_REL=$(grep -oE '`content/[^`]+\.md`' /tmp/quartz-build.log | head -1 | tr -d '`' || true)
   if [ -z "$BAD_FILE_REL" ] || [ ! -f "$QUARTZ_DIR/$BAD_FILE_REL" ]; then
     log "Quartz build FAILED (attempt $q_attempt) — can't identify offending file, giving up"
     tail -20 /tmp/quartz-build.log >> "$LOG_FILE"

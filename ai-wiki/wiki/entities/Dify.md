@@ -3,9 +3,9 @@ type: entity
 name: Dify
 category: 开发工具
 tags: [低代码, Agent, RAG, 工作流, 可视化编排]
-sources: [2026-04-29-yupi-ai-guide-programming-tech, 2026-05-10-skills-monetization-5-points]
+sources: [2026-04-29-yupi-ai-guide-programming-tech, 2026-05-10-skills-monetization-5-points, 2026-05-21-woshipm-ai-knowledge-base-product-design]
 created: 2026-04-29
-updated: 2026-05-10
+updated: 2026-05-21
 ---
 
 # Dify
@@ -52,6 +52,11 @@ Dify 是一款低代码 AI 应用开发平台，提供可视化的方式构建 A
 - 低代码平台的代表产品
 
 - **[[2026-05-10-skills-monetization-5-points]]**：伍德安思壮将Dify定位为Skills变现"工具封装"阶段的推荐工具——拖拽式操作把大模型、知识库、流程节点拼起来，1天就能生成一个独立的工具链接。相比Prompt版（10分钟但体验差）和简单前端（3天但专业感强），Dify工具封装是"有产品感"和"快速出活"之间的最佳平衡点，用户不用自己复制Prompt，直接在工具里输入内容就能得到结果，体验更好。
+
+来自 [[2026-05-21-woshipm-ai-knowledge-base-product-design]]：
+- 本文把 Dify 放在“低成本原型验证”位置：它适合快速拼出文档问答与知识库流程，用来证明用户愿意为语义检索买单，但并不直接等于多人可协作的成品系统
+- 作者将 Dify 与 Ollama、本地 Qwen 组合使用，说明 Dify 的优势在于先把问答链路和知识导入体验跑通，再决定是否升级到带独立账号、移动端和 API 治理能力的云端产品
+- 相比最终选择的 Yuxi 方案，Dify 在这条叙事里更像 MVP 前置验证层，而非组织级知识管理平台的最终形态
 
 ## 实用信息
 

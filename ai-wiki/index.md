@@ -1,14 +1,14 @@
 # 知识库索引
 
-> 最后更新：2026-05-13
+> 最后更新：2026-05-23
 
 ---
 
 ## 概览
 
 - 主题：AI 学习笔记
-- 素材总数：40
-- Wiki 页面总数：69
+- 素材总数：48
+- Wiki 页面总数：77
 
 ---
 
@@ -57,7 +57,10 @@
 - [[Skill]] - 写给 AI 的 SOP，将隐性经验编译为可复用程序性知识包，可落地为 PM 需求拆解与智能排期等工作流
 - [[锅圈食汇]] - 万店连锁零售企业，会员运营标杆案例（63.7%会员销售占比、净利润+88.2%）
 - [[会员运营]] - 以活跃度而非规模为北极星指标的会员体系策略，横纵策略+场景化+组织赋能
+- [[私域流量]] - 创作者/品牌自有的、不依赖平台算法分发的用户触达渠道，是对抗平台流量不确定性的核心资产
 - [[产品分析]] - 交易类产品四维分析方法论：功能分类→流量走势→交易漏斗→关联行为
+- [[自我产品化]] - 把个人成长、职业发展和身份转型视为一个需要立项、定义价值、持续迭代并向世界交付的产品系统
+- [[工作SOP]] - 写给人的 SOP，PDCA/5问/SCQA/重要紧急四象限四件套，与 Skill（写给 AI 的 SOP）形成镜像
 
 ---
 
@@ -110,7 +113,7 @@
 
 - [[2026-05-09-10-marketing-trends-2026]] - 2026 年 10 大营销趋势：GEO 替代 SEO、AI 人感博弈、K型消费
 
-### 产品经理类（12 篇）
+### 产品经理类（17 篇）
 
 - [[2026-05-09-pm-ai-playbook]] - 产品经理的AI实战手册：5个技能让效率翻倍
 - [[2026-05-09-product-to-startup-blues]] - 产品到创业：两次失败一次重生换来的能力闭环与GTM认知
@@ -124,8 +127,14 @@
 - [[2026-05-11-guoquan-super-member]] - 万店锅圈会员运营深度拆解：63.7%会员销售占比、横纵策略、场景营销三板斧、分布式组织模式
 - [[2026-05-12-product-analysis-not-just-dau]] - 交易类产品分析四维框架：功能分类→流量走势→交易漏斗归因→关联行为因果验证
 - [[2026-05-13-ai-pm-requirement-scheduling]] - AI给PM装上需求外挂：需求拆解转Story/Gherkin，智能排期按价值/成本/风险/影响和依赖图排序
+- [[2026-05-20-self-as-product-sop]] - 把“自我”作为产品经营：立项评审、PPRD、价值主张、北极星指标、Horizon 路线图与个人 Dashboard
+- [[2026-05-21-woshipm-ai-knowledge-base-product-design]] - 从个人痛点到企业级知识库：AI知识管理产品设计实践（本地RAG→云端协作知识库）
+- [[2026-01-15-private-domain-sop-3-models]] - 私域运营 SOP 全解析：品牌内容型 / 效率转化型 / 深度信任型三类打法
+- [[2026-05-17-ai-pm-interview-claude-workflow]] - AI PM跳槽实录：半个月38场面试 + 一套Claude工作流 = 13个offer
+- [[2026-05-17-ai-pm-interview-claude-workflow-sonnet]] - AI PM跳槽实录：半个月38场面试 + 一套Claude工作流 = 13个offer（Sonnet A/B版）
+- [[2026-05-23-build-sop-personal-effectiveness]] - 能力强的人都会建立SOP：工作 SOP 四件套（PDCA / 5问 / SCQA / 重要紧急四象限）
 
-### 编程开发类（12 篇）
+### 编程开发类（14 篇）
 
 - [[2026-04-29-deepseek-vscode-integration]] - DeepSeek VSCode 集成：Roo Code + 通义灵码
 - [[2026-04-29-deepseek-python-local-setup]] - DeepSeek 本地部署完整方案：PyCharm + CodeGPT + Ollama
@@ -138,6 +147,8 @@
 - [[2026-04-29-yupi-ai-guide-programming-tech]] - AI 编程技术全景：从开发框架到部署上线的完整知识体系
 - [[2026-05-11-claude-code-6-skills]] - Claude Code Skills 精选：装30+个后只留6个，触发准确率与Setup Porn陷阱
 - [[2026-05-13-ai-agent-productivity-20x]] - Agent harness + agents.md + memory.md + Skill + MCP 的上下文资产体系
+- [[2026-05-20-agent-skills-intro-claude-opus]] - Agent Skills 万字干货：标准手册、渐进披露、description 门控与信息图案例
+- [[2026-05-21-agent-skills-woshipm]] - Agent Skills 全景教程：文件结构、description 触发机制、渐进式披露与从 0 到 1 制作方法
 
 ---
 

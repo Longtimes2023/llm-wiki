@@ -12,8 +12,9 @@ sources:
   - 2026-04-29-deepseek-python-local-setup
   - 2026-05-17-pm-ai-knowledge-base-design-practice
   - 2026-05-18-woshipm-ai-knowledge-management-design-practice
+  - 2026-05-21-woshipm-ai-knowledge-base-product-design
 created: 2026-04-29
-updated: 2026-05-18
+updated: 2026-05-21
 ---
 
 # Ollama
@@ -72,6 +73,11 @@ Ollama 是一款开源的本地大模型部署工具，能够一键部署和运�
 - 这篇素材再次强化了 Ollama 的定位：它非常适合在个人电脑上快速验证“文档能否被对话式调用”，但不天然等于一个可交付给团队的知识产品
 - 文章把本地知识库比作“桌上盆栽”——离不开工位、关机即不可用——这个比喻准确指出了Ollama方案在可达性上的根本限制
 - 因而 Ollama 更像 AI 知识管理产品早期的原型工具或私有化试验工具，后续是否继续沿用，取决于是否要支持多端访问、协作和统一治理
+
+来自 [[2026-05-21-woshipm-ai-knowledge-base-product-design]]：
+- 这篇素材再次把 Ollama 放在“先验证语义检索价值、再决定是否产品化升级”的位置：它适合快速试验文档问答，但不适合作为面向团队交付的最终形态
+- 文章将本地方案的限制具体化为三类门槛：离开电脑就不可访问、多人难以共享、每个成员都要重复搭建环境，说明 Ollama 的主要边界并不是模型能力，而是交付形态
+- 在产品路径上，Ollama 与 Dify、本地 Qwen 的组合承担的是原型验证层职责，真正进入组织级知识管理后，系统会转向带 API、移动端与权限能力的云端架构
 
 ## 实用信息
 

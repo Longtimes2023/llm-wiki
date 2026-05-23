@@ -1,8 +1,8 @@
 ---
-tags: [AI编程, DeepSeek, Cursor, 开发效率, 架构图, 游戏开发, Spring AI, RAG, Agent]
+tags: [AI编程, DeepSeek, Cursor, 开发效率, 架构图, 游戏开发, Spring AI, RAG, Agent, Skills]
 created: 2026-04-29
-updated: 2026-05-13
-sources: [2026-04-29-deepseek-vscode-integration, 2026-04-29-deepseek-python-local-setup, 2026-04-29-ai-architecture-diagram-tutorial, 2026-04-29-ai-game-development-3h-28w, 2026-04-29-deepseek-cline-ios-app, 2026-04-29-yupi-ai-guide-intro, 2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-tools, 2026-04-29-yupi-ai-guide-programming-tips, 2026-04-29-yupi-ai-guide-programming-tech, 2026-05-11-claude-code-6-skills, 2026-05-13-ai-agent-productivity-20x]
+updated: 2026-05-21
+sources: [2026-04-29-deepseek-vscode-integration, 2026-04-29-deepseek-python-local-setup, 2026-04-29-ai-architecture-diagram-tutorial, 2026-04-29-ai-game-development-3h-28w, 2026-04-29-deepseek-cline-ios-app, 2026-04-29-yupi-ai-guide-intro, 2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-tools, 2026-04-29-yupi-ai-guide-programming-tips, 2026-04-29-yupi-ai-guide-programming-tech, 2026-05-11-claude-code-6-skills, 2026-05-13-ai-agent-productivity-20x, 2026-05-20-agent-skills-intro-claude-opus, 2026-05-21-agent-skills-woshipm]
 ---
 
 # AI 编程开发全景
@@ -24,6 +24,12 @@ sources: [2026-04-29-deepseek-vscode-integration, 2026-04-29-deepseek-python-loc
 6. **Claude Code Skill 装太多会降触发准确率**：装 30+ 个 Skill 实测触发准确率掉到 50% 以下，官方建议 20-30 个且贴自己工作流。筛选唯一标准"能不能替我每天省掉一步手动动作"，注意"Setup Porn"陷阱——来源：[[2026-05-11-claude-code-6-skills]]
 
 7. **AI 编程正在从提示词技巧升级为上下文资产管理**：Claude Code、Codex、Manus 等 harness 的差异不如 `agents.md`、`memory.md`、Skill 文件与 MCP 连接方式重要；真正可迁移的生产力来自上下文、记忆、工具和技能组合成的数字团队系统——来源：[[2026-05-13-ai-agent-productivity-20x]]
+
+8. **Skills 已成为跨 Agent 平台的通用协议**：从 2025-10-16 Anthropic 首发到 2025-12-18 开放标准，Codex/Cursor/OpenClaw/Hermes 等十余个 Agent 全面支持，Skills 成为 AI 时代相当于 npm 的技能分发标准——来源：[[2026-05-20-agent-skills-intro-claude-opus]]
+
+9. **description 字段是 Skills 触发的唯一门控**：90% 的 Skill 未被触发是因为 description 不够具体；黄金写法：`[功能]+[执行动作]+[触发关键词]`，用祈使句，不超过 500 字；含 3 条约束 + 1 个输出示例可使稳定性提升 60%（Anthropic 内部数据）——来源：[[2026-05-20-agent-skills-intro-claude-opus]]
+
+10. **Skill 的标准工程骨架是 `SKILL.md` 驱动、资源目录按需加载**：`SKILL.md` 负责总控，`scripts/` 放可执行代码，`references/` 放规范文档，`assets/` 放模板与素材；真正的工程优势不只是“会触发”，而是能靠渐进式披露把大体量规范拆成随取随用的知识层，既保持约束密度，又不把上下文一次性塞满——来源：[[2026-05-21-agent-skills-woshipm]]
 
 ## AI 核心概念体系
 
@@ -308,6 +314,30 @@ Claude Code 的 Skill 机制按需加载，不用时不占上下文。通用类 
 - 典型场景：23 页 PDF → 10 页品牌色 Slide
 
 **选择原则**：控制总量 20 个以内确保触发准确率；手动跑同一任务 3 次以上再用 Skill Creator 打包；警惕"Setup Porn"（拿配置当拖延借口）。——来源：[[2026-05-11-claude-code-6-skills]]
+
+### 场景七：自己制作 Skills（从 0 到 1）
+
+从工程结构看，一个成熟 Skill 的最小完整骨架不是单文件，而是 `SKILL.md` 负责总控，`scripts/` 放可执行逻辑，`references/` 放按需加载的规则文档，`assets/` 放模板和素材资源。这样的拆分能让 Agent 先理解“任务边界与流程”，再按需取用细节，避免把全部规范一次性塞进上下文。——来源：[[2026-05-21-agent-skills-woshipm]]
+
+四阶段工作流（来源：[[2026-05-20-agent-skills-intro-claude-opus]]、[[2026-05-21-agent-skills-woshipm]]）：
+
+| 阶段 | 核心动作 | 关键输出 |
+|------|---------|---------|
+| 1. 明确需求与边界 | 回答"解决什么问题、触发词是什么、需要什么资源" | 单一职责定义 |
+| 2. 构建文件夹 | 创建 SKILL.md + 按需创建 scripts/、references/、assets/ | 标准文件结构 |
+| 3. 编写核心指令 | 描述职责边界 + 编号操作步骤 + 输入输出规范 + 硬性约束 | 高质量 SKILL.md |
+| 4. 测试与迭代 | 路径检查、YAML 校验、触发测试、执行验证 | 可用 Skill |
+
+**关键质量指标**：
+- description 黄金公式：`[一句话核心功能] + [具体执行动作] + [明确的触发关键词/场景]`
+- 稳定性提升配方：3 条明确约束（必须/严禁/总是）+ 1 个输出示例 → 稳定性提升 60%
+- 调试方法：`claude --debug` 查看加载日志，90% 触发失败原因是 description 不够具体
+
+**常用 Skills 资源**：
+- Anthropic 官方：https://github.com/anthropics/skills
+- 全球注册表：agentskills.io
+- 开源兼容包：github.com/numman-ali/openskills（兼容多平台）
+- 其他市场：skillsmp.com、skillsdirectory.com、skillhub.tencent.com
 
 ## 工具选型决策树
 

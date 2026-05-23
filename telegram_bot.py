@@ -27,7 +27,9 @@ import time
 from collections import deque
 from dataclasses import dataclass, asdict, field
 from datetime import datetime
+from html import escape
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Optional
 
 import aiofiles
@@ -92,6 +94,7 @@ RE_PROVIDER_TOKEN = re.compile(r"@([a-z0-9_-]+)\b", re.IGNORECASE)
 RE_DETECTED = re.compile(r"detected new file:\s*(\S+\.md)")
 RE_INGEST_OK = re.compile(r"INGEST VERIFIED OK")
 RE_INGEST_FAIL = re.compile(r"GIVING UP after \d+ attempts:\s*(\S+\.md)")
+RE_DEDUP_SKIP = re.compile(r"DEDUP_SKIP:\s*(\S+\.md)\s+same URL as\s+(\S+\.md)\s+— skipping ingest, no rebuild needed")
 RE_DEPLOYED = re.compile(r"deployed:\s*(https?://\S+)")
 
 logging.basicConfig(
@@ -259,6 +262,42 @@ def find_fetch_fail_for_raw(raw_filename: str) -> Optional[dict]:
         return last
     except OSError:
         return None
+
+
+def _is_placeholder_value(value: object) -> bool:
+    if not isinstance(value, str):
+        return False
+    s = value.strip()
+    return s in {
+        "<id>",
+        "<url>",
+        "<一句话原因>",
+        "403|paywall|empty|timeout|runtime_failed",
+        "<source_id>",
+        "<reason>",
+        "<status>",
+        "真实来源ID",
+        "真实原始URL",
+        "真实单一状态值",
+        "真实一句话原因",
+    }
+
+
+def _clean_fetch_fail_info(fail_info: dict) -> tuple[Optional[str], Optional[str], Optional[str]]:
+    status = fail_info.get("status")
+    reason = fail_info.get("reason")
+    url = fail_info.get("url")
+
+    status_text = None if _is_placeholder_value(status) else str(status).strip() or None
+    reason_text = None if _is_placeholder_value(reason) else str(reason).strip() or None
+    url_text = None if _is_placeholder_value(url) else str(url).strip() or None
+    return status_text, reason_text, url_text
+
+
+def _lookup_source_page_for_raw(pending: Pending) -> Optional[str]:
+    if pending.new_source_file:
+        return pending.new_source_file
+    return find_source_page_for_raw(pending.raw_file)
 
 
 def format_metrics_line(metrics: dict) -> str:
@@ -460,7 +499,7 @@ def _atomic_retrigger(path: Path) -> None:
 async def tail_watcher_log(emit) -> None:
     """Tail scripts/watcher.log forever; call emit(event_type, payload) per match.
 
-    event_type ∈ {"ingest_ok", "ingest_fail", "deployed"}
+    event_type ∈ {"ingest_ok", "ingest_fail", "dedup_skip", "deployed"}
     payload: dict with at least one of: filename, url
     """
     if not WATCHER_LOG.exists():
@@ -504,6 +543,11 @@ async def tail_watcher_log(emit) -> None:
             m = RE_INGEST_FAIL.search(line)
             if m:
                 await emit("ingest_fail", {"filename": Path(m.group(1)).name})
+                continue
+
+            m = RE_DEDUP_SKIP.search(line)
+            if m:
+                await emit("dedup_skip", {"filename": Path(m.group(1)).name})
                 continue
 
             m = RE_DEPLOYED.search(line)
@@ -601,13 +645,19 @@ async def ask_wiki(question: str) -> str:
     return content or "⚠️ Agent không trả nội dung nào (có thể model rỗng response)."
 
 
-async def _send_long(msg, text: str) -> None:
+async def _send_long(msg, text: str, *, prefer_plain: bool = False) -> None:
     """Split > Telegram limit and reply each chunk. Markdown→plain fallback per chunk."""
     if not text:
         await msg.reply_text("(empty)")
         return
     chunks = [text[i:i + TELEGRAM_MAX_MSG] for i in range(0, len(text), TELEGRAM_MAX_MSG)]
     for chunk in chunks:
+        if prefer_plain:
+            try:
+                await msg.reply_text(chunk, disable_web_page_preview=True)
+            except Exception as e:
+                log.exception("send_long plain-text send failed: %s", e)
+            continue
         try:
             await msg.reply_text(chunk, parse_mode="Markdown", disable_web_page_preview=True)
         except Exception:
@@ -641,6 +691,23 @@ def _is_allowed(chat_id: int) -> bool:
         return False
 
 
+def _command_parts(text: str) -> list[str]:
+    if not text:
+        return []
+    parts = text.strip().split()
+    if not parts or not parts[0].startswith("/"):
+        return []
+    head = parts[0][1:].split("@", 1)[0].lower()
+    return [head, *parts[1:]]
+
+
+def _command_args(update: Update, context: ContextTypes.DEFAULT_TYPE) -> list[str]:
+    if context.args:
+        return context.args
+    msg = update.effective_message
+    return _command_parts(msg.text)[1:] if msg and msg.text else []
+
+
 async def on_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.effective_message
     if not msg or not msg.text:
@@ -650,6 +717,22 @@ async def on_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     if not _is_allowed(chat_id):
         log.warning("ignoring message from non-allowlisted chat_id=%s", chat_id)
         return
+
+    cmd_parts = _command_parts(msg.text)
+    if cmd_parts:
+        cmd = cmd_parts[0]
+        if cmd == "provider":
+            await on_provider_cmd(update, context)
+            return
+        if cmd == "chatprovider":
+            await on_chatprovider_cmd(update, context)
+            return
+        if cmd == "retry":
+            await on_retry_cmd(update, context)
+            return
+        if cmd == "cancel":
+            await on_cancel_cmd(update, context)
+            return
 
     url, provider_override = extract_url_and_provider(msg.text)
 
@@ -759,7 +842,7 @@ async def on_provider_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         log.warning("ignoring /provider from non-allowlisted chat_id=%s", chat_id)
         return
 
-    args = context.args or []
+    args = _command_args(update, context)
     available = list_providers()
     if not args:
         active = get_active() or "(none — using .env default)"
@@ -807,7 +890,7 @@ async def on_chatprovider_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE
         log.warning("ignoring /chatprovider from non-allowlisted chat_id=%s", chat_id)
         return
 
-    args = context.args or []
+    args = _command_args(update, context)
     available = list_providers()
     if not args:
         active = get_active_chat() or "(none — falls back to ingest provider)"
@@ -853,7 +936,8 @@ async def on_retry_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
     tracker: PendingTracker = context.application.bot_data["tracker"]
     recent_timeouts: deque = context.application.bot_data.get("recent_timeouts") or deque()
-    arg = context.args[0] if context.args else None
+    args = _command_args(update, context)
+    arg = args[0] if args else None
     target = _resolve_raw_target(arg, await tracker.all(), recent_timeouts)
     if target is None:
         await msg.reply_text(
@@ -928,7 +1012,8 @@ async def on_cancel_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     tracker: PendingTracker = context.application.bot_data["tracker"]
     recent_timeouts: deque = context.application.bot_data.get("recent_timeouts") or deque()
-    arg = context.args[0] if context.args else None
+    args = _command_args(update, context)
+    arg = args[0] if args else None
     target = _resolve_raw_target(arg, await tracker.all(), recent_timeouts)
     if target is None:
         await msg.reply_text(
@@ -977,6 +1062,8 @@ async def make_emitter(application: Application):
 
     async def emit(event_type: str, payload: dict) -> None:
         filename = payload.get("filename")
+        if event_type == "dedup_skip" and not filename:
+            filename = next((item.raw_file for item in await tracker.all() if item.status == "queued"), None)
         if not filename:
             return
         p = await tracker.get(filename)
@@ -986,16 +1073,34 @@ async def make_emitter(application: Application):
         if event_type == "ingest_ok":
             new_sources = diff_new_sources(p.sources_snapshot)
             new_src = new_sources[0] if new_sources else None
+            matched_source = new_src or _lookup_source_page_for_raw(p)
             await tracker.update(
                 filename,
                 status="ingested",
                 last_ingest_event="ok",
-                new_source_file=new_src,
+                new_source_file=matched_source,
             )
             log.info(
                 "ingest_ok matched pending %s; new source=%s (total new: %d)",
-                filename, new_src, len(new_sources),
+                filename, matched_source, len(new_sources),
             )
+        elif event_type == "dedup_skip":
+            await tracker.update(filename, status="dedup_skipped", last_ingest_event="dedup_skip")
+            try:
+                await bot.send_message(
+                    chat_id=p.chat_id,
+                    reply_to_message_id=p.msg_id,
+                    text=(
+                        f"♻️ URL này là nội dung trùng, pipeline đã bỏ qua chứ không phải lỗi.\n"
+                        f"Raw: <code>{escape(filename)}</code>"
+                    ),
+                    parse_mode="HTML",
+                )
+            except Exception as e:
+                log.exception("failed to send dedup notification for %s: %s", filename, e)
+            finally:
+                await tracker.remove(filename)
+            return
         elif event_type == "ingest_fail":
             # Trust the filesystem poller over watcher.log's pessimism. If we already
             # detected the new source file via polling, ignore watcher's GIVING UP —
@@ -1011,26 +1116,41 @@ async def make_emitter(application: Application):
             # fall back to the generic "see watcher.log" message.
             fail_info = find_fetch_fail_for_raw(filename)
             if fail_info:
-                reason = fail_info.get("reason") or fail_info.get("status") or "unknown"
-                url = fail_info.get("url") or ""
-                status_label = fail_info.get("status") or ""
-                url_line = f"\nURL: <code>{url}</code>" if url else ""
-                text = (
-                    f"❌ Lấy nội dung thất bại ({status_label}) cho file "
-                    f"<code>{filename}</code>:\n{reason}{url_line}"
-                )
+                status_label, reason, url = _clean_fetch_fail_info(fail_info)
+                status_text = f" (status: {status_label})" if status_label else ""
+                details = []
+                if reason:
+                    details.append(reason)
+                if url:
+                    details.append(f"URL: {url}")
+                if details:
+                    text = (
+                        f"❌ Lấy nội dung thất bại cho file {filename}{status_text}.\n"
+                        + "\n".join(details)
+                    )
+                else:
+                    text = (
+                        f"❌ Lấy nội dung thất bại cho file {filename}.\n"
+                        f"Xem scripts/watcher.log."
+                    )
             else:
                 text = (
                     f"❌ Pipeline thất bại sau nhiều lần thử cho file "
-                    f"<code>{filename}</code>.\nXem <code>scripts/watcher.log</code>."
+                    f"{filename}.\nXem scripts/watcher.log."
                 )
             try:
-                await bot.send_message(
-                    chat_id=p.chat_id,
-                    reply_to_message_id=p.msg_id,
-                    text=text,
-                    parse_mode="HTML",
+                await _send_long(
+                    SimpleNamespace(reply_text=lambda *args, **kwargs: bot.send_message(
+                        chat_id=p.chat_id,
+                        reply_to_message_id=p.msg_id,
+                        text=args[0],
+                        **kwargs,
+                    )),
+                    text,
+                    prefer_plain=True,
                 )
+            except Exception as e:
+                log.exception("failed to send ingest_fail notification for %s: %s", filename, e)
             finally:
                 await tracker.remove(filename)
         elif event_type == "deployed":
@@ -1043,7 +1163,7 @@ async def make_emitter(application: Application):
             await tracker.update(filename, status="deployed", last_deploy_url=url)
             try:
                 src_label = (
-                    f"\nSource: <code>{p.new_source_file}</code>"
+                    f"\nSource: <code>{escape(p.new_source_file)}</code>"
                     if p.new_source_file else ""
                 )
                 # Append per-ingest metrics if available (time, tokens, cost)
@@ -1054,12 +1174,14 @@ async def make_emitter(application: Application):
                     reply_to_message_id=p.msg_id,
                     text=(
                         f"✅ Đã ingest + deploy xong!\n"
-                        f"Wiki: {url}{src_label}{metrics_label}\n"
-                        f"(Site: {QUARTZ_PUBLIC_BASE_URL}/)"
+                        f"Wiki: {escape(url)}{src_label}{metrics_label}\n"
+                        f"(Site: {escape(QUARTZ_PUBLIC_BASE_URL)}/)"
                     ),
                     parse_mode="HTML",
                     disable_web_page_preview=False,
                 )
+            except Exception as e:
+                log.exception("failed to send deploy notification for %s: %s", filename, e)
             finally:
                 await tracker.remove(filename)
 

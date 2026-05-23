@@ -8,8 +8,11 @@ sources:
   - 2026-05-11-claude-code-6-skills
   - 2026-05-13-ai-pm-requirement-scheduling
   - 2026-05-13-ai-agent-productivity-20x
+  - 2026-05-20-agent-skills-intro-claude-opus
+  - 2026-05-21-agent-skills-woshipm
+  - 2026-05-23-build-sop-personal-effectiveness
 created: 2026-05-11
-updated: 2026-05-13
+updated: 2026-05-23
 ---
 
 # Skill
@@ -119,6 +122,44 @@ AI 协作的分享形态正在沿一条清晰的线演进：
 5. **用 Memory 做热补丁**：小教训先写 Memory，积累到一定量再整合进 Skill 正式文件。Memory 是 Skill 的草稿箱和快速迭代通道
 6. **分享意图而非指令**：告诉「为什么这样做」比「做步骤1、步骤2」更鲁棒。约束目标和边界，把路径交给 AI——这就是 Skill 和 Workflow 的根本区别
 
+### Skills 生态发展历史与跨平台扩散
+
+- **2025-10-16**：Anthropic 首次发布 Agent Skills，仅限 Claude Code + Pro 付费用户
+- **2025-12-18**：Anthropic 把 Agent Skills 作为统一标准对外开放，无需付费用户身份
+- **2025-12 至今**：Codex、Cursor、Antigravity、OpenCode、Trae、Qoder、CodeBuddy 等 Coding Agent 陆续支持；Claude Cowork、Skywork、MiniMax Agent、扣子等桌面 Agent 跟进；OpenClaw（龙虾）、Hermes Agent（爱马仕）等新兴 Agent 原生支持
+
+这说明 Skills 已从 Anthropic 专有特性演进为 **Agent 生态的跨平台通用协议**——类比 npm 之于 Node.js，一个 Skill 可以在不同 Agent 上复用。
+
+### description 字段：触发即正义
+
+description 是 Agent 判断是否调用该 Skill 的**唯一依据**，其质量直接决定触发成败。
+
+**黄金结构公式**：`[一句话核心功能] + [具体执行动作] + [明确的触发关键词/场景]`
+
+```yaml
+# 好的写法示例
+name: security-code-review
+description: >
+  Reviews code for security vulnerabilities and best practices.
+  Use when the user asks to "review code", "check for bugs", "analyze security",
+  or mentions SQL injection, XSS, or performance bottlenecks.
+```
+
+**写法注意事项**：
+1. 用省略第二人称的**祈使句**（"把用户上传的文字生成 HTML"，而非"你帮我把这段文字生成 HTML"）
+2. 字数不超过 500 字（YAML 支持最多 1024 字符）
+3. 模拟用户的提问方式，把关键词塞进 description
+
+**调试方法**：Skill 未被触发时，90% 的原因是 description 不够具体。运行 `claude --debug` 查看加载日志诊断问题。——来源：[[2026-05-20-agent-skills-intro-claude-opus]]
+
+### Skill 质量阈值：约束 + 示例 = 60% 稳定性提升
+
+Anthropic 内部团队经验（来源：[[2026-05-20-agent-skills-intro-claude-opus]]）：
+
+> 包含至少 **3 条明确约束** 和 **1 个输出示例** 的 Skill，其结果的稳定性可提升 60%。
+
+约束使用绝对化词汇：**必须**、**严禁**、**总是**、**绝不**。输出示例给出预期格式和实际内容，而非只描述格式。
+
 ### Skill 选择策略：装太多反而降效
 
 Skill 的渐进式披露机制是核心优势——不用时不占上下文，用时才拉全文。但这个机制有一个隐性代价：**Skill 装太多会降低触发准确率**。Claude 需要扫描所有 Skill 的描述来决定用哪个，描述一多就开始乱猜，准确率直接掉到 50% 以下。官方建议合理持有量 20-30 个，且必须贴合自己工作流。
@@ -179,6 +220,10 @@ Skill 的渐进式披露机制是核心优势——不用时不占上下文，�
 
 ## 不同素材中的观点
 
+- **[[2026-05-21-agent-skills-woshipm]]**：沃垠AI 的人人都是产品经理长文，从工程实现层面对 Agent Skills 做了一次完整拆解：先用“给 AI 的员工手册”类比解释 Skill 的定位，再系统梳理标准文件夹结构 `SKILL.md + scripts/references/assets`、description 字段的路由作用、渐进式披露如何避免上下文爆炸，以及 Skill 与 Prompt、MCP、Agent、Projects 的分层差异。文章还用“HTML 信息图生成器”案例演示了从单一职责定义、YAML 元数据、Markdown 指令到参考设计指南的完整制作流程，并补充了官方/社区 Skill 来源、安装方式和 4 阶段测试迭代框架，适合作为 Skill 工程化落地的操作手册。
+
+- **[[2026-05-20-agent-skills-intro-claude-opus]]**：沃垠AI 的万字实操入门教程，从 Skills 的历史（2025-10-16 Anthropic 首发，2025-12-18 开放标准，Codex/Cursor/OpenClaw/Hermes 等十余个 Agent 全面跟进）出发，重点讲解三个核心"魔法机关"：YAML 元数据（智能开关）、渐进式披露（随用随取的小抄）、子代理召唤（影分身机制）。给出 description 字段的黄金结构公式 `[功能] + [执行动作] + [触发关键词]`，以及含 3 条约束 + 1 个输出示例可使稳定性提升 60% 的 Anthropic 内部数据。以 HTML 信息图生成器为手把手案例，覆盖命名规范、文件结构设计、设计规范细节、HTML/CSS 输出要求的完整实践。
+
 - **[[2026-05-11-skill-sop-for-ai]]**：冰冰酱基于 ACT-R 认知理论系统定义了 Skill 的本质——将隐性经验编译为可复用程序性知识包。通过两张象限图（知识视角：Know-what/Know-how × 临时/持久；编排视角：写死/自主 × 人/AI）精准定位了 Skill 在 AI 协作体系中的位置。以 Figma 原型图 Skill 为实战案例展示了四阶段构建过程（试错→提炼→组织→持续喂养）和 6 个构建技巧（踩坑即沉淀、让 AI 自己找工具、先做再提炼、AI 写 Skill、Memory 热补丁、分享意图非指令）。提出演进路径：Prompt→知识库→Skill→Agent→Principle→AI角色市场。
 
 - **[[2026-05-11-claude-code-6-skills]]**：掘金作者实战筛选 Claude Code Skill 的经验——装 30+ 个 Skill 两个月后只留 6 个。核心洞察：装太多 Skill 会降低触发准确率到 50% 以下（Claude 扫描所有描述决定用哪个，描述一多就乱猜）。提出唯一筛选标准"能不能替我每天省掉一步手动动作"和"Setup Porn"陷阱概念（拿配置当拖延借口）。推荐 6 个精选 Skill：通用类（Skill Creator 元技能 / Planning with Files 长文规划 13,410 Stars / Document & Presentation Skills 官方全家桶），创作类（SEO Blog Writer 三合一 / Newsletter Automation 全链路 / Content Repurposer 语气感知多平台分发）。
@@ -186,6 +231,10 @@ Skill 的渐进式披露机制是核心优势——不用时不占上下文，�
 - **[[2026-05-13-ai-pm-requirement-scheduling]]**：Jo斯达展示了 Skill 在产品经理需求管理中的具体落地：一个需求拆解 Skill 将客户成功/销售的自然语言需求转成 Feature、Story 和 Gherkin 验收场景，并通过继承模式、异常场景库、SaaS 关键路径校验适配真实敏捷流程；另一个智能排期 Skill 读取 stories.md，按业务价值、实现成本、风险等级、用户影响范围打分，结合依赖图排序，只处理“已确认”的 Story，并在用户确认后写回优先级和“已排期”状态。这个案例强调 Skill 是“外挂大脑”而非替代 PM 判断，自动化的是 checklist、算分和依赖解析，最终决策仍由人负责。
 
 - **[[2026-05-13-ai-agent-productivity-20x]]**：深思圈把 Skill 放进更完整的 Agent 系统里讨论，强调 Skill 的本质是“写给 AI 的 SOP”，是整个体系里复利最强的一层。它的重要性不在单次 prompt 更漂亮，而在把提案格式、广告分析、晨间简报、播客嘉宾研究等可重复流程打包为可调用能力，再与上下文、记忆、MCP 和定时调度串联，形成会持续运行的自主工作流。文章还给出两种高复用的构建方式：基于课程/流程文档直接生成 Skill，或先与 Agent 手动跑完真实流程，再把结果提炼成 Skill。
+
+- **[[2026-05-20-self-as-product-sop]]**：这篇文章虽然讨论的是“自我产品化”，但其核心写法本质上也是 Skill 思维在个人成长场景的投射：把产品经理对自己的成长管理从零散灵感升级为可执行 SOP，用立项评审、PPRD、Backlog、Sprint、Dashboard 和定期复盘把隐性的成长经验编译成持续可复用的流程。它说明 Skill 并不只适用于 AI 协作或工具调用，也是一种更广义的“把 know-how 结构化、流程化、可持续迭代”的思维方式。
+
+- **[[2026-05-23-build-sop-personal-effectiveness]]**：蔡锦海给出的"工作 SOP"是 Skill 概念的镜像投影——Skill 是写给 AI 的 SOP，工作 SOP（PDCA/5问/SCQA/重要紧急四象限）是写给人自己的 SOP。两者本质同源：把重复发生的工作场景编译成可调用的标准动作。差别只在编译载体（AI 文件 vs 大脑习惯）和执行者（AI 自主 vs 人主动）。这条线索很重要——它说明 Skill 思维不是 AI 时代独有，而是"能力强的人"沉淀经验的通用模式，AI 出现只是让这种沉淀第一次能被精确编译并直接注入另一个执行体。详见 [[工作SOP]]。
 
 ## 实用信息
 
@@ -219,3 +268,5 @@ Skill 构建过程中的关键指令：
 - [[Skills变现]]
 - [[MCP 模型上下文协议]]
 - [[AI产品经理工作流]]
+- [[工作SOP]]
+- [[自我产品化]]
