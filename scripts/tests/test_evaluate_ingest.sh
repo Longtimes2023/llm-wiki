@@ -174,6 +174,87 @@ run_case "placeholder without duplicate frontmatter -> retry but no failures.jso
   "$TC3_RAW" "$TC3_OUT" 0 5 5 10 10 1 0
 
 # ---------------------------------------------------------------------------
+# Test 4 — Update-only success: source page existed before the run (count flat),
+# but agent ran step 8 to completion: log.md grew, metrics captured, exit 0, no
+# fetch_fail. Watcher MUST return 0 so the dispatcher triggers sync-and-rebuild
+# and the deploy marker reaches the bot. This is the bug for raw stub
+# 2026-05-26-081646-tg-8891da.md: agent updated existing pages, watcher kept
+# misclassifying it as failure → sync never ran → Cloudflare stale → bot timed
+# out after 30 minutes waiting on a marker that was never going to arrive.
+# ---------------------------------------------------------------------------
+TC4_PROJ=$(make_tmp_project)
+PROJECT_DIR="$TC4_PROJ"
+source_watcher_as_lib "$TC4_PROJ"
+
+TC4_RAW="$TC4_PROJ/ai-wiki/raw/articles/update-only.md"
+cat > "$TC4_RAW" <<'RAW'
+---
+source_url: https://example.com/existing
+captured_via: telegram_bot
+---
+# stub for previously-ingested URL
+RAW
+
+TC4_OUT=$(mktemp)
+cat > "$TC4_OUT" <<'OUT'
+... agent narrative: source page already exists, updating related entities ...
+[METRICS_BEGIN]{"provider":"sonnet","raw_file":"update-only.md","cost_usd":0.18}[METRICS_END]
+OUT
+
+run_case "update-only success: log.md grew, metrics present, no fetch_fail -> rc=0" \
+  "$TC4_RAW" "$TC4_OUT" 0 75 75 100 110 0 0
+
+# ---------------------------------------------------------------------------
+# Test 5 — Defense in depth: log.md grew but agent exited non-zero. Must still
+# return 1 (the non-zero-exit branch wins; we do NOT promote a half-completed
+# crash to a success just because step 8 happened to flush).
+# ---------------------------------------------------------------------------
+TC5_PROJ=$(make_tmp_project)
+PROJECT_DIR="$TC5_PROJ"
+source_watcher_as_lib "$TC5_PROJ"
+
+TC5_RAW="$TC5_PROJ/ai-wiki/raw/articles/half-crash.md"
+cat > "$TC5_RAW" <<'RAW'
+---
+source_url: https://example.com/half
+captured_via: telegram_bot
+---
+RAW
+
+TC5_OUT=$(mktemp)
+cat > "$TC5_OUT" <<'OUT'
+... agent narrative ...
+[METRICS_BEGIN]{"provider":"sonnet","raw_file":"half-crash.md"}[METRICS_END]
+OUT
+
+run_case "non-zero exit overrides log.md growth -> rc=1" \
+  "$TC5_RAW" "$TC5_OUT" 1 75 75 100 110 1 0
+
+# ---------------------------------------------------------------------------
+# Test 6 — Defense in depth: log.md grew, exit 0, but METRICS_LINE missing.
+# Agent never reached its epilogue print → treat as failure so retry can happen.
+# ---------------------------------------------------------------------------
+TC6_PROJ=$(make_tmp_project)
+PROJECT_DIR="$TC6_PROJ"
+source_watcher_as_lib "$TC6_PROJ"
+
+TC6_RAW="$TC6_PROJ/ai-wiki/raw/articles/no-metrics.md"
+cat > "$TC6_RAW" <<'RAW'
+---
+source_url: https://example.com/no-metrics
+captured_via: telegram_bot
+---
+RAW
+
+TC6_OUT=$(mktemp)
+cat > "$TC6_OUT" <<'OUT'
+... agent narrative, never printed METRICS epilogue ...
+OUT
+
+run_case "no metrics line -> rc=1 even if log.md grew" \
+  "$TC6_RAW" "$TC6_OUT" 0 75 75 100 110 1 0
+
+# ---------------------------------------------------------------------------
 # Summary
 # ---------------------------------------------------------------------------
 echo

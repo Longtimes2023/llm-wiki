@@ -28,6 +28,22 @@ if [ ! -d "$DST_DIR" ]; then
   exit 1
 fi
 
+# Single-writer guard. Bot fail-safe and raw-watcher can both invoke this
+# script; flock prevents concurrent rsync/build/deploy races. If the lock is
+# already held, log and exit 0 silently — the in-flight sync covers this run.
+LOCKFILE="${SYNC_LOCKFILE:-/tmp/llm-wiki-sync.lock}"
+exec 200>"$LOCKFILE"
+if ! flock -n 200; then
+  log "skipped: another sync already holds $LOCKFILE"
+  exit 0
+fi
+
+# Explicit start marker — telegram_bot.RE_SYNC_RUNNING binds this to the
+# current pending and shows the user "đang sync vào Quartz". Hint is either
+# the raw file basename (when invoked via raw-watcher) or "manual" (direct).
+RUN_HINT="${SYNC_RUN_HINT:-manual}"
+log "running: $RUN_HINT"
+
 # Stage 0: orphan rescue — files that exist in quartz/content/ but not in ai-wiki/
 # would be wiped by rsync --delete. If any future code path writes only to quartz,
 # this guard rescues those files back to ai-wiki/ before the destructive rsync runs.

@@ -81,13 +81,30 @@ WIKI_API_TIMEOUT_S = int(os.getenv("WIKI_API_TIMEOUT_S", "300"))
 TELEGRAM_MAX_MSG = 4000  # 4096 hard cap minus margin for Telegram entity overhead
 
 PENDING_TIMEOUT_SECONDS = 1800
+PENDING_HARD_TIMEOUT_SECONDS = 7200
 SWEEP_INTERVAL_SECONDS = 30
 LOG_POLL_INTERVAL_SECONDS = 1.0
 SOURCES_POLL_INTERVAL_SECONDS = 15
+HEARTBEAT_INTERVAL_SECONDS = 60
+# Cap for bot_data["recent_resolved"]: parked entries from hard-timed-out pendings
+# so a late-arriving deploy marker can still notify the user even after the
+# tracker entry has been removed. In-memory only (bot restart loses entries).
+RECENT_RESOLVED_MAXLEN = 32
+# Poller fail-safe: when the bot's filesystem poller has flipped a pending to
+# `status=ingested` and no sync_start marker has landed for this many seconds,
+# the bot itself fires sync-and-rebuild.sh as a backstop. Protects the user
+# from the watcher misclassifying the ingest result (e.g. update-only or
+# already-ingested cases the heuristic misses) and never calling sync.
+POLLER_SYNC_FAILSAFE_SECONDS = 120
 
 URL_RE = re.compile(r"https?://[^\s<>\"']+", re.IGNORECASE)
 RE_SOURCE_URL = re.compile(r"^source_url:\s*(\S+)\s*$", re.MULTILINE)
 RE_SOURCE_PATH = re.compile(r"^source_path:\s*raw/articles/(\S+\.md)\s*$", re.MULTILINE)
+# Matches both `source_url: https://…` (stub raws) and `source: "https://…"` (post-fetch raws).
+RE_RAW_URL_ANY = re.compile(
+    r"""^(?:source_url|source)\s*:\s*["']?(https?://[^\s"']+)["']?\s*$""",
+    re.MULTILINE,
+)
 RE_PROVIDER_TOKEN = re.compile(r"@([a-z0-9_-]+)\b", re.IGNORECASE)
 
 # Markers emitted by raw-watcher.sh + sync-and-rebuild.sh
@@ -96,6 +113,19 @@ RE_INGEST_OK = re.compile(r"INGEST VERIFIED OK")
 RE_INGEST_FAIL = re.compile(r"GIVING UP after \d+ attempts:\s*(\S+\.md)")
 RE_DEDUP_SKIP = re.compile(r"DEDUP_SKIP:\s*(\S+\.md)\s+same URL as\s+(\S+\.md)\s+— skipping ingest, no rebuild needed")
 RE_DEPLOYED = re.compile(r"deployed:\s*(https?://\S+)")
+# Progress milestones — surfaced to user as ack edits (not new replies).
+RE_INGEST_START = re.compile(r"ingest start \|")
+RE_INGEST_ATTEMPT = re.compile(r"attempt (\d+)/(\d+)(?:\s*\|\s*provider=(\S+))?")
+RE_SYNC_OK = re.compile(r"post-ingest sync OK")
+RE_INGEST_RETRY_FAIL = re.compile(r"INGEST FAILED \((.+?)\)")
+# Sync+deploy phase markers from sync-and-rebuild.sh. RE_SYNC_RUNNING matches
+# the explicit `[sync] running:` start marker; RE_REBUILD_OK fires after
+# `Quartz build OK (NNN files emitted)`; RE_SYNC_FAILED catches both Quartz
+# build failures and Cloudflare deploy failures so the user gets a single
+# error notification instead of silent watcher.log mutation.
+RE_SYNC_RUNNING = re.compile(r"\[sync\] running(?::\s*(\S+))?")
+RE_REBUILD_OK = re.compile(r"\[sync\] Quartz build OK \((\d+) files emitted\)")
+RE_SYNC_FAILED = re.compile(r"\[sync\] (Quartz build FAILED[^\n]*|Cloudflare deploy FAILED[^\n]*)")
 
 logging.basicConfig(
     format="%(asctime)s [telegram_bot] %(levelname)s %(message)s",
@@ -120,6 +150,22 @@ class Pending:
     last_deploy_url: Optional[str] = None
     sources_snapshot: list[str] = field(default_factory=list)
     new_source_file: Optional[str] = None  # detected after ingest_ok via diff
+    timeout_notified_ts: Optional[float] = None
+    # Progress tracking — populated by tail_watcher_log milestones + heartbeat loop.
+    phase: str = "queued"  # queued / fetching / attempt_1..N / verifying / syncing
+    attempt: int = 0
+    max_attempts: int = 3
+    ack_base_text: Optional[str] = None  # initial ack text, used as heartbeat prefix
+    # Idempotent milestone flags. Each phase ("ingested", "deployed", "failed") is
+    # appended exactly once so that the filesystem poller (poll_sources) and the
+    # watcher.log tail (tail_watcher_log) can each independently call
+    # notify_milestone without double-messaging the user.
+    notified_phases: list[str] = field(default_factory=list)
+    # When poller or watcher first flips status to "ingested". The poller
+    # fail-safe uses (now - ingested_ts) > POLLER_SYNC_FAILSAFE_SECONDS to
+    # decide whether to trigger sync-and-rebuild.sh as backstop.
+    ingested_ts: Optional[float] = None
+    sync_failsafe_fired: bool = False
 
 
 class PendingTracker:
@@ -219,6 +265,77 @@ def find_source_page_for_raw(raw_filename: str) -> Optional[str]:
     return None
 
 
+def _read_raw_url(raw_path: Path) -> Optional[str]:
+    """Pull `source_url:` or `source: "…"` from a raw file's frontmatter."""
+    try:
+        head = raw_path.read_text(encoding="utf-8", errors="ignore")[:2500]
+    except OSError:
+        return None
+    m = RE_RAW_URL_ANY.search(head)
+    return m.group(1) if m else None
+
+
+def find_source_page_for_url(url: str) -> Optional[str]:
+    """Find a wiki/sources/*.md that backs `url`, even if the raw was renamed.
+
+    Walks each source page → reads its source_path: → reads that raw's
+    source/source_url frontmatter → matches against `url`. Handles the case
+    where ingest renamed the raw, breaking the filename-based lookup.
+    """
+    if not SOURCES_DIR.exists():
+        return None
+    target = _norm_url(url)
+    for src in SOURCES_DIR.glob("*.md"):
+        try:
+            head = src.read_text(encoding="utf-8", errors="ignore")[:1500]
+        except OSError:
+            continue
+        m = RE_SOURCE_PATH.search(head)
+        if not m:
+            continue
+        raw_path = RAW_ARTICLES_DIR / m.group(1)
+        raw_url = _read_raw_url(raw_path)
+        if raw_url and _norm_url(raw_url) == target:
+            return src.name
+    return None
+
+
+def source_page_matches_pending(src_name: str, pending: Pending) -> bool:
+    src_path = SOURCES_DIR / src_name
+    try:
+        head = src_path.read_text(encoding="utf-8", errors="ignore")[:1500]
+    except OSError:
+        return False
+
+    m = RE_SOURCE_PATH.search(head)
+    if m and m.group(1) == pending.raw_file:
+        return True
+
+    pending_url = _read_raw_url(RAW_ARTICLES_DIR / pending.raw_file)
+    if not pending_url:
+        return False
+
+    source_url = None
+    raw_url = None
+    raw_path = RAW_ARTICLES_DIR / m.group(1) if m else None
+    if raw_path:
+        raw_url = _read_raw_url(raw_path)
+
+    url_match = RE_RAW_URL_ANY.search(head)
+    if url_match:
+        source_url = url_match.group(1)
+
+    target = _norm_url(pending_url)
+    return any(_norm_url(url) == target for url in (source_url, raw_url) if url)
+
+
+def find_matching_new_source_for_pending(pending: Pending) -> Optional[str]:
+    for src_name in diff_new_sources(pending.sources_snapshot):
+        if source_page_matches_pending(src_name, pending):
+            return src_name
+    return None
+
+
 def find_metrics_for_raw(raw_filename: str) -> Optional[dict]:
     """Read the latest metrics line for this raw_file from ingest_metrics.jsonl."""
     if not METRICS_FILE.exists():
@@ -294,10 +411,151 @@ def _clean_fetch_fail_info(fail_info: dict) -> tuple[Optional[str], Optional[str
     return status_text, reason_text, url_text
 
 
+def find_watcher_status_for_raw(raw_filename: str) -> Optional[dict]:
+    if not WATCHER_LOG.exists():
+        return None
+
+    status: dict = {
+        "attempt": None,
+        "max_attempts": None,
+        "provider": None,
+        "failures": [],
+        "final_give_up": False,
+        "started": False,
+    }
+    in_section = False
+
+    try:
+        with WATCHER_LOG.open(encoding="utf-8", errors="replace") as f:
+            for line in f:
+                detected = RE_DETECTED.search(line)
+                if detected:
+                    in_section = Path(detected.group(1)).name == raw_filename
+                    if in_section:
+                        status = {
+                            "attempt": None,
+                            "max_attempts": None,
+                            "provider": None,
+                            "failures": [],
+                            "final_give_up": False,
+                            "started": False,
+                        }
+                    continue
+
+                give_up = RE_INGEST_FAIL.search(line)
+                if give_up and Path(give_up.group(1)).name == raw_filename:
+                    status["final_give_up"] = True
+                    in_section = False
+                    continue
+
+                if not in_section:
+                    continue
+
+                if RE_INGEST_START.search(line):
+                    status["started"] = True
+                    continue
+
+                attempt = RE_INGEST_ATTEMPT.search(line)
+                if attempt:
+                    status["attempt"] = int(attempt.group(1))
+                    status["max_attempts"] = int(attempt.group(2))
+                    status["provider"] = attempt.group(3)
+                    continue
+
+                failure = RE_INGEST_RETRY_FAIL.search(line)
+                if failure:
+                    status["failures"].append(failure.group(1))
+    except OSError:
+        return None
+
+    if status["started"] or status["attempt"] or status["failures"] or status["final_give_up"]:
+        return status
+    return None
+
+
+def _format_failure_reason_text(reason: str) -> str:
+    reason = reason.strip()
+    if reason.startswith("timeout 25m"):
+        return "một attempt đã chạm hard timeout 25 phút"
+    if reason.startswith("partial:"):
+        return f"attempt cuối ghi dở: {reason}"
+    if reason.startswith("api/connection error"):
+        return f"lỗi API/kết nối: {reason}"
+    if reason.startswith("exit code"):
+        return f"agent thoát lỗi: {reason}"
+    if reason.startswith("sources count unchanged"):
+        return f"không tạo thêm source page: {reason}"
+    return reason
+
+
+def _format_watcher_status_reason(status: dict) -> Optional[str]:
+    parts = []
+    failures = status.get("failures") or []
+    if failures:
+        summarized = [_format_failure_reason_text(reason) for reason in failures[-2:]]
+        parts.append("; ".join(summarized))
+
+    attempt = status.get("attempt")
+    max_attempts = status.get("max_attempts")
+    if status.get("final_give_up"):
+        if attempt and max_attempts:
+            parts.append(f"watcher đã dừng sau {attempt}/{max_attempts} attempts")
+        else:
+            parts.append("watcher đã dừng sau nhiều lần thử")
+    elif attempt and max_attempts:
+        provider = status.get("provider")
+        provider_text = f" bằng provider {provider}" if provider else ""
+        parts.append(f"watcher đang/đã chạy attempt {attempt}/{max_attempts}{provider_text}")
+    elif status.get("started"):
+        parts.append("watcher đã bắt đầu xử lý file này")
+
+    if not parts:
+        return None
+    return "; ".join(parts) + "."
+
+
+def format_pipeline_reason(pending: Pending) -> str:
+    fail_info = find_fetch_fail_for_raw(pending.raw_file)
+    if fail_info:
+        status_label, reason, url = _clean_fetch_fail_info(fail_info)
+        details = []
+        if status_label:
+            details.append(f"status: {status_label}")
+        if reason:
+            details.append(reason)
+        if url:
+            details.append(f"URL: {url}")
+        if details:
+            return "; ".join(details) + "."
+
+    watcher_status = find_watcher_status_for_raw(pending.raw_file)
+    watcher_reason = _format_watcher_status_reason(watcher_status) if watcher_status else None
+    if watcher_reason:
+        return watcher_reason
+
+    live_parts = []
+    if pending.attempt and pending.max_attempts:
+        live_parts.append(f"watcher đang/đã chạy attempt {pending.attempt}/{pending.max_attempts}")
+    if pending.phase and pending.phase != "queued":
+        live_parts.append(f"phase hiện tại: {pending.phase}")
+    if live_parts:
+        return "; ".join(live_parts) + "."
+
+    return "Chưa thấy marker kết thúc từ watcher; attempt hiện tại có thể vẫn đang chạy hoặc bị kẹt."
+
+
+
 def _lookup_source_page_for_raw(pending: Pending) -> Optional[str]:
     if pending.new_source_file:
         return pending.new_source_file
-    return find_source_page_for_raw(pending.raw_file)
+    direct = find_source_page_for_raw(pending.raw_file)
+    if direct:
+        return direct
+    # Fallback: raw may have been renamed by ingest. Try URL-based lookup.
+    raw_url = _read_raw_url(RAW_ARTICLES_DIR / pending.raw_file)
+    if raw_url:
+        return find_source_page_for_url(raw_url)
+    return None
 
 
 def format_metrics_line(metrics: dict) -> str:
@@ -499,7 +757,10 @@ def _atomic_retrigger(path: Path) -> None:
 async def tail_watcher_log(emit) -> None:
     """Tail scripts/watcher.log forever; call emit(event_type, payload) per match.
 
-    event_type ∈ {"ingest_ok", "ingest_fail", "dedup_skip", "deployed"}
+    event_type ∈ {
+      "ingest_ok", "ingest_fail", "dedup_skip", "deployed",
+      "ingest_start", "ingest_attempt", "ingest_retry_fail", "sync_ok",
+    }
     payload: dict with at least one of: filename, url
     """
     if not WATCHER_LOG.exists():
@@ -535,6 +796,50 @@ async def tail_watcher_log(emit) -> None:
             if m:
                 last_seen_filename = Path(m.group(1)).name
                 continue
+
+            # Progress milestones — only emit if bound to a known pending filename.
+            if last_seen_filename:
+                if RE_INGEST_START.search(line):
+                    await emit("ingest_start", {"filename": last_seen_filename})
+                    continue
+                m = RE_INGEST_ATTEMPT.search(line)
+                if m:
+                    await emit("ingest_attempt", {
+                        "filename": last_seen_filename,
+                        "attempt": int(m.group(1)),
+                        "max_attempts": int(m.group(2)),
+                        "provider": m.group(3),
+                    })
+                    continue
+                # `INGEST FAILED (...)` is a per-attempt failure; bot stays in retry mode
+                # until either `INGEST VERIFIED OK` or `GIVING UP after N attempts` lands.
+                m = RE_INGEST_RETRY_FAIL.search(line)
+                if m:
+                    await emit("ingest_retry_fail", {
+                        "filename": last_seen_filename,
+                        "reason": m.group(1),
+                    })
+                    continue
+                if RE_SYNC_OK.search(line):
+                    await emit("sync_ok", {"filename": last_seen_filename})
+                    continue
+                if RE_SYNC_RUNNING.search(line):
+                    await emit("sync_start", {"filename": last_seen_filename})
+                    continue
+                m = RE_REBUILD_OK.search(line)
+                if m:
+                    await emit("rebuild_ok", {
+                        "filename": last_seen_filename,
+                        "files_emitted": int(m.group(1)),
+                    })
+                    continue
+                m = RE_SYNC_FAILED.search(line)
+                if m:
+                    await emit("sync_fail", {
+                        "filename": last_seen_filename,
+                        "reason": m.group(1),
+                    })
+                    continue
 
             if RE_INGEST_OK.search(line) and last_seen_filename:
                 await emit("ingest_ok", {"filename": last_seen_filename})
@@ -775,7 +1080,9 @@ async def on_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     if not provider_override:
         existing = find_existing_raw_for_url(url)
         if existing:
-            src_name = find_source_page_for_raw(existing.name)
+            # Try filename-based source lookup first, then fall back to URL-based
+            # (handles raws renamed by ingest — e.g. stub → slugified filename).
+            src_name = find_source_page_for_raw(existing.name) or find_source_page_for_url(url)
             if src_name:
                 src_url = quartz_url_for_source(src_name)
                 log.info("dedup: url already ingested via raw=%s, source=%s", existing.name, src_name)
@@ -816,7 +1123,8 @@ async def on_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         ack_lines.append(f"\n<b>Provider override:</b> {provider_override} (one-off, dedup bypass)")
     ack_lines.append(f"\nFile: <code>{raw_path.name}</code>")
     ack_lines.append("Sẽ reply link wiki khi pipeline xong (thường 1–5 phút).")
-    ack = await msg.reply_text("\n".join(ack_lines), parse_mode="HTML")
+    ack_text = "\n".join(ack_lines)
+    ack = await msg.reply_text(ack_text, parse_mode="HTML")
 
     tracker: PendingTracker = context.application.bot_data["tracker"]
     await tracker.add(
@@ -828,6 +1136,7 @@ async def on_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
             created_ts=time.time(),
             status="queued",
             sources_snapshot=sources_before,
+            ack_base_text=ack_text,
         )
     )
 
@@ -977,13 +1286,13 @@ async def on_retry_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         return
 
     sources_before = snapshot_sources()
-    ack = await msg.reply_text(
+    ack_text = (
         f"🔁 Đã retry <code>{raw_name}</code>.\n"
         + (f"Killed PID <code>{pid}</code>.\n" if pid else "")
         + (f"Removed from <code>watcher.failed</code>.\n" if removed_from_failed else "")
-        + "Sẽ báo khi pipeline xong (thường 1–5 phút).",
-        parse_mode="HTML",
+        + "Sẽ báo khi pipeline xong (thường 1–5 phút)."
     )
+    ack = await msg.reply_text(ack_text, parse_mode="HTML")
 
     await tracker.add(
         Pending(
@@ -994,6 +1303,7 @@ async def on_retry_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
             created_ts=time.time(),
             status="queued",
             sources_snapshot=sources_before,
+            ack_base_text=ack_text,
         )
     )
 
@@ -1055,7 +1365,156 @@ async def on_cancel_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     )
 
 
+# ---------- Progress ack helpers ----------
+def _format_progress_line(p: Pending, now: float) -> str:
+    elapsed_s = max(0, int(now - p.created_ts))
+    if elapsed_s < 60:
+        elapsed = f"{elapsed_s}s"
+    else:
+        elapsed = f"{elapsed_s / 60:.1f}m"
+    parts = [f"⏳ {elapsed}"]
+    # Once the poller (or watcher) has flipped to ingested, the watcher's
+    # `attempt N/M` and stale failure phase text become misleading — the
+    # pipeline has already crossed into sync/deploy. Override the display
+    # with a sync/deploy-derived label so the user sees forward motion.
+    sync_phases = {"syncing", "synced", "deploying", "sync_failed"}
+    if p.status == "ingested":
+        derived = p.phase if p.phase in sync_phases else "sync/deploy"
+        parts.append(f"phase: {derived}")
+    else:
+        if p.attempt > 0:
+            parts.append(f"attempt {p.attempt}/{p.max_attempts}")
+        if p.phase and p.phase != "queued":
+            parts.append(f"phase: {p.phase}")
+    return " · ".join(parts)
+
+
+async def _edit_ack_progress(bot, p: Pending) -> None:
+    """Re-render the ack with an appended progress line. Silent on Telegram no-op."""
+    if not p.ack_msg_id or not p.ack_base_text:
+        return
+    progress = _format_progress_line(p, time.time())
+    text = f"{p.ack_base_text}\n\n{progress}"
+    try:
+        await bot.edit_message_text(
+            chat_id=p.chat_id,
+            message_id=p.ack_msg_id,
+            text=text,
+            parse_mode="HTML",
+            disable_web_page_preview=True,
+        )
+    except Exception as e:
+        # "Message is not modified" → benign; everything else → log and move on.
+        if "not modified" in str(e).lower():
+            return
+        log.debug("edit_message_text failed for %s: %s", p.raw_file, e)
+
+
+async def notify_milestone(
+    bot,
+    p: Pending,
+    phase: str,
+    tracker: PendingTracker,
+    extra: Optional[dict] = None,
+) -> bool:
+    """Send a one-time user message for a pipeline milestone.
+
+    Idempotent on `phase` — repeated calls for the same (raw_file, phase) are no-ops,
+    so the filesystem poller (poll_sources) and the watcher.log tail
+    (tail_watcher_log) can each independently call this without double-messaging.
+
+    Returns True if the message was sent this call, False if skipped (already notified
+    or unrecognized phase).
+    """
+    if phase in (p.notified_phases or []):
+        return False
+
+    extra = extra or {}
+    text: Optional[str] = None
+    if phase == "ingested":
+        src = p.new_source_file or extra.get("new_source") or "?"
+        text = (
+            f"✓ Đã ingest xong cho <code>{escape(p.raw_file)}</code>.\n"
+            f"Source: <code>{escape(src)}</code>\n"
+            f"Đang sync + deploy lên Cloudflare Pages..."
+        )
+    elif phase == "deployed":
+        url = extra.get("url") or p.last_deploy_url or ""
+        src_label = (
+            f"\nSource: <code>{escape(p.new_source_file)}</code>"
+            if p.new_source_file else ""
+        )
+        metrics = find_metrics_for_raw(p.raw_file)
+        metrics_label = f"\n{format_metrics_line(metrics)}" if metrics else ""
+        text = (
+            f"✅ Đã ingest + deploy xong!\n"
+            f"Wiki: {escape(url)}{src_label}{metrics_label}\n"
+            f"(Site: {escape(QUARTZ_PUBLIC_BASE_URL)}/)"
+        )
+    elif phase == "sync_failed":
+        # Surfaced when watcher.log shows `[sync] Quartz build FAILED` or
+        # `[sync] Cloudflare deploy FAILED`. The reason is the matched substring
+        # from RE_SYNC_FAILED — short enough to inline, truncated for safety.
+        reason = (extra.get("reason") or "unknown").strip()[:200]
+        src_label = (
+            f"\nSource: <code>{escape(p.new_source_file)}</code>"
+            if p.new_source_file else ""
+        )
+        text = (
+            f"⚠️ Sync/build thất bại cho <code>{escape(p.raw_file)}</code>.\n"
+            f"Lý do: {escape(reason)}{src_label}\n"
+            f"Wiki có thể đang stale. Thử lại: <code>/retry {escape(p.raw_file)}</code>"
+        )
+
+    if text is None:
+        return False
+
+    try:
+        await bot.send_message(
+            chat_id=p.chat_id,
+            reply_to_message_id=p.msg_id,
+            text=text,
+            parse_mode="HTML",
+            disable_web_page_preview=(phase != "deployed"),
+        )
+    except Exception as e:
+        log.exception("notify_milestone(%s) send failed for %s: %s", phase, p.raw_file, e)
+        return False
+
+    new_phases = list(p.notified_phases or [])
+    new_phases.append(phase)
+    await tracker.update(p.raw_file, notified_phases=new_phases)
+    return True
+
+
 # ---------- Bridge: log events → telegram replies ----------
+def park_pending_for_late_marker(
+    p: "Pending",
+    recent_resolved: dict,
+    now: float,
+    maxlen: int = RECENT_RESOLVED_MAXLEN,
+) -> bool:
+    """Park a pending entry so a deploy marker arriving AFTER hard-removal
+    can still notify the user. FIFO-evicts at `maxlen`.
+
+    Returns False (and does nothing) when parking would serve no purpose —
+    entry already deployed, or status not in queued/ingested.
+    """
+    if p.status not in ("queued", "ingested") or p.last_deploy_url:
+        return False
+    recent_resolved[p.raw_file] = {
+        "raw_file": p.raw_file,
+        "chat_id": p.chat_id,
+        "msg_id": p.msg_id,
+        "new_source_file": p.new_source_file,
+        "created_ts": p.created_ts,
+        "parked_ts": now,
+    }
+    while len(recent_resolved) > maxlen:
+        recent_resolved.pop(next(iter(recent_resolved)))
+    return True
+
+
 async def make_emitter(application: Application):
     bot = application.bot
     tracker: PendingTracker = application.bot_data["tracker"]
@@ -1064,26 +1523,155 @@ async def make_emitter(application: Application):
         filename = payload.get("filename")
         if event_type == "dedup_skip" and not filename:
             filename = next((item.raw_file for item in await tracker.all() if item.status == "queued"), None)
-        if not filename:
+        if not filename and event_type != "deployed":
             return
-        p = await tracker.get(filename)
-        if not p:
-            return  # not ours, ignore
+
+        if event_type == "deployed":
+            # 3-tier lookup for deployed: tail_watcher_log binds `[sync] deployed:` lines
+            # to `last_seen_filename`, which can drift to the WRONG raw_file when a
+            # second `detected new file:` arrives between this raw's ingest and its
+            # deploy marker — or be entirely irrelevant when sync-and-rebuild.sh is
+            # invoked manually. Without the fallback, the deploy marker is silently
+            # dropped (telegram_bot.log entry: "ignoring ... no tracker entry").
+            p = await tracker.get(filename) if filename else None
+            if not p:
+                candidates = [
+                    cp for cp in await tracker.all()
+                    if cp.status in ("queued", "ingested") and not cp.last_deploy_url
+                ]
+                if candidates:
+                    p = min(candidates, key=lambda x: x.created_ts)
+                    log.warning(
+                        "deployed event filename=%s has no exact tracker match; "
+                        "fallback to oldest pending without deploy_url: %s",
+                        filename, p.raw_file,
+                    )
+                    filename = p.raw_file
+            if not p:
+                # 3rd tier: late deploy marker landing AFTER sweep_pending
+                # hard-removed the tracker entry. Reconstruct a local Pending
+                # from recent_resolved so notify_milestone can still reply to
+                # the original Telegram message. Not re-inserted into tracker
+                # because the entry is terminal — drained one-shot.
+                recent_resolved: dict = application.bot_data.get("recent_resolved") or {}
+                parked = recent_resolved.get(filename) if filename else None
+                if not parked and recent_resolved:
+                    parked = recent_resolved[next(reversed(recent_resolved))]
+                if parked:
+                    p = Pending(
+                        raw_file=parked["raw_file"],
+                        chat_id=parked["chat_id"],
+                        msg_id=parked["msg_id"],
+                        ack_msg_id=None,
+                        created_ts=parked["created_ts"],
+                        new_source_file=parked.get("new_source_file"),
+                        status="ingested",
+                        notified_phases=[],
+                    )
+                    filename = p.raw_file
+                    recent_resolved.pop(p.raw_file, None)
+                    log.warning(
+                        "deployed event matched parked recent_resolved entry %s "
+                        "(tracker had already hard-removed it)", p.raw_file,
+                    )
+            if not p:
+                log.info(
+                    "deployed event filename=%s but no eligible pending entry "
+                    "(already cleared or never tracked)", filename,
+                )
+                return
+        else:
+            p = await tracker.get(filename)
+            if not p:
+                return  # not ours, ignore
 
         if event_type == "ingest_ok":
             new_sources = diff_new_sources(p.sources_snapshot)
             new_src = new_sources[0] if new_sources else None
             matched_source = new_src or _lookup_source_page_for_raw(p)
-            await tracker.update(
+            p2 = await tracker.update(
                 filename,
                 status="ingested",
                 last_ingest_event="ok",
                 new_source_file=matched_source,
+                phase="ingested",
+                ingested_ts=time.time() if p.ingested_ts is None else p.ingested_ts,
             )
             log.info(
                 "ingest_ok matched pending %s; new source=%s (total new: %d)",
                 filename, matched_source, len(new_sources),
             )
+            if p2:
+                await _edit_ack_progress(bot, p2)
+                # Idempotent — poller may already have fired this for the same raw.
+                await notify_milestone(bot, p2, "ingested", tracker)
+        elif event_type == "ingest_start":
+            await tracker.update(filename, phase="fetching", last_ingest_event="start")
+            p2 = await tracker.get(filename)
+            if p2:
+                await _edit_ack_progress(bot, p2)
+        elif event_type == "ingest_attempt":
+            attempt = int(payload.get("attempt") or 0)
+            max_attempts = int(payload.get("max_attempts") or 3)
+            await tracker.update(
+                filename,
+                attempt=attempt,
+                max_attempts=max_attempts,
+                phase="starting",
+                last_ingest_event="attempt",
+            )
+            p2 = await tracker.get(filename)
+            if p2:
+                await _edit_ack_progress(bot, p2)
+        elif event_type == "ingest_retry_fail":
+            reason = payload.get("reason") or ""
+            await tracker.update(
+                filename,
+                phase=f"retry ({reason[:40]})" if reason else "retrying",
+                last_ingest_event="retry_fail",
+            )
+            p2 = await tracker.get(filename)
+            if p2:
+                await _edit_ack_progress(bot, p2)
+        elif event_type == "sync_ok":
+            await tracker.update(filename, phase="synced", last_ingest_event="sync_ok")
+            p2 = await tracker.get(filename)
+            if p2:
+                await _edit_ack_progress(bot, p2)
+        elif event_type == "sync_start":
+            # First `[sync] running:` marker from sync-and-rebuild.sh. Ack edit
+            # only — the user already received the "Đang sync + deploy..."
+            # message via notify_milestone("ingested"). This just keeps the
+            # heartbeat phase accurate so it doesn't show stale watcher attempts.
+            await tracker.update(filename, phase="syncing", last_ingest_event="sync_start")
+            p2 = await tracker.get(filename)
+            if p2:
+                await _edit_ack_progress(bot, p2)
+        elif event_type == "rebuild_ok":
+            # Quartz build finished; Cloudflare deploy is the next step. Ack edit
+            # so heartbeat shows "deploying" rather than "syncing".
+            await tracker.update(filename, phase="deploying", last_ingest_event="rebuild_ok")
+            p2 = await tracker.get(filename)
+            if p2:
+                await _edit_ack_progress(bot, p2)
+        elif event_type == "sync_fail":
+            reason = payload.get("reason") or "unknown"
+            p2 = await tracker.update(
+                filename,
+                phase="sync_failed",
+                last_ingest_event="sync_fail",
+            )
+            target = p2 or p
+            sent = await notify_milestone(
+                bot, target, "sync_failed", tracker, extra={"reason": reason}
+            )
+            if not sent:
+                log.info(
+                    "sync_fail milestone for %s already notified (or no-op), "
+                    "skipping resend", filename,
+                )
+            # Don't tracker.remove — user may /retry. Leave entry until deploy
+            # or hard timeout.
         elif event_type == "dedup_skip":
             await tracker.update(filename, status="dedup_skipped", last_ingest_event="dedup_skip")
             try:
@@ -1113,7 +1701,7 @@ async def make_emitter(application: Application):
                 return
             await tracker.update(filename, status="failed", last_ingest_event="fail")
             # Surface structured fetch-fail reason if the skill emitted one; otherwise
-            # fall back to the generic "see watcher.log" message.
+            # derive a concise watcher/progress reason for the user.
             fail_info = find_fetch_fail_for_raw(filename)
             if fail_info:
                 status_label, reason, url = _clean_fetch_fail_info(fail_info)
@@ -1131,12 +1719,13 @@ async def make_emitter(application: Application):
                 else:
                     text = (
                         f"❌ Lấy nội dung thất bại cho file {filename}.\n"
-                        f"Xem scripts/watcher.log."
+                        f"Lý do: {format_pipeline_reason(p)}"
                     )
             else:
+                reason = format_pipeline_reason(p)
                 text = (
                     f"❌ Pipeline thất bại sau nhiều lần thử cho file "
-                    f"{filename}.\nXem scripts/watcher.log."
+                    f"{filename}.\nLý do: {reason}"
                 )
             try:
                 await _send_long(
@@ -1154,64 +1743,153 @@ async def make_emitter(application: Application):
             finally:
                 await tracker.remove(filename)
         elif event_type == "deployed":
-            # Prefer the new source file detected after ingest_ok; fallback to root
+            # Prefer the new source file detected after ingest_ok; fallback to root.
+            # `url` payload comes from the [sync] deployed: line directly; we ignore
+            # it in favor of quartz_url_for_source when we have a source_file so the
+            # message lands on the specific page rather than the homepage.
+            payload_url = payload.get("url", "")
             url = (
                 quartz_url_for_source(p.new_source_file)
                 if p.new_source_file
-                else f"{QUARTZ_PUBLIC_BASE_URL}/"
+                else (payload_url or f"{QUARTZ_PUBLIC_BASE_URL}/")
             )
-            await tracker.update(filename, status="deployed", last_deploy_url=url)
-            try:
-                src_label = (
-                    f"\nSource: <code>{escape(p.new_source_file)}</code>"
-                    if p.new_source_file else ""
+            p2 = await tracker.update(filename, status="deployed", last_deploy_url=url)
+            # Idempotent: if poller-driven notification ever adds "deployed" itself
+            # (it currently doesn't, but future code might), this stays a single send.
+            target = p2 or p
+            sent = await notify_milestone(bot, target, "deployed", tracker, extra={"url": url})
+            if not sent:
+                log.info(
+                    "deployed milestone for %s already notified (or no-op), skipping resend",
+                    filename,
                 )
-                # Append per-ingest metrics if available (time, tokens, cost)
-                metrics = find_metrics_for_raw(filename)
-                metrics_label = f"\n{format_metrics_line(metrics)}" if metrics else ""
-                await bot.send_message(
-                    chat_id=p.chat_id,
-                    reply_to_message_id=p.msg_id,
-                    text=(
-                        f"✅ Đã ingest + deploy xong!\n"
-                        f"Wiki: {escape(url)}{src_label}{metrics_label}\n"
-                        f"(Site: {escape(QUARTZ_PUBLIC_BASE_URL)}/)"
-                    ),
-                    parse_mode="HTML",
-                    disable_web_page_preview=False,
-                )
-            except Exception as e:
-                log.exception("failed to send deploy notification for %s: %s", filename, e)
-            finally:
-                await tracker.remove(filename)
+            await tracker.remove(filename)
 
     return emit
+
+
+# ---------- Heartbeat: nudge ack with elapsed time every HEARTBEAT_INTERVAL_SECONDS ----------
+async def heartbeat_loop(application: Application) -> None:
+    """Edit each in-flight pending's ack message every HEARTBEAT_INTERVAL_SECONDS so
+    the user sees forward motion even when watcher.log is silent (e.g. mid-LLM call).
+    Terminal statuses are skipped — they're handled by make_emitter.
+    """
+    bot = application.bot
+    tracker: PendingTracker = application.bot_data["tracker"]
+    while True:
+        try:
+            for p in await tracker.all():
+                # Tick during queued AND ingested — for ingested entries the
+                # heartbeat keeps elapsed time visible while sync+deploy runs,
+                # and _format_progress_line overrides the stale watcher phase.
+                if p.status not in ("queued", "ingested"):
+                    continue
+                if not p.ack_msg_id or not p.ack_base_text:
+                    continue
+                await _edit_ack_progress(bot, p)
+        except Exception as e:
+            log.exception("heartbeat_loop error: %s", e)
+        await asyncio.sleep(HEARTBEAT_INTERVAL_SECONDS)
 
 
 # ---------- Source filesystem poller (Option D) ----------
 # Authoritative ingest detector. Watches wiki/sources/ for new files matching
 # each pending's snapshot. More reliable than watcher.log markers — works even
 # when Claude SDK crashes mid-write or watcher.sh's heuristic fails.
+def should_fire_sync_failsafe(p: "Pending", now: float) -> bool:
+    """Decide if poll_sources should fire sync-and-rebuild.sh as a backstop.
+
+    The bot's poller has authoritative knowledge of "source page exists for
+    this raw_file". When the watcher misclassifies the ingest and never calls
+    sync (e.g. agent returned no-op for an already-ingested URL but the file
+    still exists), the user would wait indefinitely. The fail-safe trips when
+    we've been in `status=ingested` for POLLER_SYNC_FAILSAFE_SECONDS without
+    a sync_start marker. Once fired, sync_failsafe_fired prevents repeats.
+    """
+    if p.status != "ingested":
+        return False
+    if p.sync_failsafe_fired:
+        return False
+    if p.last_deploy_url:
+        return False
+    if p.ingested_ts is None:
+        return False
+    if now - p.ingested_ts <= POLLER_SYNC_FAILSAFE_SECONDS:
+        return False
+    # last_ingest_event in ("ok", "ok_via_poll") means we never saw sync_start.
+    # sync_start updates last_ingest_event to "sync_start"; rebuild_ok / sync_ok
+    # advance further. Block the failsafe once the pipeline has moved past ingest.
+    if p.last_ingest_event not in (None, "", "ok", "ok_via_poll"):
+        return False
+    return True
+
+
 async def poll_sources(application: Application) -> None:
     tracker: PendingTracker = application.bot_data["tracker"]
+    bot = application.bot
     while True:
         try:
             for p in await tracker.all():
-                if p.status != "queued":
-                    continue
-                new_sources = diff_new_sources(p.sources_snapshot)
-                if new_sources:
-                    new_src = new_sources[0]
-                    await tracker.update(
+                if p.status == "queued":
+                    matched_source = find_matching_new_source_for_pending(p)
+                    if matched_source:
+                        now = time.time()
+                        p2 = await tracker.update(
+                            p.raw_file,
+                            status="ingested",
+                            new_source_file=matched_source,
+                            last_ingest_event="ok_via_poll",
+                            # Anticipating sync — _format_progress_line maps
+                            # "syncing" to a friendly label and ignores stale
+                            # watcher phase wording.
+                            phase="syncing",
+                            ingested_ts=now,
+                        )
+                        log.info(
+                            "source poll detected ingest: %s → new_source=%s",
+                            p.raw_file, matched_source,
+                        )
+                        # Proactively tell the user immediately, instead of waiting for
+                        # watcher.log to emit INGEST VERIFIED OK (can be 7+ min on retry
+                        # chains). notify_milestone is idempotent; if the watcher tail
+                        # later fires ingest_ok for the same raw, it's a no-op.
+                        if p2:
+                            await notify_milestone(bot, p2, "ingested", tracker)
+                elif should_fire_sync_failsafe(p, time.time()):
+                    # Bot-side fail-safe: source exists but no sync_start observed
+                    # for >120s. Watcher probably misclassified; fire sync-and-rebuild
+                    # ourselves. The script is flock-protected so concurrent calls
+                    # from a delayed watcher invocation are no-ops.
+                    await tracker.update(p.raw_file, sync_failsafe_fired=True)
+                    log.warning(
+                        "poller fail-safe firing sync-and-rebuild for %s "
+                        "(ingested for %.1fs with no sync_start)",
                         p.raw_file,
-                        status="ingested",
-                        new_source_file=new_src,
-                        last_ingest_event="ok_via_poll",
+                        time.time() - (p.ingested_ts or time.time()),
                     )
-                    log.info(
-                        "source poll detected ingest: %s → new_source=%s",
-                        p.raw_file, new_src,
-                    )
+                    try:
+                        log_path = str(WATCHER_LOG)
+                        log_fh = open(log_path, "ab")
+                        subprocess.Popen(
+                            [
+                                "bash",
+                                str(PROJECT_DIR / "scripts" / "sync-and-rebuild.sh"),
+                            ],
+                            stdout=log_fh,
+                            stderr=log_fh,
+                            cwd=str(PROJECT_DIR),
+                            env={
+                                **os.environ,
+                                "SYNC_RUN_HINT": f"bot-failsafe:{p.raw_file}",
+                            },
+                            start_new_session=True,
+                        )
+                        log_fh.close()
+                    except Exception as spawn_err:
+                        log.exception(
+                            "poller failsafe failed to spawn sync-and-rebuild: %s",
+                            spawn_err,
+                        )
         except Exception as e:
             log.exception("poll_sources error: %s", e)
         await asyncio.sleep(SOURCES_POLL_INTERVAL_SECONDS)
@@ -1222,51 +1900,66 @@ async def sweep_pending(application: Application) -> None:
     bot = application.bot
     tracker: PendingTracker = application.bot_data["tracker"]
     recent_timeouts: deque = application.bot_data["recent_timeouts"]
+    recent_resolved: dict = application.bot_data.setdefault("recent_resolved", {})
     while True:
         try:
             now = time.time()
             for p in await tracker.all():
-                if now - p.created_ts > PENDING_TIMEOUT_SECONDS:
-                    log.warning("timeout for pending %s (status=%s)", p.raw_file, p.status)
-                    minutes = PENDING_TIMEOUT_SECONDS // 60
-                    # Tailor wording to actual status. "ingested" means the ingest
-                    # itself succeeded and a source page exists — only the
-                    # `deployed:` marker never came back, which usually means
-                    # rsync/Quartz lagged or bot was restarted mid-tail.
-                    if p.status in ("ingested", "deployed"):
-                        src_label = (
-                            f"\nSource page: <code>{p.new_source_file}</code>"
-                            if p.new_source_file else ""
-                        )
-                        msg_text = (
-                            f"⏱️ Quá {minutes} phút đợi marker deploy cho "
-                            f"<code>{p.raw_file}</code>.\n"
-                            f"Status hiện tại: <b>{p.status}</b> — ingest đã xong, "
-                            f"chỉ deploy không phản hồi.{src_label}\n\n"
-                            f"Có thể wiki đã update rồi, kiểm tra: "
-                            f"{QUARTZ_PUBLIC_BASE_URL}/\n"
-                            f"Nếu cần ép chạy lại: <code>/retry {p.raw_file}</code>"
-                        )
-                    else:
-                        msg_text = (
-                            f"⏱️ Quá {minutes} phút mà pipeline chưa xong cho "
-                            f"<code>{p.raw_file}</code>.\n"
-                            f"Last status: <b>{p.status}</b>. "
-                            f"Xem <code>scripts/watcher.log</code>.\n\n"
-                            f"Lệnh nhanh:\n"
-                            f"• Chạy lại: <code>/retry {p.raw_file}</code>\n"
-                            f"• Hủy hẳn: <code>/cancel {p.raw_file}</code>"
-                        )
-                    try:
-                        await bot.send_message(
-                            chat_id=p.chat_id,
-                            reply_to_message_id=p.msg_id,
-                            text=msg_text,
-                            parse_mode="HTML",
-                        )
-                    finally:
-                        recent_timeouts.append(p.raw_file)
-                        await tracker.remove(p.raw_file)
+                age = now - p.created_ts
+                if age <= PENDING_TIMEOUT_SECONDS:
+                    continue
+
+                if age > PENDING_HARD_TIMEOUT_SECONDS:
+                    log.warning("hard timeout for pending %s (status=%s)", p.raw_file, p.status)
+                    # Park so a late `[sync] deployed:` marker can still notify
+                    # via the bridge's 3rd-tier lookup. In-memory only — bot
+                    # restart drops parked entries (acceptable since the user
+                    # has already received the "đang deploy" early-ack).
+                    park_pending_for_late_marker(p, recent_resolved, now)
+                    await tracker.remove(p.raw_file)
+                    continue
+
+                if p.timeout_notified_ts:
+                    continue
+
+                log.warning("timeout for pending %s (status=%s)", p.raw_file, p.status)
+                minutes = PENDING_TIMEOUT_SECONDS // 60
+                if p.status in ("ingested", "deployed"):
+                    src_label = (
+                        f"\nSource page: <code>{escape(p.new_source_file)}</code>"
+                        if p.new_source_file else ""
+                    )
+                    msg_text = (
+                        f"⏱️ Quá {minutes} phút đợi marker deploy cho "
+                        f"<code>{escape(p.raw_file)}</code>.\n"
+                        f"Status hiện tại: <b>{escape(p.status)}</b> — ingest đã xong, "
+                        f"chỉ deploy không phản hồi.{src_label}\n\n"
+                        f"Có thể wiki đã update rồi, kiểm tra: "
+                        f"{escape(QUARTZ_PUBLIC_BASE_URL)}/\n"
+                        f"Nếu cần ép chạy lại: <code>/retry {escape(p.raw_file)}</code>"
+                    )
+                else:
+                    reason = format_pipeline_reason(p)
+                    msg_text = (
+                        f"⏱️ Quá {minutes} phút mà pipeline chưa xong cho "
+                        f"<code>{escape(p.raw_file)}</code>.\n"
+                        f"Last status: <b>{escape(p.status)}</b>.\n"
+                        f"Lý do hiện tại: {escape(reason)}\n\n"
+                        f"Bot sẽ tiếp tục nghe watcher để báo kết quả cuối.\n"
+                        f"Lệnh nhanh:\n"
+                        f"• Chạy lại: <code>/retry {escape(p.raw_file)}</code>\n"
+                        f"• Hủy hẳn: <code>/cancel {escape(p.raw_file)}</code>"
+                    )
+                try:
+                    await bot.send_message(
+                        chat_id=p.chat_id,
+                        reply_to_message_id=p.msg_id,
+                        text=msg_text,
+                        parse_mode="HTML",
+                    )
+                finally:
+                    recent_timeouts.append(p.raw_file)
+                    await tracker.update(p.raw_file, timeout_notified_ts=now)
         except Exception as e:
             log.exception("sweeper error: %s", e)
         await asyncio.sleep(SWEEP_INTERVAL_SECONDS)
@@ -1277,16 +1970,22 @@ async def _post_init(application: Application) -> None:
     application.bot_data["tracker"] = PendingTracker()
     # Files the sweep just timed out — `/retry` no-args picks from here first.
     application.bot_data["recent_timeouts"] = deque(maxlen=16)
+    # Parking lot for raw_files whose tracker entry was hard-removed by
+    # sweep_pending; a late `[sync] deployed:` marker can still notify the
+    # user via the bridge's 3rd-tier lookup. FIFO-bounded at
+    # RECENT_RESOLVED_MAXLEN, in-memory only (lost on restart by design).
+    application.bot_data["recent_resolved"] = {}
     emit = await make_emitter(application)
     loop = asyncio.get_running_loop()
     application.bot_data["tail_task"] = loop.create_task(tail_watcher_log(emit))
     application.bot_data["poll_task"] = loop.create_task(poll_sources(application))
     application.bot_data["sweep_task"] = loop.create_task(sweep_pending(application))
-    log.info("post_init: tracker + tail + poll + sweep started")
+    application.bot_data["heartbeat_task"] = loop.create_task(heartbeat_loop(application))
+    log.info("post_init: tracker + tail + poll + sweep + heartbeat started")
 
 
 async def _post_shutdown(application: Application) -> None:
-    for key in ("tail_task", "poll_task", "sweep_task"):
+    for key in ("tail_task", "poll_task", "sweep_task", "heartbeat_task"):
         t = application.bot_data.get(key)
         if t:
             t.cancel()

@@ -182,6 +182,20 @@ PY
     return 2
   fi
 
+  # Update-only success: agent updated existing pages without adding a new source/.
+  # Source page existed before this attempt (count flat), but agent still ran step 8
+  # to completion — log.md grew + metrics line captured + zero exit, no fetch_fail.
+  # Without this branch, the watcher marks legitimate "entity/topic updates against
+  # a pre-existing source page" as failure and never triggers sync-and-rebuild, so
+  # Cloudflare stays stale and the bot tracker hangs waiting for the deploy marker.
+  if [ "$EXIT_CODE" -eq 0 ] \
+     && [ "$LOG_LINES_AFTER" -gt "$LOG_LINES_BEFORE" ] \
+     && [ -n "$METRICS_LINE" ] \
+     && [ -z "$FETCH_FAIL_LINE" ]; then
+    log "INGEST OK (sources flat $COUNT_BEFORE → $COUNT_AFTER, log.md $LOG_LINES_BEFORE → $LOG_LINES_AFTER + metrics captured — agent updated existing pages)"
+    return 0
+  fi
+
   if [ -n "$FETCH_FAIL_LINE" ]; then
     log "INGEST FAILED (source fetch): $FETCH_FAIL_LINE"
   else
@@ -350,8 +364,10 @@ process_file() {
       echo "$FILE" >> "$STATE_FILE"
       log "marked as processed in state"
 
-      # Run sync (rsync, no AI)
-      if "$PROJECT_DIR/scripts/sync-and-rebuild.sh" >> "$LOG_FILE" 2>&1; then
+      # Run sync (rsync, no AI). Pass the raw filename so sync-and-rebuild.sh
+      # can emit `[sync] running: <basename>` and the telegram bot binds the
+      # start signal to the right pending.
+      if SYNC_RUN_HINT="$(basename "$FILE")" "$PROJECT_DIR/scripts/sync-and-rebuild.sh" >> "$LOG_FILE" 2>&1; then
         log "post-ingest sync OK"
       else
         log "post-ingest sync FAILED (Quartz site may be stale)"
