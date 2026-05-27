@@ -3,9 +3,9 @@ type: entity
 name: ReAct
 category: 核心技术
 tags: [推理, 行动, Agent, 智能体, 工具调用]
-sources: [2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-programming-tech]
+sources: [2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-programming-tech, 2026-05-23-woshipm-sop-as-cot-agent-clone-expert]
 created: 2026-04-29
-updated: 2026-04-29
+updated: 2026-05-23
 ---
 
 # ReAct
@@ -101,13 +101,33 @@ ReAct 是 "Reasoning + Acting" 的缩写，是一种让大模型先思考再行�
 
 ## 与其他技术的关系
 
-- **思维链 CoT**：ReAct = CoT + 工具执行 + 观察反馈
+- **思维链 CoT**：ReAct = CoT + 工具执行 + 观察反馈，详见 [[思维链 CoT]]
 - **Function Call**：大模型原生函数调用是 ReAct 的行动层实现
 - **MCP 协议**：标准化的工具调用协议，增强 ReAct 的工具生态
 - **Agent 工作流**：更复杂的多 Agent 编排，ReAct 是基础单元
+- **SOP**：[[2026-05-23-woshipm-sop-as-cot-agent-clone-expert]] 提出"SOP 即思维链"——SOP 天然就是一种结构化的思维链；把行业老专家的 SOP 翻译进 ReAct 框架就完成了"老专家经验→AI 可执行思维链"的编译
+
+## 不同素材中的观点
+
+来自 [[2026-04-29-yupi-ai-guide-core-concepts]] 和 [[2026-04-29-yupi-ai-guide-programming-tech]]：
+- ReAct 是 AI Agent 开发的核心范式之一
+- 与 CoT、Function Call、MCP 形成完整工具链
+- 是 Cursor、Cline 等 AI IDE 的核心模式
+
+来自 [[2026-05-23-woshipm-sop-as-cot-agent-clone-expert]]：
+- 提供 ReAct 在企业级业务流程中应用的完整工程化范例——G7 易流的 IoT 设备运维项目把老专家 12 步隐性诊断 SOP 映射到 ReAct 框架，每一步对应 `[观察]→[思考]→[行动]→[观察]` 循环
+- 案例展示了 ReAct 的"工程化模板"：每个 `[行动]` 都精确调用业务工具（`check_device_status` / `check_last_communication` / `check_service_status`），每个 `[思考]` 都基于业务规则做判断（"ACC 开启且通信中断超过 20 分钟，确认为离线故障"）
+- 强调 ReAct 在企业落地中的关键不是"算法多强"而是"业务理解多深"——12 步思维链是从老专家身边一步步问出来的，不是模型自己生成的
+- 配合系统级"先诊断、后派单"强绑定（只有 Agent 跑完完整 ReAct 循环且明确给出"建议上门"结论时下单按钮才亮起），ReAct 从"辅助工具"升级为"流程守门员"
+- 单"离线"场景的工单拦截率维持在高位，预计每年为公司节省数十万元运维成本，验证 ReAct 在企业 ROI 计算下的落地价值
 
 ## 相关页面
 - [[AI Agent 智能体]]
 - [[MCP 模型上下文协议]]
 - [[Cursor]]
 - [[提示词工程]]
+- [[思维链 CoT]]
+- [[工作SOP]]
+- [[业务架构师]]
+- [[企业AI落地]]
+- [[2026-05-23-woshipm-sop-as-cot-agent-clone-expert]]

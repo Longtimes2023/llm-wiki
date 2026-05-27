@@ -2,7 +2,7 @@
 tags: [大模型, AI, DeepSeek, 国产AI]
 created: 2026-04-29
 updated: 2026-04-29
-sources: [2026-04-29-deepseek-xiaohongshu-formula, 2026-04-29-deepseek-novel-tutorial, 2026-04-29-deepseek-official-document-tips, 2026-04-29-deepseek-novel-collaboration, 2026-04-29-deepseek-content-creation]
+sources: [2026-04-29-deepseek-xiaohongshu-formula, 2026-04-29-deepseek-novel-tutorial, 2026-04-29-deepseek-official-document-tips, 2026-04-29-deepseek-novel-collaboration, 2026-04-29-deepseek-content-creation, 2026-05-25-openclaw-deepseek-content-automation-sop]
 ---
 
 # DeepSeek
@@ -81,6 +81,10 @@ sources: [2026-04-29-deepseek-xiaohongshu-formula, 2026-04-29-deepseek-novel-tut
 ### 关于精准喂料原理
 来源：2026-04-29-deepseek-xiaohongshu-formula
 > "给AI精准'喂料'，它才能吐出金子！"
+
+### 关于高频自动化场景的性价比优势
+来源：[[2026-05-25-openclaw-deepseek-content-automation-sop]]
+> "DeepSeek百万Token才几块钱"（对比其他模型"动辄几十块"）。面对高频内容生产场景，在逻辑组织、文本完成度、代码理解等方面能满足相当一部分实际需求；让它写 Python 脚本抓取数据，"代码可用率极高，而部分参数较小的国产模型生成的代码，改Bug的时间比写代码还长"。
 
 ## 实用信息
 

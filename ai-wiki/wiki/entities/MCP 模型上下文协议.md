@@ -3,9 +3,9 @@ type: entity
 name: MCP 模型上下文协议
 category: 核心技术
 tags: [MCP, Model Context Protocol, 工具调用, 标准化协议, Canva]
-sources: [2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-programming-tech, 2026-05-10-codex-canva-operations-assets, 2026-05-13-ai-agent-productivity-20x]
+sources: [2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-programming-tech, 2026-05-10-codex-canva-operations-assets, 2026-05-13-ai-agent-productivity-20x, 2026-05-18-ai-agent-week-into-day]
 created: 2026-04-29
-updated: 2026-05-13
+updated: 2026-05-24
 ---
 
 # MCP 模型上下文协议
@@ -74,6 +74,14 @@ MCP（Model Context Protocol）是模型上下文协议，为 AI 与外部工具
 - 在实际工作流里，MCP 不是单点工具调用，而是把总结收件箱、提取会议纪要、创建付款链接、在 Notion 建项目、起草跟进邮件等动作串成一个连续任务
 - 文章强调 MCP 让用户不必手动切换多个标签页，本质上降低的是跨 SaaS 编排的摩擦，而不是单个 API 接入的门槛
 - 当 MCP 与 Agent、Skill、上下文文件组合后，AI 的角色会从"会调用一个工具"升级为"能在多个业务系统之间跑完整流程"
+
+来自 [[2026-05-18-ai-agent-week-into-day]]：
+- MCP由Anthropic开发，作为AI与各类工具之间的"通用翻译器"，彻底解决了多工具集成的碎片化问题：Agent使用统一交互语言，各类工具保留原有接口，MCP负责中间的双向翻译和适配
+- 主流Agent框架（Cowork、Codex、Manus、Perplexity等）均已内置MCP支持，提供"连接器"或"技能"菜单，用户只需登录授权即可一键完成工具连接，无需任何开发工作
+- MCP连接后可实现跨工具的无缝工作流编排：一个指令即可触发Agent在多个工具中执行连续操作，无需用户在不同应用间切换，典型案例包括：
+  - 总结收件箱 → 从Granola提取会议笔记 → 创建Stripe付款链接 → 在Notion中设置项目 → 起草后续跟进邮件
+  - 检查日历 → 总结当日会议 → 从Notion提取项目状态 → 在Slack发送团队更新 → 创建跟进任务
+- MCP的真正价值不在于单个工具调用，而在于成为所有工具的统一协调层，让信息和行动在不同平台间自由流动，消除了传统工作流中的上下文切换成本
 
 ## 快速开发工具
 

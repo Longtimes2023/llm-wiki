@@ -1,8 +1,8 @@
 ---
 tags: [AI编程, DeepSeek, Cursor, 开发效率, 架构图, 游戏开发, Spring AI, RAG, Agent, Skills]
 created: 2026-04-29
-updated: 2026-05-21
-sources: [2026-04-29-deepseek-vscode-integration, 2026-04-29-deepseek-python-local-setup, 2026-04-29-ai-architecture-diagram-tutorial, 2026-04-29-ai-game-development-3h-28w, 2026-04-29-deepseek-cline-ios-app, 2026-04-29-yupi-ai-guide-intro, 2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-tools, 2026-04-29-yupi-ai-guide-programming-tips, 2026-04-29-yupi-ai-guide-programming-tech, 2026-05-11-claude-code-6-skills, 2026-05-13-ai-agent-productivity-20x, 2026-05-20-agent-skills-intro-claude-opus, 2026-05-21-agent-skills-woshipm]
+updated: 2026-05-27
+sources: [2026-04-29-deepseek-vscode-integration, 2026-04-29-deepseek-python-local-setup, 2026-04-29-ai-architecture-diagram-tutorial, 2026-04-29-ai-game-development-3h-28w, 2026-04-29-deepseek-cline-ios-app, 2026-04-29-yupi-ai-guide-intro, 2026-04-29-yupi-ai-guide-core-concepts, 2026-04-29-yupi-ai-guide-tools, 2026-04-29-yupi-ai-guide-programming-tips, 2026-04-29-yupi-ai-guide-programming-tech, 2026-05-11-claude-code-6-skills, 2026-05-13-ai-agent-productivity-20x, 2026-05-20-agent-skills-intro-claude-opus, 2026-05-21-agent-skills-woshipm, 2026-05-27-woshipm-central-skill-symlink, 2026-05-27-woshipm-yunshu-skill-practical-guide]
 ---
 
 # AI 编程开发全景
@@ -29,7 +29,13 @@ sources: [2026-04-29-deepseek-vscode-integration, 2026-04-29-deepseek-python-loc
 
 9. **description 字段是 Skills 触发的唯一门控**：90% 的 Skill 未被触发是因为 description 不够具体；黄金写法：`[功能]+[执行动作]+[触发关键词]`，用祈使句，不超过 500 字；含 3 条约束 + 1 个输出示例可使稳定性提升 60%（Anthropic 内部数据）——来源：[[2026-05-20-agent-skills-intro-claude-opus]]
 
-10. **Skill 的标准工程骨架是 `SKILL.md` 驱动、资源目录按需加载**：`SKILL.md` 负责总控，`scripts/` 放可执行代码，`references/` 放规范文档，`assets/` 放模板与素材；真正的工程优势不只是“会触发”，而是能靠渐进式披露把大体量规范拆成随取随用的知识层，既保持约束密度，又不把上下文一次性塞满——来源：[[2026-05-21-agent-skills-woshipm]]
+10. **Skill 的标准工程骨架是 `SKILL.md` 驱动、资源目录按需加载**：`SKILL.md` 负责总控，`scripts/` 放可执行代码，`references/` 放规范文档，`assets/` 放模板与素材；真正的工程优势不只是”会触发”，而是能靠渐进式披露把大体量规范拆成随取随用的知识层，既保持约束密度，又不把上下文一次性塞满——来源：[[2026-05-21-agent-skills-woshipm]]
+
+11. **多 Agent 并存时 Skill 应统一中央管理**：Claude Code、Cursor、OpenClaw 等每个 Agent 都有独立 Skills 文件夹，导致重复安装、版本漂移、不知道自己有什么 Skill。解决方案是用软链接把所有 Agent 的 skills 目录统一指向一个 SharedSkills 中央文件夹——改一处全部同步，新 Skill 自动对所有 Agent 生效。更深层的理由：Skill 是 AI 时代里少有的确定性资产，其价值曲线与 AI 进化轨道独立，需要稳定基础设施沉淀和进化——来源：[[2026-05-27-woshipm-central-skill-symlink]]
+
+12. **写 Skill 的核心方法论是"先跑通再封装"而不是"先设计"**：Agent 任务复杂度涉及脚本、工具调用、文件读取、subagent 分工，很多流程很难一开始就完整设计。云舒"上百个 Skill"的实战经验给出四步作业流程：跑通（和 AI 定目标、跑出真实场景）→ 复盘（讨论正向 vs 负向流程、哪些应该沉淀）→ 封装（让 AI 基于复盘结果做封装）→ 回溯测试（开新对话验证稳定性）。本质是从凭想象设计走向从实践中提炼——来源：[[2026-05-27-woshipm-yunshu-skill-practical-guide]]
+
+13. **Skill 的三层渐进式加载机制 + 熟悉/不熟悉领域元判断**：Agent 调用 Skill 不是一上来就把全部内容塞给模型，而是分层加载：第一层 name+description（触发判断）→ 第二层 SKILL.md（主流程）→ 第三层 references/scripts/assets（按需补充）。判断一个场景能否 Skill 化：熟悉领域走经验蒸馏；不熟悉领域看能否建立回溯验证机制（六爻占卜失败 vs 编程自动化测试成功）——来源：[[2026-05-27-woshipm-yunshu-skill-practical-guide]]
 
 ## AI 核心概念体系
 
@@ -338,6 +344,25 @@ Claude Code 的 Skill 机制按需加载，不用时不占上下文。通用类 
 - 全球注册表：agentskills.io
 - 开源兼容包：github.com/numman-ali/openskills（兼容多平台）
 - 其他市场：skillsmp.com、skillsdirectory.com、skillhub.tencent.com
+
+### 场景八：上百个 Skill 实战之后的作业流程升级
+
+云舒（[[2026-05-27-woshipm-yunshu-skill-practical-guide]]）写了上百个 Skill 后给出更具体的作业升级：**Agent 时代不能"先设计再验证"，必须"先跑通再封装"**——因为任务复杂度涉及脚本、工具调用、文件读取、subagent 分工，凭想象设计的流程跟真实跑出来的差距太大。
+
+**四步作业流程**：
+
+| 阶段 | 关键动作 | 容易踩的坑 |
+|------|---------|-----------|
+| 1. 跑通 | 和 AI 定好目标 → 把真实场景跑出来（不需完美） | 追求一开始就完美，反而跑不通 |
+| 2. 复盘 | 和 AI 讨论：哪些是正向流程 / 哪些是负向流程 / 哪些内容应该沉淀 | 跳过这步直接封装等于凭想象做产品 |
+| 3. 封装 | 让 AI 基于复盘结果进行 Skill 封装 | 不让 AI 写，手写容易脱离真实经验 |
+| 4. 回溯 | 开新对话测试稳定性，不稳定就定位问题 | 不做回溯永远不知道 Skill 是否真的可复用 |
+
+**像产品一样迭代**：每次优化前问两个问题——①根本要解决的问题是什么（边界守护，不要做着做着过界）；②当前最明显的不足是什么（焦点守护，这次只解决一个最明显的问题）。云舒的两个真实案例：多视角深度分析 Skill 1.0→3.0 解决稳定性/数量问题但拒绝做 4.0 万能化；PPT Skill 1.0→4.0 解决能不能做→样式→适配→自动化，每一步只攻一个问题。
+
+**元判断模型——哪些场景值得 Skill 化**：
+- 熟悉领域 → 经验蒸馏：把脑子里"会做"的拆成 AI 能执行的流程
+- 不熟悉领域 → 看能否建立回溯验证机制：能验证则可做（编程自动化测试案例），不能验证则放弃（六爻占卜案例：自己不懂、AI 也不懂，打磨半月放弃）
 
 ## 工具选型决策树
 
