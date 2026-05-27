@@ -73,6 +73,31 @@ Optional (for cost reporting):
 
 Profile có giá → cost tự tính; không có → fallback `total_cost_usd` từ SDK (chỉ chính xác với Anthropic native).
 
+## Anthropic-compatible relays (Claude Code SDK quirks)
+
+Một số relay (Mimo, GLM, …) host non-Claude model nhưng expose Anthropic-compatible API. Khi Claude Agent SDK validate `model=` field client-side, model name phải là Anthropic-standard (vd `claude-sonnet-4-6[1M]`) — nếu không sẽ bị reject với `"There's an issue with the selected model ... may not exist"` (5s preflight fail, request không kịp gửi đi).
+
+Pattern để route Anthropic name → relay's underlying model server-side:
+
+```env
+MODEL=claude-sonnet-4-6[1M]                           # passes SDK validation
+ANTHROPIC_DEFAULT_HAIKU_MODEL=relay-model-name        # relay maps internally
+ANTHROPIC_DEFAULT_SONNET_MODEL=relay-model-name
+ANTHROPIC_DEFAULT_OPUS_MODEL=relay-model-name
+```
+
+`providers/loader.py:resolve()` forward các `ANTHROPIC_DEFAULT_*_MODEL` keys vào SDK env tự động.
+
+### ⚠️ Skill capability — không phải relay nào cũng dùng được cho ingest
+
+Ingest workflow (`llm-wiki-skill`) phụ thuộc các user-level skills (vd `baoyu-url-to-markdown`, `youtube-transcript`) thông qua Claude Code's Skill tool. Skill registry được inject vào system prompt, NHƯNG model phải được tune để hiểu convention và emit tool_use đúng cách. Đó là tài năng riêng của Claude (Anthropic).
+
+Relay non-Claude (vd Mimo's `mimo-v2.5-pro`, GLM-* …) thường:
+- Nhận system prompt có skill list nhưng model **không gọi skill được** → trả "外挂未安装" / "skill not available"
+- Vẫn consume tokens (~$0.01 + ~5 phút) → waste $$
+
+**Khuyến nghị:** dùng các provider non-Claude cho **chat/Q&A path** (`.active_chat`) hoặc explicit A/B test (`URL @mimo`). Để ingest path (`.active`) trên Claude-native provider (Anthropic API hoặc Claude-relay như `sonnet`/`haiku`/`claude-opus` profile).
+
 ## Gitignore
 
 `providers/*.env`, `providers/.active`, `providers/.active_chat` đều gitignored. Chỉ `.env.example` được track. Đừng commit creds.

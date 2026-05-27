@@ -108,6 +108,7 @@ def resolve(override: Optional[str] = None) -> dict:
         "input_price_per_m": 0.0,
         "output_price_per_m": 0.0,
     }
+    base["extra_env"] = {}
     if name:
         profile = PROVIDERS_DIR / f"{name}.env"
         if not profile.exists():
@@ -124,6 +125,18 @@ def resolve(override: Optional[str] = None) -> dict:
             "input_price_per_m": float(vals.get("INPUT_PRICE_PER_M") or 0),
             "output_price_per_m": float(vals.get("OUTPUT_PRICE_PER_M") or 0),
         })
+        # Forward Claude SDK model-mapping vars (lets relays like Mimo route
+        # `claude-sonnet-4-6` requests to their own underlying model server-side
+        # while passing client-side model whitelist validation).
+        base["extra_env"] = {
+            k: vals[k]
+            for k in (
+                "ANTHROPIC_DEFAULT_HAIKU_MODEL",
+                "ANTHROPIC_DEFAULT_SONNET_MODEL",
+                "ANTHROPIC_DEFAULT_OPUS_MODEL",
+            )
+            if vals.get(k)
+        }
     if not base["auth_token"]:
         raise RuntimeError(
             f"No ANTHROPIC_AUTH_TOKEN in profile {base['name']!r}. "

@@ -132,9 +132,19 @@ PY
   # If sources/ grew, the ingest substantively succeeded — even if the wrap-up
   # timed out (exit 124) or the SDK glued a trailing "API Error" into stdout.
   if [ "$COUNT_AFTER" -gt "$COUNT_BEFORE" ]; then
-    # Half-write detection: count grew but log.md untouched → agent crashed before
-    # workflow step 8. Treat as failure so the attempt can be retried.
+    # Half-write detection: count grew but log.md untouched.
+    # Distinguish two cases:
+    #   - exit 124 (timeout)/137 (SIGKILL) → agent ran out of time before step 8.
+    #     Source page IS the primary artifact and exists. Retry would re-do the
+    #     same expensive work and likely timeout again. Accept as partial success,
+    #     trigger sync. The missing log.md changelog entry is a cosmetic gap.
+    #   - any other exit (0, generic non-zero) → agent crashed mid-flow.
+    #     Retry might recover.
     if [ "$LOG_LINES_AFTER" -le "$LOG_LINES_BEFORE" ]; then
+      if [ "$EXIT_CODE" -eq 124 ] || [ "$EXIT_CODE" -eq 137 ]; then
+        log "INGEST OK with timeout (partial: sources $COUNT_BEFORE → $COUNT_AFTER, log.md unchanged — agent timeout-killed but source page created; accepting, log.md changelog skipped)"
+        return 0
+      fi
       log "INGEST FAILED (partial: sources $COUNT_BEFORE → $COUNT_AFTER but log.md unchanged at $LOG_LINES_AFTER lines)"
       return 1
     fi
@@ -158,7 +168,7 @@ PY
 
   if [ "$EXIT_CODE" -ne 0 ]; then
     if [ "$EXIT_CODE" -eq 124 ] || [ "$EXIT_CODE" -eq 137 ]; then
-      log "INGEST FAILED (timeout 25m, exit $EXIT_CODE)"
+      log "INGEST FAILED (timeout 40m, exit $EXIT_CODE)"
     else
       log "INGEST FAILED (exit code $EXIT_CODE)"
     fi
@@ -275,10 +285,12 @@ ingest_one_file() {
   if [ -n "$PROVIDER" ] && [ -z "$CHAIN_PROVIDER" ]; then
     AB_HINT="注意：素材摘要页文件名末尾追加 -$PROVIDER 后缀（用于 A/B 测试，避免覆盖之前用其他模型生成的版本）。"
   fi
-  # Hard cap per attempt: 25m. Without this, claude_agent_sdk hangs can block the
+  # Hard cap per attempt: 40m. Without this, claude_agent_sdk hangs can block the
   # entire watcher queue (raw-watcher processes files sequentially via inotify pipe).
+  # Set to 40m (was 25m) so skill-heavy ingest finishes naturally and emits METRICS
+  # before being killed — articles with many entity/topic updates regularly run 25-35min.
   # Exit 124 = timeout reached, 137 = SIGKILL after grace. Treated as normal failure.
-  timeout --kill-after=10s 25m \
+  timeout --kill-after=10s 40m \
     "$PROJECT_DIR/.venv/bin/python" -B 7_wiki_writer.py $PROVIDER_FLAG \
     --raw-file "$FILE" \
     -r "请消化这个新素材文件，文件路径是: $FILE。请运行 llm-wiki-skill 的 ingest 工作流。${AB_HINT}" \

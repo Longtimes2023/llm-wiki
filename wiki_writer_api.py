@@ -161,6 +161,7 @@ async def generate_wiki_article_stream(
         env={
             "ANTHROPIC_AUTH_TOKEN": provider["auth_token"],
             "ANTHROPIC_BASE_URL": provider["base_url"],
+            **provider.get("extra_env", {}),
             **({"CLAUDE_CODE_CLI_PATH": CLAUDE_CLI_PATH} if CLAUDE_CLI_PATH else {}),
         },
         extra_args={"cli-path": CLAUDE_CLI_PATH} if CLAUDE_CLI_PATH else {},
@@ -244,6 +245,7 @@ async def generate_wiki_article_sync(
         env={
             "ANTHROPIC_AUTH_TOKEN": provider["auth_token"],
             "ANTHROPIC_BASE_URL": provider["base_url"],
+            **provider.get("extra_env", {}),
             **({"CLAUDE_CODE_CLI_PATH": CLAUDE_CLI_PATH} if CLAUDE_CLI_PATH else {}),
         },
         extra_args={"cli-path": CLAUDE_CLI_PATH} if CLAUDE_CLI_PATH else {},

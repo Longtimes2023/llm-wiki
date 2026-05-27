@@ -92,6 +92,7 @@ async def generate_wiki_article(
         env={
             "ANTHROPIC_AUTH_TOKEN": provider["auth_token"],
             "ANTHROPIC_BASE_URL": provider["base_url"],
+            **provider.get("extra_env", {}),
         }
     )
 

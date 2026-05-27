@@ -337,11 +337,17 @@ def find_matching_new_source_for_pending(pending: Pending) -> Optional[str]:
 
 
 def find_metrics_for_raw(raw_filename: str) -> Optional[dict]:
-    """Read the latest metrics line for this raw_file from ingest_metrics.jsonl."""
+    """Read the latest metrics line for this raw_file from ingest_metrics.jsonl.
+
+    Prefer the most recent entry with input_tokens > 0 (an attempt that actually
+    reached the model). Falls back to the last entry if every attempt failed,
+    so callers can still surface the failure for debugging.
+    """
     if not METRICS_FILE.exists():
         return None
     try:
         last = None
+        last_success = None
         with METRICS_FILE.open(encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
@@ -353,7 +359,9 @@ def find_metrics_for_raw(raw_filename: str) -> Optional[dict]:
                     continue
                 if obj.get("raw_file") == raw_filename:
                     last = obj
-        return last
+                    if (obj.get("input_tokens") or 0) > 0:
+                        last_success = obj
+        return last_success or last
     except OSError:
         return None
 
@@ -769,6 +777,7 @@ async def tail_watcher_log(emit) -> None:
     last_inode: Optional[int] = None
     fp = None
     last_seen_filename: Optional[str] = None  # bind ingest_ok to most recent "detected" line
+    _sync_hint_filename: Optional[str] = None  # from [sync] running: <hint> — more accurate for deploy binding
 
     while True:
         try:
@@ -821,22 +830,27 @@ async def tail_watcher_log(emit) -> None:
                     })
                     continue
                 if RE_SYNC_OK.search(line):
-                    await emit("sync_ok", {"filename": last_seen_filename})
+                    await emit("sync_ok", {"filename": _sync_hint_filename or last_seen_filename})
                     continue
-                if RE_SYNC_RUNNING.search(line):
+                m = RE_SYNC_RUNNING.search(line)
+                if m:
+                    hint = m.group(1)  # e.g. "bot-failsafe:raw.md", "raw.md", or "manual"
+                    if hint and hint != "manual":
+                        # bot-failsafe:<raw>.md → strip prefix; <raw>.md → keep
+                        _sync_hint_filename = hint.removeprefix("bot-failsafe:")
                     await emit("sync_start", {"filename": last_seen_filename})
                     continue
                 m = RE_REBUILD_OK.search(line)
                 if m:
                     await emit("rebuild_ok", {
-                        "filename": last_seen_filename,
+                        "filename": _sync_hint_filename or last_seen_filename,
                         "files_emitted": int(m.group(1)),
                     })
                     continue
                 m = RE_SYNC_FAILED.search(line)
                 if m:
                     await emit("sync_fail", {
-                        "filename": last_seen_filename,
+                        "filename": _sync_hint_filename or last_seen_filename,
                         "reason": m.group(1),
                     })
                     continue
@@ -856,11 +870,13 @@ async def tail_watcher_log(emit) -> None:
                 continue
 
             m = RE_DEPLOYED.search(line)
-            if m and last_seen_filename:
+            deploy_filename = _sync_hint_filename or last_seen_filename
+            if m and deploy_filename:
                 await emit(
                     "deployed",
-                    {"filename": last_seen_filename, "url": m.group(1)},
+                    {"filename": deploy_filename, "url": m.group(1)},
                 )
+                _sync_hint_filename = None  # one-shot: each sync deploy uses its own hint
                 continue
         except Exception as e:
             log.exception("LogTailer error, sleeping then retrying: %s", e)
@@ -1537,7 +1553,7 @@ async def make_emitter(application: Application):
             if not p:
                 candidates = [
                     cp for cp in await tracker.all()
-                    if cp.status in ("queued", "ingested") and not cp.last_deploy_url
+                    if cp.status == "ingested" and not cp.last_deploy_url
                 ]
                 if candidates:
                     p = min(candidates, key=lambda x: x.created_ts)
