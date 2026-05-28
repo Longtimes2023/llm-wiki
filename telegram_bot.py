@@ -166,6 +166,10 @@ class Pending:
     # decide whether to trigger sync-and-rebuild.sh as backstop.
     ingested_ts: Optional[float] = None
     sync_failsafe_fired: bool = False
+    # Set when the watcher actually starts processing this file (ingest_start
+    # or first ingest_attempt event). Used by sweep_pending to skip timeout
+    # for entries still waiting in the watcher queue.
+    started_ts: Optional[float] = None
 
 
 class PendingTracker:
@@ -1639,20 +1643,25 @@ async def make_emitter(application: Application):
                 # Idempotent — poller may already have fired this for the same raw.
                 await notify_milestone(bot, p2, "ingested", tracker)
         elif event_type == "ingest_start":
-            await tracker.update(filename, phase="fetching", last_ingest_event="start")
+            fields = {"phase": "fetching", "last_ingest_event": "start"}
+            if not p.started_ts:
+                fields["started_ts"] = time.time()
+            await tracker.update(filename, **fields)
             p2 = await tracker.get(filename)
             if p2:
                 await _edit_ack_progress(bot, p2)
         elif event_type == "ingest_attempt":
             attempt = int(payload.get("attempt") or 0)
             max_attempts = int(payload.get("max_attempts") or 3)
-            await tracker.update(
-                filename,
-                attempt=attempt,
-                max_attempts=max_attempts,
-                phase="starting",
-                last_ingest_event="attempt",
-            )
+            fields = {
+                "attempt": attempt,
+                "max_attempts": max_attempts,
+                "phase": "starting",
+                "last_ingest_event": "attempt",
+            }
+            if not p.started_ts:
+                fields["started_ts"] = time.time()
+            await tracker.update(filename, **fields)
             p2 = await tracker.get(filename)
             if p2:
                 await _edit_ack_progress(bot, p2)
@@ -1952,7 +1961,12 @@ async def sweep_pending(application: Application) -> None:
         try:
             now = time.time()
             for p in await tracker.all():
-                age = now - p.created_ts
+                # Skip timeout for entries still waiting in the watcher queue.
+                # The watcher processes files sequentially; counting from
+                # created_ts would penalise entries behind a long-running file.
+                if not p.started_ts:
+                    continue
+                age = now - p.started_ts
                 if age <= PENDING_TIMEOUT_SECONDS:
                     continue
 
