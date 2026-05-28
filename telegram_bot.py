@@ -872,6 +872,10 @@ async def tail_watcher_log(emit) -> None:
             m = RE_DEPLOYED.search(line)
             deploy_filename = _sync_hint_filename or last_seen_filename
             if m and deploy_filename:
+                log.debug(
+                    "deploy event: filename=%s url=%s (hint=%s last=%s)",
+                    deploy_filename, m.group(1), _sync_hint_filename, last_seen_filename,
+                )
                 await emit(
                     "deployed",
                     {"filename": deploy_filename, "url": m.group(1)},
@@ -1551,18 +1555,31 @@ async def make_emitter(application: Application):
             # dropped (telegram_bot.log entry: "ignoring ... no tracker entry").
             p = await tracker.get(filename) if filename else None
             if not p:
-                candidates = [
-                    cp for cp in await tracker.all()
-                    if cp.status == "ingested" and not cp.last_deploy_url
-                ]
-                if candidates:
-                    p = min(candidates, key=lambda x: x.created_ts)
-                    log.warning(
-                        "deployed event filename=%s has no exact tracker match; "
-                        "fallback to oldest pending without deploy_url: %s",
-                        filename, p.raw_file,
-                    )
-                    filename = p.raw_file
+                # Tier 2a: exact filename match among ALL pending entries.
+                # When the tail reader falls behind, last_seen_filename can
+                # drift to a different file, causing Tier 1 to miss.  But the
+                # _sync_hint_filename (used for `filename`) is correct, so a
+                # direct scan finds the right entry.
+                all_pending = await tracker.all()
+                if filename:
+                    for cp in all_pending:
+                        if cp.raw_file == filename:
+                            p = cp
+                            break
+                # Tier 2b: oldest ingested without deploy_url (best-effort).
+                if not p:
+                    candidates = [
+                        cp for cp in all_pending
+                        if cp.status == "ingested" and not cp.last_deploy_url
+                    ]
+                    if candidates:
+                        p = min(candidates, key=lambda x: x.created_ts)
+                        log.warning(
+                            "deployed event filename=%s has no exact tracker match; "
+                            "fallback to oldest pending without deploy_url: %s",
+                            filename, p.raw_file,
+                        )
+                        filename = p.raw_file
             if not p:
                 # 3rd tier: late deploy marker landing AFTER sweep_pending
                 # hard-removed the tracker entry. Reconstruct a local Pending
@@ -1770,16 +1787,30 @@ async def make_emitter(application: Application):
                 else (payload_url or f"{QUARTZ_PUBLIC_BASE_URL}/")
             )
             p2 = await tracker.update(filename, status="deployed", last_deploy_url=url)
-            # Idempotent: if poller-driven notification ever adds "deployed" itself
-            # (it currently doesn't, but future code might), this stays a single send.
             target = p2 or p
-            sent = await notify_milestone(bot, target, "deployed", tracker, extra={"url": url})
-            if not sent:
+            # Guard: skip deployed notification when metrics are not yet available.
+            # The bot-failsafe deploy often fires BEFORE the watcher writes the
+            # metrics line (ingest_metrics.jsonl).  Sending now would produce a
+            # message without ⏱/🔢/💰, and marking "deployed" as notified would
+            # prevent the watcher's later deploy from resending WITH metrics.
+            # By skipping (and NOT marking notified), we let the watcher deploy
+            # send the complete message.
+            if not find_metrics_for_raw(filename):
                 log.info(
-                    "deployed milestone for %s already notified (or no-op), skipping resend",
+                    "deployed event for %s: metrics not yet available, deferring "
+                    "notification to next deploy marker (likely watcher sync)",
                     filename,
                 )
-            await tracker.remove(filename)
+            else:
+                sent = await notify_milestone(bot, target, "deployed", tracker, extra={"url": url})
+                if not sent:
+                    log.info(
+                        "deployed milestone for %s already notified (or no-op), skipping resend",
+                        filename,
+                    )
+                await tracker.remove(filename)
+            # else: deferred (metrics not yet available) — entry stays in tracker
+            # so the watcher's deploy marker can find it and send WITH metrics.
 
     return emit
 
