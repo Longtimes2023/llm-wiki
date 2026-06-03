@@ -228,7 +228,7 @@ class PendingTracker:
     async def add(self, p: Pending) -> None:
         async with self._lock:
             self._items[p.raw_file] = p
-        await self._persist(p)
+        await self._persist()
 
     async def get(self, raw_file: str) -> Optional[Pending]:
         async with self._lock:
@@ -241,22 +241,58 @@ class PendingTracker:
                 return None
             for k, v in fields.items():
                 setattr(p, k, v)
-            await self._persist(p)
+            await self._persist()
             return p
 
     async def remove(self, raw_file: str) -> Optional[Pending]:
         async with self._lock:
-            return self._items.pop(raw_file, None)
+            p = self._items.pop(raw_file, None)
+        if p is not None:
+            await self._persist()
+        return p
 
     async def all(self) -> list[Pending]:
         async with self._lock:
             return list(self._items.values())
 
-    async def _persist(self, p: Pending) -> None:
+    async def _persist(self) -> None:
         STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-        line = json.dumps(asdict(p), ensure_ascii=False)
-        async with aiofiles.open(STATE_FILE, "a") as f:
-            await f.write(line + "\n")
+        async with self._lock:
+            items = list(self._items.values())
+        data = [asdict(p) for p in items]
+        tmp = STATE_FILE.with_suffix(".tmp")
+        async with aiofiles.open(tmp, "w") as f:
+            await f.write(json.dumps(data, ensure_ascii=False, indent=2))
+        tmp.rename(STATE_FILE)
+
+    async def restore(self) -> int:
+        """Restore pending entries from STATE_FILE after restart."""
+        if not STATE_FILE.exists():
+            return 0
+        try:
+            raw = STATE_FILE.read_text(encoding="utf-8").strip()
+            if not raw:
+                return 0
+            data = json.loads(raw)
+            if not isinstance(data, list):
+                return 0
+            restored = 0
+            async with self._lock:
+                for d in data:
+                    if not isinstance(d, dict) or "raw_file" not in d:
+                        continue
+                    # Only restore non-terminal entries
+                    if d.get("status") in ("deployed", "failed"):
+                        continue
+                    p = Pending(**{k: v for k, v in d.items() if k in Pending.__dataclass_fields__})
+                    self._items[p.raw_file] = p
+                    restored += 1
+            if restored:
+                log.info("restored %d pending entries from state file", restored)
+            return restored
+        except Exception as e:
+            log.warning("failed to restore state file: %s", e)
+            return 0
 
 
 # ---------- URL + raw file ----------
@@ -2093,6 +2129,8 @@ async def sweep_pending(application: Application) -> None:
 # ---------- App lifecycle ----------
 async def _post_init(application: Application) -> None:
     application.bot_data["tracker"] = PendingTracker()
+    # Restore pending entries from previous run (survives OOM kill / restart)
+    await application.bot_data["tracker"].restore()
     # Files the sweep just timed out — `/retry` no-args picks from here first.
     application.bot_data["recent_timeouts"] = deque(maxlen=16)
     # Parking lot for raw_files whose tracker entry was hard-removed by
