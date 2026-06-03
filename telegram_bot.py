@@ -218,6 +218,9 @@ class Pending:
     # Content type detected from URL (text/video/image/audio). Used for
     # multimodal provider routing and display in notifications.
     content_type: str = "text"
+    # Set when deployed notification was sent without metrics. The sweep loop
+    # watches for this flag and sends a follow-up with metrics when they appear.
+    metrics_missing_notified: bool = False
 
 
 class PendingTracker:
@@ -1897,29 +1900,30 @@ async def make_emitter(application: Application):
             )
             p2 = await tracker.update(filename, status="deployed", last_deploy_url=url)
             target = p2 or p
-            # Guard: skip deployed notification when metrics are not yet available.
-            # The bot-failsafe deploy often fires BEFORE the watcher writes the
-            # metrics line (ingest_metrics.jsonl).  Sending now would produce a
-            # message without ⏱/🔢/💰, and marking "deployed" as notified would
-            # prevent the watcher's later deploy from resending WITH metrics.
-            # By skipping (and NOT marking notified), we let the watcher deploy
-            # send the complete message.
-            if not find_metrics_for_raw(filename):
+            # Always send deploy notification immediately.
+            # If metrics aren't available yet (bot-failsafe fires before watcher
+            # writes ingest_metrics.jsonl), send without metrics. A follow-up
+            # message with metrics will be sent when they arrive.
+            has_metrics = bool(find_metrics_for_raw(filename))
+            sent = await notify_milestone(bot, target, "deployed", tracker, extra={"url": url})
+            if not sent:
                 log.info(
-                    "deployed event for %s: metrics not yet available, deferring "
-                    "notification to next deploy marker (likely watcher sync)",
+                    "deployed milestone for %s already notified (or no-op), skipping resend",
+                    filename,
+                )
+                await tracker.remove(filename)
+            elif not has_metrics:
+                # Metrics weren't available when we sent — keep entry in tracker
+                # so sweep_pending can send follow-up when metrics arrive.
+                await tracker.update(filename, metrics_missing_notified=True)
+                log.info(
+                    "deployed notification for %s sent without metrics; "
+                    "follow-up will be sent when metrics arrive",
                     filename,
                 )
             else:
-                sent = await notify_milestone(bot, target, "deployed", tracker, extra={"url": url})
-                if not sent:
-                    log.info(
-                        "deployed milestone for %s already notified (or no-op), skipping resend",
-                        filename,
-                    )
+                # Metrics were included in the message — done.
                 await tracker.remove(filename)
-            # else: deferred (metrics not yet available) — entry stays in tracker
-            # so the watcher's deploy marker can find it and send WITH metrics.
 
     return emit
 
@@ -2061,6 +2065,28 @@ async def sweep_pending(application: Application) -> None:
         try:
             now = time.time()
             for p in await tracker.all():
+                # Follow-up: send metrics for deployed entries that were notified
+                # without metrics (bot-failsafe deploy fires before metrics jsonl).
+                if p.status == "deployed" and p.metrics_missing_notified:
+                    metrics = find_metrics_for_raw(p.raw_file)
+                    if metrics:
+                        try:
+                            await bot.send_message(
+                                chat_id=p.chat_id,
+                                reply_to_message_id=p.msg_id,
+                                text=f"📊 Metrics: {format_metrics_line(metrics)}",
+                                parse_mode="HTML",
+                            )
+                        except Exception as e:
+                            log.exception("metrics follow-up send failed for %s: %s", p.raw_file, e)
+                        await tracker.remove(p.raw_file)
+                        log.info("sent metrics follow-up for %s", p.raw_file)
+                    # Don't timeout these — wait for metrics
+                    continue
+                # Skip timeout for deployed entries (already notified user)
+                if p.status == "deployed":
+                    continue
+
                 # Skip timeout for entries still waiting in the watcher queue.
                 # The watcher processes files sequentially; counting from
                 # created_ts would penalise entries behind a long-running file.
