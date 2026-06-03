@@ -234,6 +234,11 @@ ingest_one_file() {
   local PROVIDER
   PROVIDER=$(awk '/^provider:/{print $2; exit}' "$FILE" 2>/dev/null)
 
+  # Read content_type from frontmatter (set by telegram_bot for multimodal routing).
+  local CONTENT_TYPE
+  CONTENT_TYPE=$(awk '/^content_type:/{print $2; exit}' "$FILE" 2>/dev/null)
+  CONTENT_TYPE="${CONTENT_TYPE:-text}"
+
   # Dedup precheck: same source_url as already-processed raw → skip without invoking agent.
   # Skipped when PROVIDER override present (A/B re-test).
   # Returns code 2 (distinct from 0=success-with-rebuild and 1=real-failure).
@@ -260,16 +265,26 @@ ingest_one_file() {
   # the source page but before updating log.md / entities / topics. We reject that and retry.
   local LOG_LINES_BEFORE
   LOG_LINES_BEFORE=$(wc -l < "$PROJECT_DIR/$WIKI_NAME/log.md" 2>/dev/null || echo 0)
-  # Resolve effective provider for this attempt: chain override > frontmatter override > none (loader picks .active).
+  # Resolve effective provider for this attempt: chain override > frontmatter override > content-type-aware default.
   local EFFECTIVE_PROVIDER=""
   if [ -n "$CHAIN_PROVIDER" ]; then
     EFFECTIVE_PROVIDER="$CHAIN_PROVIDER"
-    log "ingest start | provider=$EFFECTIVE_PROVIDER (fallback chain) | sources count before: $COUNT_BEFORE"
+    log "ingest start | provider=$EFFECTIVE_PROVIDER (fallback chain) | content_type=$CONTENT_TYPE | sources count before: $COUNT_BEFORE"
   elif [ -n "$PROVIDER" ]; then
     EFFECTIVE_PROVIDER="$PROVIDER"
-    log "ingest start | provider=$EFFECTIVE_PROVIDER (frontmatter override) | sources count before: $COUNT_BEFORE"
+    log "ingest start | provider=$EFFECTIVE_PROVIDER (frontmatter override) | content_type=$CONTENT_TYPE | sources count before: $COUNT_BEFORE"
   else
-    log "ingest start | sources count before: $COUNT_BEFORE"
+    # No explicit provider: use content_type-aware resolution via loader.resolve_for_content().
+    EFFECTIVE_PROVIDER=$("$PROJECT_DIR/.venv/bin/python" -c "
+from providers.loader import resolve_for_content
+p = resolve_for_content('$CONTENT_TYPE')
+print(p['name'])
+" 2>/dev/null) || EFFECTIVE_PROVIDER=""
+    if [ -n "$EFFECTIVE_PROVIDER" ]; then
+      log "ingest start | provider=$EFFECTIVE_PROVIDER (content_type=$CONTENT_TYPE) | sources count before: $COUNT_BEFORE"
+    else
+      log "ingest start | content_type=$CONTENT_TYPE | sources count before: $COUNT_BEFORE"
+    fi
   fi
 
   cd "$PROJECT_DIR"

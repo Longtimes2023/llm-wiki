@@ -143,3 +143,43 @@ def resolve(override: Optional[str] = None) -> dict:
             f"Check providers/{base['name']}.env or main .env"
         )
     return base
+
+
+# --- Content-type-aware resolution ---
+
+# Default mapping: content_type → provider name.
+# Override with env var MULTIMODAL_PROVIDER (for image/video/audio) or TEXT_PROVIDER.
+_TEXT_PROVIDER = os.getenv("TEXT_PROVIDER", "mimo-pro")
+_MULTIMODAL_PROVIDER = os.getenv("MULTIMODAL_PROVIDER", "mimo-multimodal")
+
+_CONTENT_TYPE_MAP = {
+    "text": _TEXT_PROVIDER,
+    "image": _MULTIMODAL_PROVIDER,
+    "video": _MULTIMODAL_PROVIDER,
+    "audio": _MULTIMODAL_PROVIDER,
+}
+
+
+def resolve_for_content(
+    content_type: str = "text",
+    override: Optional[str] = None,
+) -> dict:
+    """Resolve provider based on content type.
+
+    Priority:
+      1. Explicit override (--provider or @provider in Telegram)
+      2. Content-type-specific provider from mapping
+      3. Fallback to .active sentinel
+
+    When override is set, it takes absolute precedence (user A/B test).
+    Otherwise, content_type selects between text-oriented and multimodal providers.
+    """
+    if override:
+        return resolve(override)
+
+    provider_name = _CONTENT_TYPE_MAP.get(content_type)
+    if provider_name and (PROVIDERS_DIR / f"{provider_name}.env").exists():
+        return resolve(provider_name)
+
+    # Fallback: .active sentinel (original behavior)
+    return resolve()

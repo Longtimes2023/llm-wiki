@@ -127,6 +127,51 @@ RE_SYNC_RUNNING = re.compile(r"\[sync\] running(?::\s*(\S+))?")
 RE_REBUILD_OK = re.compile(r"\[sync\] Quartz build OK \((\d+) files emitted\)")
 RE_SYNC_FAILED = re.compile(r"\[sync\] (Quartz build FAILED[^\n]*|Cloudflare deploy FAILED[^\n]*)")
 
+# ---------- Content type detection ----------
+# Maps URL patterns to content_type for multimodal provider routing.
+# Returns "text" for general URLs; "video" / "image" / "audio" for known media hosts.
+_YT_HOSTS = {"youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be", "www.youtu.be"}
+_IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg", ".avif"}
+_AUDIO_EXTS = {".mp3", ".wav", ".m4a", ".ogg", ".flac", ".aac", ".wma"}
+_VIDEO_EXTS = {".mp4", ".webm", ".mkv", ".avi", ".mov", ".flv"}
+_MEDIA_HOSTS_VIDEO = {"vimeo.com", "www.vimeo.com", "dailymotion.com", "www.dailymotion.com",
+                       "tiktok.com", "www.tiktok.com", "twitch.tv", "www.twitch.tv",
+                       "bilibili.com", "www.bilibili.com"}
+
+
+def detect_content_type(url: str) -> str:
+    """Classify URL as text / video / image / audio.
+
+    Priority:
+      1. Known video hosts (YouTube, Vimeo, TikTok, …) → "video"
+      2. File extension match → corresponding type
+      3. Default → "text"
+    """
+    from urllib.parse import urlparse
+    try:
+        parsed = urlparse(url)
+    except Exception:
+        return "text"
+
+    host = parsed.hostname or ""
+    path_lower = parsed.path.lower()
+
+    # YouTube / known video hosts
+    if host in _YT_HOSTS or host in _MEDIA_HOSTS_VIDEO:
+        return "video"
+
+    # Extension-based detection (strip query string)
+    ext = Path(path_lower).suffix
+    if ext in _IMAGE_EXTS:
+        return "image"
+    if ext in _AUDIO_EXTS:
+        return "audio"
+    if ext in _VIDEO_EXTS:
+        return "video"
+
+    return "text"
+
+
 logging.basicConfig(
     format="%(asctime)s [telegram_bot] %(levelname)s %(message)s",
     level=logging.INFO,
@@ -170,6 +215,9 @@ class Pending:
     # or first ingest_attempt event). Used by sweep_pending to skip timeout
     # for entries still waiting in the watcher queue.
     started_ts: Optional[float] = None
+    # Content type detected from URL (text/video/image/audio). Used for
+    # multimodal provider routing and display in notifications.
+    content_type: str = "text"
 
 
 class PendingTracker:
@@ -593,6 +641,7 @@ def write_raw_file(
     chat_id: int,
     msg_id: int,
     provider: Optional[str] = None,
+    content_type: str = "text",
 ) -> Path:
     RAW_ARTICLES_DIR.mkdir(parents=True, exist_ok=True)
     ts = datetime.now().strftime("%Y-%m-%d-%H%M%S")
@@ -602,6 +651,7 @@ def write_raw_file(
     body = (
         f"---\n"
         f"source_url: {url}\n"
+        f"content_type: {content_type}\n"
         f"captured_at: {datetime.now().isoformat(timespec='seconds')}\n"
         f"captured_via: telegram_bot\n"
         f"telegram_chat_id: {chat_id}\n"
@@ -1133,16 +1183,19 @@ async def on_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
                 )
             return
 
-    raw_path = write_raw_file(url, chat_id, msg.message_id, provider=provider_override)
+    content_type = detect_content_type(url)
+    raw_path = write_raw_file(url, chat_id, msg.message_id, provider=provider_override, content_type=content_type)
     log.info(
-        "wrote raw file %s for url=%s provider=%s",
-        raw_path, url, provider_override or "(default)",
+        "wrote raw file %s for url=%s provider=%s content_type=%s",
+        raw_path, url, provider_override or "(default)", content_type,
     )
 
     sources_before = snapshot_sources()
     log.info("snapshot sources before ingest: %d files", len(sources_before))
 
     ack_lines = [f"🔄 Đã nhận URL — đang đẩy vào pipeline:", url]
+    if content_type != "text":
+        ack_lines.append(f"\n<b>Content type:</b> {content_type} → multimodal provider")
     if provider_override:
         ack_lines.append(f"\n<b>Provider override:</b> {provider_override} (one-off, dedup bypass)")
     ack_lines.append(f"\nFile: <code>{raw_path.name}</code>")
@@ -1161,6 +1214,7 @@ async def on_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
             status="queued",
             sources_snapshot=sources_before,
             ack_base_text=ack_text,
+            content_type=content_type,
         )
     )
 
@@ -1310,6 +1364,15 @@ async def on_retry_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         return
 
     sources_before = snapshot_sources()
+    # Read content_type from existing raw file frontmatter (set during original ingest).
+    retry_content_type = "text"
+    try:
+        raw_text = target.read_text(encoding="utf-8", errors="replace")
+        m_ct = re.search(r"^content_type:\s*(\S+)", raw_text, re.MULTILINE)
+        if m_ct:
+            retry_content_type = m_ct.group(1)
+    except OSError:
+        pass
     ack_text = (
         f"🔁 Đã retry <code>{raw_name}</code>.\n"
         + (f"Killed PID <code>{pid}</code>.\n" if pid else "")
@@ -1328,6 +1391,7 @@ async def on_retry_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
             status="queued",
             sources_snapshot=sources_before,
             ack_base_text=ack_text,
+            content_type=retry_content_type,
         )
     )
 
