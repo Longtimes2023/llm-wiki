@@ -244,8 +244,8 @@ class PendingTracker:
                 return None
             for k, v in fields.items():
                 setattr(p, k, v)
-            await self._persist()
-            return p
+        await self._persist()
+        return p
 
     async def remove(self, raw_file: str) -> Optional[Pending]:
         async with self._lock:
@@ -871,14 +871,23 @@ async def tail_watcher_log(emit) -> None:
     fp = None
     last_seen_filename: Optional[str] = None  # bind ingest_ok to most recent "detected" line
     _sync_hint_filename: Optional[str] = None  # from [sync] running: <hint> — more accurate for deploy binding
+    last_activity_ts = time.time()
+    STALE_LOG_SECONDS = 300  # warn if tail loop produces no lines for 5min
 
     while True:
         try:
-            if not WATCHER_LOG.exists():
+            # Watchdog: if no lines (or no sleep) for 5min, log that we're alive.
+            now = time.time()
+            if now - last_activity_ts > STALE_LOG_SECONDS:
+                log.info("tail_watcher_log: no watcher.log activity for %.0fs (still running)", now - last_activity_ts)
+                last_activity_ts = now
+
+            if not await asyncio.to_thread(WATCHER_LOG.exists):
                 await asyncio.sleep(LOG_POLL_INTERVAL_SECONDS)
+                last_activity_ts = time.time()
                 continue
 
-            st = WATCHER_LOG.stat()
+            st = await asyncio.to_thread(WATCHER_LOG.stat)
             if fp is None or st.st_ino != last_inode:
                 if fp is not None:
                     fp.close()
@@ -887,10 +896,14 @@ async def tail_watcher_log(emit) -> None:
                 last_inode = st.st_ino
                 log.info("LogTailer attached to %s (inode=%s)", WATCHER_LOG, last_inode)
 
-            line = fp.readline()
+            # readline() is synchronous but returns immediately at EOF (empty string).
+            # Use asyncio.to_thread to avoid blocking the event loop during I/O.
+            line = await asyncio.to_thread(fp.readline)
             if not line:
                 await asyncio.sleep(LOG_POLL_INTERVAL_SECONDS)
                 continue
+
+            last_activity_ts = time.time()
 
             line = line.rstrip("\n")
 
@@ -964,8 +977,8 @@ async def tail_watcher_log(emit) -> None:
 
             m = RE_DEPLOYED.search(line)
             deploy_filename = _sync_hint_filename or last_seen_filename
-            if m and deploy_filename:
-                log.debug(
+            if m:
+                log.info(
                     "deploy event: filename=%s url=%s (hint=%s last=%s)",
                     deploy_filename, m.group(1), _sync_hint_filename, last_seen_filename,
                 )
@@ -1191,11 +1204,13 @@ async def on_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 
     # Pre-flight dedup — skip when @provider override is present (intentional re-test)
     if not provider_override:
-        existing = find_existing_raw_for_url(url)
+        existing = await asyncio.to_thread(find_existing_raw_for_url, url)
         if existing:
             # Try filename-based source lookup first, then fall back to URL-based
             # (handles raws renamed by ingest — e.g. stub → slugified filename).
-            src_name = find_source_page_for_raw(existing.name) or find_source_page_for_url(url)
+            src_name = await asyncio.to_thread(find_source_page_for_raw, existing.name)
+            if not src_name:
+                src_name = await asyncio.to_thread(find_source_page_for_url, url)
             if src_name:
                 src_url = quartz_url_for_source(src_name)
                 log.info("dedup: url already ingested via raw=%s, source=%s", existing.name, src_name)
@@ -1229,7 +1244,7 @@ async def on_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         raw_path, url, provider_override or "(default)", content_type,
     )
 
-    sources_before = snapshot_sources()
+    sources_before = await asyncio.to_thread(snapshot_sources)
     log.info("snapshot sources before ingest: %d files", len(sources_before))
 
     ack_lines = [f"🔄 Đã nhận URL — đang đẩy vào pipeline:", url]
@@ -1377,10 +1392,10 @@ async def on_retry_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     raw_name = target.name
 
     # Kill old process first to avoid races on watcher.state / metrics jsonl
-    pid = _find_pid_for_raw(raw_name)
+    pid = await asyncio.to_thread(_find_pid_for_raw, raw_name)
     killed = False
     if pid:
-        killed = _kill_pid(pid)
+        killed = await asyncio.to_thread(_kill_pid, pid)
         log.info("/retry killed pid=%s for %s (success=%s)", pid, raw_name, killed)
 
     # Clean state
@@ -1461,10 +1476,10 @@ async def on_cancel_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
 
     raw_name = target.name
-    pid = _find_pid_for_raw(raw_name)
+    pid = await asyncio.to_thread(_find_pid_for_raw, raw_name)
     killed = False
     if pid:
-        killed = _kill_pid(pid)
+        killed = await asyncio.to_thread(_kill_pid, pid)
         log.info("/cancel killed pid=%s for %s (success=%s)", pid, raw_name, killed)
 
     _remove_from_watcher_failed(raw_name)
@@ -1523,13 +1538,18 @@ async def _edit_ack_progress(bot, p: Pending) -> None:
     progress = _format_progress_line(p, time.time())
     text = f"{p.ack_base_text}\n\n{progress}"
     try:
-        await bot.edit_message_text(
-            chat_id=p.chat_id,
-            message_id=p.ack_msg_id,
-            text=text,
-            parse_mode="HTML",
-            disable_web_page_preview=True,
+        await asyncio.wait_for(
+            bot.edit_message_text(
+                chat_id=p.chat_id,
+                message_id=p.ack_msg_id,
+                text=text,
+                parse_mode="HTML",
+                disable_web_page_preview=True,
+            ),
+            timeout=15.0,
         )
+    except asyncio.TimeoutError:
+        log.warning("edit_ack_progress timed out for %s", p.raw_file)
     except Exception as e:
         # "Message is not modified" → benign; everything else → log and move on.
         if "not modified" in str(e).lower():
@@ -1571,7 +1591,7 @@ async def notify_milestone(
             f"\nSource: <code>{escape(p.new_source_file)}</code>"
             if p.new_source_file else ""
         )
-        metrics = find_metrics_for_raw(p.raw_file)
+        metrics = await asyncio.to_thread(find_metrics_for_raw, p.raw_file)
         metrics_label = f"\n{format_metrics_line(metrics)}" if metrics else ""
         text = (
             f"✅ Đã ingest + deploy xong!\n"
@@ -1597,13 +1617,19 @@ async def notify_milestone(
         return False
 
     try:
-        await bot.send_message(
-            chat_id=p.chat_id,
-            reply_to_message_id=p.msg_id,
-            text=text,
-            parse_mode="HTML",
-            disable_web_page_preview=(phase != "deployed"),
+        await asyncio.wait_for(
+            bot.send_message(
+                chat_id=p.chat_id,
+                reply_to_message_id=p.msg_id,
+                text=text,
+                parse_mode="HTML",
+                disable_web_page_preview=(phase != "deployed"),
+            ),
+            timeout=15.0,
         )
+    except asyncio.TimeoutError:
+        log.warning("notify_milestone(%s) timed out for %s", phase, p.raw_file)
+        return False
     except Exception as e:
         log.exception("notify_milestone(%s) send failed for %s: %s", phase, p.raw_file, e)
         return False
@@ -1726,9 +1752,9 @@ async def make_emitter(application: Application):
                 return  # not ours, ignore
 
         if event_type == "ingest_ok":
-            new_sources = diff_new_sources(p.sources_snapshot)
+            new_sources = await asyncio.to_thread(diff_new_sources, p.sources_snapshot)
             new_src = new_sources[0] if new_sources else None
-            matched_source = new_src or _lookup_source_page_for_raw(p)
+            matched_source = new_src or await asyncio.to_thread(_lookup_source_page_for_raw, p)
             p2 = await tracker.update(
                 filename,
                 status="ingested",
@@ -1847,7 +1873,7 @@ async def make_emitter(application: Application):
             await tracker.update(filename, status="failed", last_ingest_event="fail")
             # Surface structured fetch-fail reason if the skill emitted one; otherwise
             # derive a concise watcher/progress reason for the user.
-            fail_info = find_fetch_fail_for_raw(filename)
+            fail_info = await asyncio.to_thread(find_fetch_fail_for_raw, filename)
             if fail_info:
                 status_label, reason, url = _clean_fetch_fail_info(fail_info)
                 status_text = f" (status: {status_label})" if status_label else ""
@@ -1904,7 +1930,7 @@ async def make_emitter(application: Application):
             # If metrics aren't available yet (bot-failsafe fires before watcher
             # writes ingest_metrics.jsonl), send without metrics. A follow-up
             # message with metrics will be sent when they arrive.
-            has_metrics = bool(find_metrics_for_raw(filename))
+            has_metrics = bool(await asyncio.to_thread(find_metrics_for_raw, filename))
             sent = await notify_milestone(bot, target, "deployed", tracker, extra={"url": url})
             if not sent:
                 log.info(
@@ -1936,9 +1962,14 @@ async def heartbeat_loop(application: Application) -> None:
     """
     bot = application.bot
     tracker: PendingTracker = application.bot_data["tracker"]
+    tick = 0
     while True:
+        tick += 1
         try:
-            for p in await tracker.all():
+            pendings = await tracker.all()
+            if not pendings and tick % 5 == 1:
+                log.info("heartbeat: alive, no pending entries (tick=%d)", tick)
+            for p in pendings:
                 # Tick during queued AND ingested — for ingested entries the
                 # heartbeat keeps elapsed time visible while sync+deploy runs,
                 # and _format_progress_line overrides the stale watcher phase.
@@ -1946,7 +1977,12 @@ async def heartbeat_loop(application: Application) -> None:
                     continue
                 if not p.ack_msg_id or not p.ack_base_text:
                     continue
-                await _edit_ack_progress(bot, p)
+                try:
+                    await asyncio.wait_for(_edit_ack_progress(bot, p), timeout=20.0)
+                except asyncio.TimeoutError:
+                    log.warning("heartbeat: _edit_ack_progress timed out for %s", p.raw_file)
+                except Exception as e:
+                    log.exception("heartbeat: _edit_ack_progress error for %s: %s", p.raw_file, e)
         except Exception as e:
             log.exception("heartbeat_loop error: %s", e)
         await asyncio.sleep(HEARTBEAT_INTERVAL_SECONDS)
@@ -1991,7 +2027,9 @@ async def poll_sources(application: Application) -> None:
         try:
             for p in await tracker.all():
                 if p.status == "queued":
-                    matched_source = find_matching_new_source_for_pending(p)
+                    # find_matching_new_source_for_pending does synchronous glob+read;
+                    # offload to thread so the event loop stays responsive.
+                    matched_source = await asyncio.to_thread(find_matching_new_source_for_pending, p)
                     if matched_source:
                         now = time.time()
                         p2 = await tracker.update(
@@ -2068,15 +2106,20 @@ async def sweep_pending(application: Application) -> None:
                 # Follow-up: send metrics for deployed entries that were notified
                 # without metrics (bot-failsafe deploy fires before metrics jsonl).
                 if p.status == "deployed" and p.metrics_missing_notified:
-                    metrics = find_metrics_for_raw(p.raw_file)
+                    metrics = await asyncio.to_thread(find_metrics_for_raw, p.raw_file)
                     if metrics:
                         try:
-                            await bot.send_message(
-                                chat_id=p.chat_id,
-                                reply_to_message_id=p.msg_id,
-                                text=f"📊 Metrics: {format_metrics_line(metrics)}",
-                                parse_mode="HTML",
+                            await asyncio.wait_for(
+                                bot.send_message(
+                                    chat_id=p.chat_id,
+                                    reply_to_message_id=p.msg_id,
+                                    text=f"📊 Metrics: {format_metrics_line(metrics)}",
+                                    parse_mode="HTML",
+                                ),
+                                timeout=15.0,
                             )
+                        except asyncio.TimeoutError:
+                            log.warning("metrics follow-up timed out for %s", p.raw_file)
                         except Exception as e:
                             log.exception("metrics follow-up send failed for %s: %s", p.raw_file, e)
                         await tracker.remove(p.raw_file)
@@ -2138,12 +2181,17 @@ async def sweep_pending(application: Application) -> None:
                         f"• Hủy hẳn: <code>/cancel {escape(p.raw_file)}</code>"
                     )
                 try:
-                    await bot.send_message(
-                        chat_id=p.chat_id,
-                        reply_to_message_id=p.msg_id,
-                        text=msg_text,
-                        parse_mode="HTML",
+                    await asyncio.wait_for(
+                        bot.send_message(
+                            chat_id=p.chat_id,
+                            reply_to_message_id=p.msg_id,
+                            text=msg_text,
+                            parse_mode="HTML",
+                        ),
+                        timeout=15.0,
                     )
+                except asyncio.TimeoutError:
+                    log.warning("timeout notification send timed out for %s", p.raw_file)
                 finally:
                     recent_timeouts.append(p.raw_file)
                     await tracker.update(p.raw_file, timeout_notified_ts=now)
@@ -2189,6 +2237,10 @@ def build_app() -> Application:
     app = (
         ApplicationBuilder()
         .token(TELEGRAM_BOT_TOKEN)
+        .connect_timeout(10.0)
+        .read_timeout(30.0)
+        .write_timeout(15.0)
+        .pool_timeout(10.0)
         .post_init(_post_init)
         .post_shutdown(_post_shutdown)
         .build()
@@ -2236,6 +2288,7 @@ def main() -> None:
         return
 
     log.info("Starting telegram bot (allowlist chat_id=%s)", TELEGRAM_ALLOWED_CHAT_ID)
+    log.info("Telegram API timeouts: connect=10s read=30s write=15s pool=10s")
     app = build_app()
     app.run_polling(allowed_updates=["message"])
 
