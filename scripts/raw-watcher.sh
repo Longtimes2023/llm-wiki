@@ -275,7 +275,8 @@ ingest_one_file() {
     log "ingest start | provider=$EFFECTIVE_PROVIDER (frontmatter override) | content_type=$CONTENT_TYPE | sources count before: $COUNT_BEFORE"
   else
     # No explicit provider: use content_type-aware resolution via loader.resolve_for_content().
-    EFFECTIVE_PROVIDER=$("$PROJECT_DIR/.venv/bin/python" -c "
+    # cd needed: systemd service has no WorkingDirectory, so cwd defaults to /.
+    EFFECTIVE_PROVIDER=$(cd "$PROJECT_DIR" && "$PROJECT_DIR/.venv/bin/python" -c "
 from providers.loader import resolve_for_content
 p = resolve_for_content('$CONTENT_TYPE')
 print(p['name'])
